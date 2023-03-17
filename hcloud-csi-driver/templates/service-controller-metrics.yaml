@@ -1,0 +1,17 @@
+{{- if .Values.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.fullname" . }}-controller-metrics
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    component: controller
+spec:
+  selector:
+    {{- include "common.labels.matchLabels" . | nindent 4 }}
+    component: controller
+  ports:
+    - port: 9189
+      name: metrics
+      targetPort: metrics
+{{- end }}
