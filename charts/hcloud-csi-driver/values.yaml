@@ -1,12 +1,12 @@
 # namespace:
 
+image: hetznercloud/hcloud-csi-driver
+
+tag: 2.2.0
+
+imagePullPolicy: IfNotPresent
+
 controller:
-
-  image: hetznercloud/hcloud-csi-driver
-
-  tag: 2.2.0
-
-  imagePullPolicy: IfNotPresent
 
   attacher:
 
@@ -34,12 +34,6 @@ controller:
 
 node:
 
-  image: hetznercloud/hcloud-csi-driver
-
-  tag: 1.6.0
-
-  imagePullPolicy: IfNotPresent
-
   kubeletPath: /var/lib/kubelet
 
   registrar:
@@ -53,6 +47,7 @@ node:
     image: k8s.gcr.io/sig-storage/livenessprobe
 
     tag: v2.9.0
+
 storageClass:
 
   name: hcloud-volume

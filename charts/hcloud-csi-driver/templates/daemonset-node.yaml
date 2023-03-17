@@ -46,8 +46,8 @@ spec:
               value: 0.0.0.0:9189
             - name: ENABLE_METRICS
               value: "{{ .Values.metrics.enabled }}"
-          image: {{ .Values.node.image }}:{{ .Values.node.tag }}
-          imagePullPolicy: {{ .Values.node.imagePullPolicy | default "IfNotPresent" }}
+          image: {{ .Values.image }}:{{ .Values.tag }}
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "IfNotPresent" }}
           livenessProbe:
             failureThreshold: 5
             httpGet:
