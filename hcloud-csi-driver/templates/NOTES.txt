@@ -1,0 +1,7 @@
+Thank you for installing {{ .Chart.Name }}!
+
+In case of problems regarding this Helm Chart please help us to improve:
+  https://github.com/okaufmann/helm-charts
+
+In case of general problems with Hetzner Cloud csi-driver you can get help here:
+  https://github.com/hetznercloud/csi-driver

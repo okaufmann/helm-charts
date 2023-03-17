@@ -1,0 +1,8 @@
+/.git
+/.gitignore
+/.helmignore
+/docs/
+/logo.png
+/*.tgz
+/*.tgz.prov
+values.*.yaml

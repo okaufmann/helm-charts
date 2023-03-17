@@ -1,0 +1,33 @@
+controller:
+
+  image: hetznercloud/hcloud-csi-driver:1.6.0
+
+  imagePullPolicy: IfNotPresent
+
+
+node:
+
+  image: hetznercloud/hcloud-csi-driver:1.6.0
+
+  imagePullPolicy: IfNotPresent
+
+  kubeletPath: /var/lib/kubelet
+
+storageClass:
+
+  name: hcloud-volume
+
+  isDefault: false
+
+  reclaimPolicy: "Delete"
+
+secret:
+
+  hcloudApiToken:
+
+  existingSecretName:
+
+
+metrics:
+
+  enabled: false

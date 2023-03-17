@@ -1,0 +1,4 @@
+/charts/
+values.*.yaml
+*.tgz
+*.tgz.prov
