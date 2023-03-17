@@ -1,7 +1,7 @@
 apiVersion: v2
 name: hcloud-csi-driver
 description: Community Helm Chart for installing the Hetzner Cloud CSI drivers in your Kubernetes cluster
-version: 0.0.4
+version: 1.0.0
 appVersion: 2.2.0
 icon: https://raw.githubusercontent.com/okaufmann/helm-charts/main/charts/hcloud-csi-driver/logo.png
 type: application
