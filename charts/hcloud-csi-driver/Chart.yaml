@@ -20,3 +20,8 @@ maintainers:
 - name: Oliver Kaufmann
   email: okaufmann91@gmail.com
   url: https://oli-the.dev
+
+dependencies:
+- name: common
+  version: 1.x.x
+  repository: https://charts.bitnami.com/bitnami

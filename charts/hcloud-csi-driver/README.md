@@ -37,3 +37,7 @@ For installing this Helm Chart, you can either reuse an existing secret or creat
 
 To see all available configuration options for a deployment using this helm chart,
 please check the [`values.yaml`](https://github.com/okaufmann/helm-charts/tree/main/charts/hcloud-csi-driver/values.yaml) file.
+
+## Test
+
+    helm template --dry-run --skip-crds -f values.yaml hcloud-csi-driver .
