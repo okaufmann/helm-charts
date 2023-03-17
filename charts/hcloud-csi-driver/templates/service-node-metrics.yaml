@@ -15,5 +15,4 @@ spec:
   selector:
     {{- include "common.labels.matchLabels" . | nindent 4 }}
     component: node
-    namespace: {{ .Release.Namespace }}
 {{- end }}

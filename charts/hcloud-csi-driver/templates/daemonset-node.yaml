@@ -74,8 +74,6 @@ spec:
               mountPath: /run/csi
             - name: device-dir
               mountPath: /dev
-          securityContext:
-            privileged: true
         - name: liveness-probe
           imagePullPolicy: Always
           image: {{ .Values.node.livenessprobe.image }}:{{ .Values.node.livenessprobe.tag }}

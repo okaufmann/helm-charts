@@ -4,8 +4,9 @@ metadata:
   name: {{ .Values.storageClass.name }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.storageClass.isDefault }}
   annotations:
-    {{- if .Values.storageClass.isDefault }}
+
     storageclass.kubernetes.io/is-default-class: "true"
     {{- end }}
 provisioner: csi.hetzner.cloud
