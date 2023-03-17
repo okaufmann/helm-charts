@@ -6,6 +6,7 @@ metadata:
     {{- include "common.labels.standard" . | nindent 4 }}
 spec:
   attachRequired: true
+  fsGroupPolicy: File
   podInfoOnMount: true
   volumeLifecycleModes:
-    - Persistent
+  - Persistent

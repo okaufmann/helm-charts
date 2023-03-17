@@ -3,15 +3,17 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "common.names.fullname" . }}-node-metrics
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
     component: node
 spec:
-  selector:
-    {{- include "common.labels.matchLabels" . | nindent 4 }}
-    component: node
   ports:
     - port: 9189
       name: metrics
       targetPort: metrics
+  selector:
+    {{- include "common.labels.matchLabels" . | nindent 4 }}
+    component: node
+    namespace: {{ .Release.Namespace }}
 {{- end }}

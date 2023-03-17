@@ -1,17 +1,17 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "common.names.fullname" . }}-controller
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
     component: controller
 spec:
+  replicas: 1
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
       component: controller
-  serviceName: {{ include "common.names.fullname" . }}-controller
-  replicas: 1
   template:
     metadata:
       labels:
@@ -21,17 +21,19 @@ spec:
       serviceAccount: {{ include "common.names.fullname" . }}
       containers:
         - name: csi-attacher
-          image: k8s.gcr.io/sig-storage/csi-attacher:v3.2.1
+          image: {{ .Values.controller.attacher.image }}:{{ .Values.controller.attacher.tag }}
+          args:
+          - --default-fstype=ext4
           volumeMounts:
             - name: socket-dir
               mountPath: /run/csi
         - name: csi-resizer
-          image: k8s.gcr.io/sig-storage/csi-resizer:v1.2.0
+          image: {{ .Values.controller.resizer.image }}:{{ .Values.controller.resizer.tag }}
           volumeMounts:
             - name: socket-dir
               mountPath: /run/csi
         - name: csi-provisioner
-          image: k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2
+          image: {{ .Values.controller.provisioner.image }}:{{ .Values.controller.provisioner.tag }}
           args:
             - --feature-gates=Topology=true
             - --default-fstype=ext4
@@ -41,6 +43,8 @@ spec:
         - name: hcloud-csi-driver
           image: {{ .Values.controller.image }}
           imagePullPolicy: {{ .Values.controller.imagePullPolicy | default "IfNotPresent" }}
+          command:
+          - /bin/hcloud-csi-driver-controller
           env:
             - name: CSI_ENDPOINT
               value: unix:///run/csi/socket
@@ -57,10 +61,8 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: "{{ if .Values.secret.existingSecretName }}{{ .Values.secret.existingSecretName }}{{ else }}{{ include "common.names.fullname" . }}{{ end }}"
-                  key: hcloudApiToken
-          volumeMounts:
-            - name: socket-dir
-              mountPath: /run/csi
+                  key: {{ .Values.secret.tokenKey | default "token" }}
+                  namespace: {{ .Release.Namespace }}
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: 9189
@@ -72,16 +74,17 @@ spec:
           livenessProbe:
             failureThreshold: 5
             httpGet:
-              path: /healthz
-              port: healthz
+                path: /healthz
+                port: healthz
             initialDelaySeconds: 10
-            timeoutSeconds: 3
             periodSeconds: 2
-          securityContext:
-            privileged: true
+            timeoutSeconds: 3
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /run/csi
         - name: liveness-probe
           imagePullPolicy: Always
-          image: k8s.gcr.io/sig-storage/livenessprobe:v2.3.0
+          image: {{ .Values.controller.livenessprobe.image }}:{{ .Values.controller.livenessprobe.tag }}
           volumeMounts:
             - mountPath: /run/csi
               name: socket-dir
