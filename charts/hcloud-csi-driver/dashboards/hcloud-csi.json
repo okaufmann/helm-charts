@@ -108,7 +108,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -164,7 +164,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(up{pod=~\"$pod\"})",
@@ -177,7 +177,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "count(up{pod=~\"$pod\"})",
@@ -211,7 +211,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -278,7 +278,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "(sum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_type=\"unary\",grpc_code=\"OK\"}[$__rate_interval])) + \nsum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_type=\"unary\",grpc_code=\"NotFound\"}[$__rate_interval])) + \nsum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_type=\"unary\",grpc_code=\"PermissionDenied\"}[$__rate_interval])) + \nsum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_type=\"unary\",grpc_code=\"InvalidArgument\"}[$__rate_interval])))\n/ \nsum(rate(grpc_server_started_total{pod=~\"$pod\",grpc_type=\"unary\"}[$__rate_interval]))",
@@ -294,7 +294,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "Without csi.v1.Identity.Probe (health checks)",
       "fieldConfig": {
@@ -359,7 +359,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(irate(grpc_server_started_total{pod=~\"$pod\",grpc_method!=\"Probe\"}[$__rate_interval]))",
@@ -375,7 +375,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -451,7 +451,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(container_memory_working_set_bytes{pod=~\"$pod\",container!=\"\"}) by (pod, container)",
@@ -470,7 +470,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -548,7 +548,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum by(container,pod)(rate(container_cpu_usage_seconds_total{pod=~\"$pod\",container!=\"\"}[$__interval]))",
@@ -579,7 +579,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -655,7 +655,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(irate(grpc_server_started_total{pod=~\"$pod\"}[$__rate_interval])) by (grpc_service, pod)",
@@ -672,7 +672,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -752,7 +752,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "avg(rate(grpc_server_handling_seconds_sum{pod=~\"$pod\",grpc_type=\"unary\"}[$__rate_interval])) by (grpc_service, pod) * 1000",
@@ -769,7 +769,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -851,7 +851,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_type=\"unary\"}[$__rate_interval])) by (grpc_code, pod)",
@@ -895,7 +895,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -975,7 +975,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_service=~\"$grpc_service\"}[$__rate_interval])) by (grpc_method)",
@@ -992,7 +992,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1071,7 +1071,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.99, \n  sum(rate(grpc_server_handling_seconds_bucket{pod=~\"$pod\",grpc_service=~\"$grpc_service\"}[$__rate_interval])) by (grpc_method,le)\n)",
@@ -1088,7 +1088,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1168,7 +1168,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_code!=\"OK\",grpc_service=~\"$grpc_service\"}[$__rate_interval])) by (grpc_method)",
@@ -1185,7 +1185,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1264,7 +1264,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(grpc_server_handled_total{pod=~\"$pod\",grpc_code!=\"OK\",grpc_service=~\"$grpc_service\"}[$__rate_interval])) by (grpc_method)\n/ \nsum(rate(grpc_server_started_total{pod=~\"$pod\",grpc_service=~\"$grpc_service\"}[$__rate_interval])) by (grpc_method)",
@@ -1294,7 +1294,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "Total number of requests made per endpoint.",
       "fieldConfig": {
@@ -1368,7 +1368,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum by (method, api_endpoint) (rate(hcloud_api_requests_total{pod=~\"$pod\"}[$__rate_interval]))",
@@ -1383,7 +1383,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "Responses from Hetzner Cloud API by HTTP code",
       "fieldConfig": {
@@ -1458,7 +1458,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(hcloud_api_requests_total{pod=~\"$pod\"}[$__rate_interval])) by (code)",
@@ -1473,7 +1473,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "Requests made over 1 hour window. Relevant for Rate Limiting Issues",
       "fieldConfig": {
@@ -1551,7 +1551,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1568,7 +1568,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -1636,7 +1636,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(rate(hcloud_api_request_duration_seconds_bucket[$__rate_interval])) by (le)",
@@ -1684,7 +1684,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${datasource}"
         },
         "definition": "label_values(up{job=~\"hcloud-csi|hcloud-csi-controller\"}, pod)",
         "hide": 0,
@@ -1710,7 +1710,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${datasource}"
         },
         "definition": "label_values(grpc_server_handled_total{job=~\"hcloud-csi|hcloud-csi-controller\"}, grpc_service)",
         "hide": 0,
