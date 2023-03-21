@@ -3,9 +3,11 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "common.names.fullname" . }}-controller-service-monitor
-  namespace: kube-system
+  namespace: {{ .Values.metrics.namespace | default .Release.Namespace }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/part-of: {{ include "common.names.fullname" . }}
+    app.kubernetes.io/component: metrics
 spec:
   endpoints:
   - port: metrics
@@ -20,9 +22,11 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "common.names.fullname" . }}-node-service-monitor
-  namespace: kube-system
+  namespace: {{ .Values.metrics.namespace | default .Release.Namespace }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/part-of: {{ include "common.names.fullname" . }}
+    app.kubernetes.io/component: metrics
 spec:
   endpoints:
   - port: metrics

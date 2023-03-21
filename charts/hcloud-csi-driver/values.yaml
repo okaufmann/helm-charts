@@ -68,4 +68,6 @@ metrics:
 
   enabled: false
 
+  namespace: monitoring
+
 
