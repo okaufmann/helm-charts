@@ -1686,7 +1686,7 @@
           "type": "prometheus",
           "uid": "${datasource}"
         },
-        "definition": "label_values(up{job=~\"hcloud-csi|hcloud-csi-controller\"}, pod)",
+        "definition": "label_values(up{job=~\"hcloud-csi-driver-node-metrics|hcloud-csi-driver-controller-metrics\"}, pod)",
         "hide": 0,
         "includeAll": true,
         "label": "Pod",
@@ -1694,7 +1694,7 @@
         "name": "pod",
         "options": [],
         "query": {
-          "query": "label_values(up{job=~\"hcloud-csi|hcloud-csi-controller\"}, pod)",
+          "query": "label_values(up{job=~\"hcloud-csi-driver-node-metrics|hcloud-csi-driver-controller-metrics\"}, pod)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1712,14 +1712,14 @@
           "type": "prometheus",
           "uid": "${datasource}"
         },
-        "definition": "label_values(grpc_server_handled_total{job=~\"hcloud-csi|hcloud-csi-controller\"}, grpc_service)",
+        "definition": "label_values(grpc_server_handled_total{job=~\"hcloud-csi-driver-node-metrics|hcloud-csi-driver-controller-metrics\"}, grpc_service)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "grpc_service",
         "options": [],
         "query": {
-          "query": "label_values(grpc_server_handled_total{job=~\"hcloud-csi|hcloud-csi-controller\"}, grpc_service)",
+          "query": "label_values(grpc_server_handled_total{job=~\"hcloud-csi-driver-node-metrics|hcloud-csi-driver-controller-metrics\"}, grpc_service)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
