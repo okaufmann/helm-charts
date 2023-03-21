@@ -1,0 +1,35 @@
+{{- if .Values.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "common.names.fullname" . }}-controller-service-monitor
+  namespace: kube-system
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  endpoints:
+  - port: metrics
+    scheme: http
+  jobLabel: app
+  selector:
+    matchLabels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+        component: controller
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "common.names.fullname" . }}-node-service-monitor
+  namespace: kube-system
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  endpoints:
+  - port: metrics
+    scheme: http
+  jobLabel: app
+  selector:
+    matchLabels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+        component: node
+{{- end }}
