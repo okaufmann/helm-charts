@@ -3,6 +3,34 @@ entries:
   hcloud-csi-driver:
   - apiVersion: v2
     appVersion: 2.2.0
+    created: "2023-03-21T21:20:10.081445974Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.x.x
+    description: Community Helm Chart for installing the Hetzner Cloud CSI drivers
+      in your Kubernetes cluster
+    digest: 196f9e5812031d02ff4afb4523b3e3843eb89f4d889dea095de4334b683d6cd4
+    icon: https://raw.githubusercontent.com/okaufmann/helm-charts/main/charts/hcloud-csi-driver/logo.png
+    keywords:
+    - hetzner
+    - hcloud
+    - hcloud-csi-driver
+    - csi-driver
+    maintainers:
+    - email: okaufmann91@gmail.com
+      name: Oliver Kaufmann
+      url: https://oli-the.dev
+    name: hcloud-csi-driver
+    sources:
+    - https://github.com/okaufmann/helm-charts/tree/main/charts/hcloud-csi-driver
+    - https://github.com/hetznercloud/csi-driver
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/hcloud-csi-driver-1.2.0/hcloud-csi-driver-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: 2.2.0
     created: "2023-03-21T20:33:33.989110411Z"
     dependencies:
     - name: common
@@ -133,4 +161,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/hcloud-csi-driver-0.0.4/hcloud-csi-driver-0.0.4.tgz
     version: 0.0.4
-generated: "2023-03-21T20:33:33.989134611Z"
+generated: "2023-03-21T21:20:10.081473274Z"
