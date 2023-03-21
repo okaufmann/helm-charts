@@ -67,7 +67,3 @@ secret:
 metrics:
 
   enabled: false
-
-  namespace: monitoring
-
-
