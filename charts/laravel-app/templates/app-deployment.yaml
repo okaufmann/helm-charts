@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "laravel-app.fullname" . }}
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.app.autoscaling.enabled }}
+  replicas: {{ .Values.app.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "laravel-app.selectorLabels" . | nindent 6 }}
+  # scale via ui or cli. this can not be here as it will overwrite the current replica count
+  #  replicas: 3
+#   minReadySeconds: 5
+#   revisionHistoryLimit: 1
+#   strategy:
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 50%
+#     type: RollingUpdate
+  template:
+    metadata:
+      {{- with .Values.app.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "laravel-app.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          envFrom:
+            # - configMapRef:
+            #     name: testapp
+            - secretRef:
+                name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
+          env:
+            - name: SSL_MODE
+              value: off
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+      {{- with .Values.app.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.affinity }}
+      affinity:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.tolerations }}
+      tolerations:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+#          volumeMounts:
+#            - mountPath: /var/www
+#              name: codebase
+#      volumes:
+#        - emptyDir: {}
+#          name: codebase

@@ -1,0 +1,272 @@
+global: {}
+
+imagePullSecrets: []
+
+
+
+securityContext: {}
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: false
+  # The name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Additional annotations for the ServiceAccount
+  annotations: {}
+
+envSecretName: ""
+
+app:
+  image:
+    repository: serversideup/php:8.2-fpm-nginx
+    pullPolicy: Always
+    tag: "1.0.0"
+
+  replicaCount: 1
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 200M
+  # requests:
+  #   cpu: 50m
+  #   memory: 100M
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  # Extra volumes to mount on the container.
+  extraVolumeMounts: []
+  # - name: some-folder
+  #   mountPath: /some/path
+
+  affinity: {}
+  #     podAntiAffinity:
+  #       preferredDuringSchedulingIgnoredDuringExecution:
+  #         - podAffinityTerm:
+  #             labelSelector:
+  #               matchExpressions:
+  #                 - key: role
+  #                   operator: In
+  #                   values:
+  #                     - backend
+  #             topologyKey: kubernetes.io/hostname
+  #           weight: 100
+
+  healthcheck:
+    enabled: false
+    period: 5
+    path: /health
+
+  service:
+    type: ClusterIP # Default service type.
+    port: 80 # Default port the service listens on.
+    targetPort: 80 # Default port the pods are exposing.
+    nodePort: "" # For when service.type is NodePort.
+    annotations: {} # Annotations to add to the service.
+    labels: {} # Additional labels to add to the service.
+    externalTrafficPolicy: Cluster # Can be set to Local to preserve source IP, or Cluster for default behavior.
+    loadBalancerIP: "" # To set a specific IP for a LoadBalancer type service.
+    loadBalancerSourceRanges: [] # IP whitelist for LoadBalancers.
+
+  ingress:
+    enabled: false # By default, do not create an ingress.
+    annotations: {} # Allow users to add any ingress annotations.
+    hosts:
+    - host: chart-example.local # Default host, users should override.
+      paths:
+      - / # Default path.
+    tls: [] # TLS configurations.
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  podAnnotations:
+
+  podSecurityContext: {}
+
+queue:
+  image:
+    repository: serversideup/php:8.2-fpm-nginx
+    pullPolicy: Always
+    tag: "1.0.0"
+
+
+  replicaCount: 1
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 200M
+  # requests:
+  #   cpu: 50m
+  #   memory: 100M
+
+  # Extra volumes to mount on the container.
+  extraVolumeMounts: []
+  # - name: some-folder
+  #   mountPath: /some/path
+
+  affinity: {}
+  #     podAntiAffinity:
+  #       preferredDuringSchedulingIgnoredDuringExecution:
+  #         - podAffinityTerm:
+  #             labelSelector:
+  #               matchExpressions:
+  #                 - key: role
+  #                   operator: In
+  #                   values:
+  #                     - backend
+  #             topologyKey: kubernetes.io/hostname
+  #           weight: 100
+
+  healthcheck:
+    enabled: false
+    period: 5
+    path: /health
+
+scheduler:
+  image:
+    repository: serversideup/php:8.2-fpm-nginx
+    pullPolicy: Always
+    tag: "1.0.0"
+
+  replicaCount: 1
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 200M
+  # requests:
+  #   cpu: 50m
+  #   memory: 100M
+
+  # Extra volumes to mount on the container.
+  extraVolumeMounts: []
+  # - name: some-folder
+  #   mountPath: /some/path
+
+  affinity: {}
+  #     podAntiAffinity:
+  #       preferredDuringSchedulingIgnoredDuringExecution:
+  #         - podAffinityTerm:
+  #             labelSelector:
+  #               matchExpressions:
+  #                 - key: role
+  #                   operator: In
+  #                   values:
+  #                     - backend
+  #             topologyKey: kubernetes.io/hostname
+  #           weight: 100
+
+  healthcheck:
+    enabled: false
+    period: 5
+    path: /health
+
+redis:
+  # https://artifacthub.io/packages/helm/bitnami/redis
+  enabled: false
+
+  auth:
+    enabled: false
+    password: "yourpassword"
+
+  architecture: standalone
+
+  persistance:
+    ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
+    ##
+    enabled: false
+    ## @param master.persistence.medium Provide a medium for `emptyDir` volumes.
+    ##
+    medium: ""
+    ## @param master.persistence.sizeLimit Set this to enable a size limit for `emptyDir` volumes.
+    ##
+    sizeLimit: ""
+    ## @param master.persistence.path The path the volume will be mounted at on Redis&reg; master containers
+    ## NOTE: Useful when using different Redis&reg; images
+    ##
+    path: /data
+    ## @param master.persistence.subPath The subdirectory of the volume to mount on Redis&reg; master containers
+    ## NOTE: Useful in dev environments
+    ##
+    subPath: ""
+    ## @param master.persistence.subPathExpr Used to construct the subPath subdirectory of the volume to mount on Redis&reg; master containers
+    ##
+    subPathExpr: ""
+    ## @param master.persistence.storageClass Persistent Volume storage class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
+    ##
+    storageClass: ""
+    ## @param master.persistence.accessModes Persistent Volume access modes
+    ##
+    accessModes:
+    - ReadWriteOnce
+    ## @param master.persistence.size Persistent Volume size
+    ##
+    size: 8Gi
+    ## @param master.persistence.annotations Additional custom annotations for the PVC
+    ##
+    annotations: {}
+    ## @param master.persistence.labels Additional custom labels for the PVC
+    ##
+    labels: {}
+    ## @param master.persistence.selector Additional labels to match for the PVC
+    ## e.g:
+    ## selector:
+    ##   matchLabels:
+    ##     app: my-app
+    ##
+    selector: {}
+    ## @param master.persistence.dataSource Custom PVC data source
+    ##
+    dataSource: {}
+    ## @param master.persistence.existingClaim Use a existing PVC which must be created manually before bound
+    ## NOTE: requires master.persistence.enabled: true
+    ##
+    existingClaim: ""
+
+  # any other Redis-specific overrides...
+
+
+meilisearch:
+  # https://artifacthub.io/packages/helm/meilisearch-kubernetes/meilisearch
+  enabled: false
+
+  # Environment loaded into the configMap
+  environment:
+    # -- Deactivates analytics
+    MEILI_NO_ANALYTICS: true
+    # -- Sets the environment. Either **production** or **development**
+    MEILI_ENV: production
+    # For production deployment, the environment MEILI_MASTER_KEY is required.
+    # If MEILI_ENV is set to "production" without setting MEILI_MASTER_KEY, this
+    # chart will automatically create a secure MEILI_MASTER_KEY and push it as a
+    # secret. Otherwise the below value of MEILI_MASTER_KEY will be used instead.
+    # MEILI_MASTER_KEY: ""
+
+  auth:
+    # -- Use an existing Kubernetes secret for the MEILI_MASTER_KEY
+    existingMasterKeySecret: ""
+
+  # any other MeiliSearch-specific overrides...
