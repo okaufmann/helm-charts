@@ -2,7 +2,7 @@
 {{- if .Values.app.ingress.enabled }}
 {{- range $host := .Values.app.ingress.hosts }}
   {{- range .paths }}
-  http{{ if $.Values.app.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  http{{ if $.Values.app.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.app.service.type }}
