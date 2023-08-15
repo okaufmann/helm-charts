@@ -36,8 +36,61 @@ spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
       {{- end }}
+      initContainers:
+        - name: artisan
+          args:
+            - /bin/bash
+            - -c
+            - php artisan optimize
+          env:
+            - name: SSL_MODE
+              value: off
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          envFrom:
+            # - configMapRef:
+            #     name: testapp
+            - secretRef:
+                name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
+          env:
+            - name: SSL_MODE
+              value: off
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+        - name: migrate
+          args:
+            - /bin/bash
+            - -c
+            - php artisan migrate --force
+          env:
+            - name: SSL_MODE
+              value: off
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          envFrom:
+            # - configMapRef:
+            #     name: testapp
+            - secretRef:
+                name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
+          env:
+            - name: SSL_MODE
+              value: off
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: app
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
