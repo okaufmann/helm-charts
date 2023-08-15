@@ -245,4 +245,22 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/hcloud-csi-driver-0.0.4/hcloud-csi-driver-0.0.4.tgz
     version: 0.0.4
-generated: "2023-03-21T22:49:08.512557741Z"
+  laravel-app:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-08-15T11:35:57.582242418Z"
+    dependencies:
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 17.15.x
+    - name: meilisearch
+      repository: https://meilisearch.github.io/meilisearch-kubernetes
+      version: 0.2.x
+    description: A Helm chart for running Laravel Apps on Kubernetes
+    digest: f07296aea553d3c0db90f44a552fb09681536e31f0891b77a2339bc8e2132d62
+    name: laravel-app
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
+    version: 0.1.1
+generated: "2023-08-15T11:35:57.582268818Z"
