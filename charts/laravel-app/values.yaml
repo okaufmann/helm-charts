@@ -2,8 +2,6 @@ global: {}
 
 imagePullSecrets: []
 
-
-
 securityContext: {}
 
 serviceAccount:
@@ -58,11 +56,6 @@ app:
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
 
-  healthcheck:
-    enabled: false
-    period: 5
-    path: /health
-
   service:
     type: ClusterIP # Default service type.
     port: 80 # Default port the service listens on.
@@ -89,6 +82,20 @@ app:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 30
+
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    tcpSocket:
+      port: 80
 
   podAnnotations:
 
@@ -133,11 +140,6 @@ queue:
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
 
-  healthcheck:
-    enabled: false
-    period: 5
-    path: /health
-
 scheduler:
   image:
     repository: serversideup/php:8.2-fpm-nginx
@@ -175,11 +177,6 @@ scheduler:
   #                     - backend
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
-
-  healthcheck:
-    enabled: false
-    period: 5
-    path: /health
 
 redis:
   # https://artifacthub.io/packages/helm/bitnami/redis

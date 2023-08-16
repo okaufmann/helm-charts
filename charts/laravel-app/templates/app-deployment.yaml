@@ -68,7 +68,7 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy | default "Always" }}
           envFrom:
             # - configMapRef:
             #     name: testapp
@@ -81,6 +81,10 @@ spec:
             - name: http
               containerPort: {{ .Values.app.service.port }}
               protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.app.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.app.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.app.resources | nindent 12 }}
       containers:
