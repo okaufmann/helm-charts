@@ -15,11 +15,8 @@ spec:
   #  replicas: 3
 #   minReadySeconds: 5
 #   revisionHistoryLimit: 1
-#   strategy:
-#     rollingUpdate:
-#       maxSurge: 1
-#       maxUnavailable: 50%
-#     type: RollingUpdate
+  strategy:
+    {{- toYaml .Values.app.strategy | nindent 4 }}
   template:
     metadata:
       {{- with .Values.app.podAnnotations }}
@@ -47,19 +44,11 @@ spec:
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           envFrom:
-            # - configMapRef:
-            #     name: testapp
             - secretRef:
                 name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
           env:
             - name: SSL_MODE
               value: off
-          ports:
-            - name: http
-              containerPort: {{ .Values.app.service.port }}
-              protocol: TCP
-          resources:
-            {{- toYaml .Values.app.resources | nindent 12 }}
         - name: migrate
           args:
             - /bin/bash
@@ -70,8 +59,18 @@ spec:
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy | default "Always" }}
           envFrom:
-            # - configMapRef:
-            #     name: testapp
+            - secretRef:
+                name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
+          env:
+            - name: SSL_MODE
+              value: off
+      containers:
+        - name: app
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          envFrom:
             - secretRef:
                 name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
           env:
@@ -85,36 +84,6 @@ spec:
             {{- toYaml .Values.app.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.app.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.app.resources | nindent 12 }}
-      containers:
-        - name: app
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-          envFrom:
-            # - configMapRef:
-            #     name: testapp
-            - secretRef:
-                name: {{ .Values.envSecretName | default (include "laravel-app.fullname" .) }}
-          env:
-            - name: SSL_MODE
-              value: off
-          ports:
-            - name: http
-              containerPort: {{ .Values.app.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.app.resources | nindent 12 }}
       {{- with .Values.app.nodeSelector }}
