@@ -13,9 +13,7 @@ serviceAccount:
   # Additional annotations for the ServiceAccount
   annotations: {}
 
-envSecretName: ""
-
-envConfigMapName: ""
+envs: {}
 
 app:
   image:
