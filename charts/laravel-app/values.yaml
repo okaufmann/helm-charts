@@ -41,6 +41,10 @@ app:
 
   tolerations: []
 
+  podAnnotations:
+
+  podSecurityContext: {}
+
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
   # - name: some-folder
@@ -70,15 +74,6 @@ app:
     loadBalancerIP: "" # To set a specific IP for a LoadBalancer type service.
     loadBalancerSourceRanges: [] # IP whitelist for LoadBalancers.
 
-  ingress:
-    enabled: false # By default, do not create an ingress.
-    annotations: {} # Allow users to add any ingress annotations.
-    hosts:
-    - host: chart-example.local # Default host, users should override.
-      paths:
-      - / # Default path.
-    tls: [] # TLS configurations.
-
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -106,31 +101,48 @@ app:
     tcpSocket:
       port: 80
 
+  ingress:
+    enabled: false # By default, do not create an ingress.
+    annotations: {} # Allow users to add any ingress annotations.
+    hosts:
+    - host: chart-example.local # Default host, users should override.
+      paths:
+      - / # Default path.
+    tls:
+    - hosts:
+      - testapp01.k8s01.oli-the.dev
+      secretName: testapp-01-k-8-s-01-oli-the-dev-tls
+
+queue:
+  enabled: false
+
+  image:
+    repository: serversideup/php:8.2-fpm-nginx
+    pullPolicy: Always
+    tag: "1.0.0"
+
+  replicaCount: 1
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 200M
+  # requests:
+  #   cpu: 50m
+  #   memory: 100M
+
+  nodeSelector: {}
+
+  tolerations: []
+
   podAnnotations:
 
   podSecurityContext: {}
 
-queue:
-  image:
-    repository: serversideup/php:8.2-fpm-nginx
-    pullPolicy: Always
-    tag: "1.0.0"
-
-
-  replicaCount: 1
-
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 200M
-  # requests:
-  #   cpu: 50m
-  #   memory: 100M
-
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
   # - name: some-folder
@@ -148,8 +160,23 @@ queue:
   #                     - backend
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 50%
+    type: RollingUpdate
 
 scheduler:
+  enabled: false
+
   image:
     repository: serversideup/php:8.2-fpm-nginx
     pullPolicy: Always
@@ -169,6 +196,14 @@ scheduler:
   #   cpu: 50m
   #   memory: 100M
 
+  nodeSelector: {}
+
+  tolerations: []
+
+  podAnnotations:
+
+  podSecurityContext: {}
+
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
   # - name: some-folder
@@ -186,6 +221,19 @@ scheduler:
   #                     - backend
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 50%
+    type: RollingUpdate
 
 redis:
   # https://artifacthub.io/packages/helm/bitnami/redis

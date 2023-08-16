@@ -1,0 +1,95 @@
+{{- if not .Values.queue.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-queue
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.queue.autoscaling.enabled }}
+  replicas: {{ .Values.queue.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "laravel-app.selectorLabels" . | nindent 6 }}
+  # scale via ui or cli. this can not be here as it will overwrite the current replica count
+  #  replicas: 3
+#   minReadySeconds: 5
+#   revisionHistoryLimit: 1
+  strategy:
+    {{- toYaml .Values.queue.strategy | nindent 4 }}
+  template:
+    metadata:
+      {{- with .Values.queue.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "laravel-app.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
+      {{- end }}
+      initContainers:
+        - name: artisan
+          args:
+            - /bin/bash
+            - -c
+            - php artisan optimize
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
+          envFrom:
+            {{- if .Values.envSecretName }}
+            - secretRef:
+                name: {{ .Values.envSecretName }}
+            {{- end }}
+            {{- if .Values.envConfigMapName }}
+            - configMapRef:
+                name: {{ .Values.envConfigMapName }}
+            {{- end }}
+          env:
+            - name: SSL_MODE
+              value: off
+      containers:
+        - name: queue
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
+          envFrom:
+            {{- if .Values.envSecretName }}
+            - secretRef:
+                name: {{ .Values.envSecretName }}
+            {{- end }}
+            {{- if .Values.envConfigMapName }}
+            - configMapRef:
+                name: {{ .Values.envConfigMapName }}
+            {{- end }}
+          env:
+            - name: SSL_MODE
+              value: off
+          args:
+            - /bin/bash
+            - -c
+            - php artisan horizon
+          resources:
+            {{- toYaml .Values.queue.resources | nindent 12 }}
+      {{- with .Values.queue.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.queue.affinity }}
+      affinity:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.queue.tolerations }}
+      tolerations:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
