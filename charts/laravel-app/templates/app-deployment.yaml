@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "laravel-app.fullname" . }}-app
+  name: {{ include "laravel-app.fullname" . }}-webapp
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
 spec:
