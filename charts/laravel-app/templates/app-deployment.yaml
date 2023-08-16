@@ -52,6 +52,8 @@ spec:
             - configMapRef:
                 name: {{ .Values.envConfigMapName }}
             {{- end }}
+            - configMapRef:
+                name: {{ include "laravel-app.fullname" . }}-config
           env:
             - name: SSL_MODE
               value: off
@@ -73,6 +75,8 @@ spec:
             - configMapRef:
                 name: {{ .Values.envConfigMapName }}
             {{- end }}
+            - configMapRef:
+                name: {{ include "laravel-app.fullname" . }}-config
           env:
             - name: SSL_MODE
               value: off
@@ -91,6 +95,8 @@ spec:
             - configMapRef:
                 name: {{ .Values.envConfigMapName }}
             {{- end }}
+            - configMapRef:
+                name: {{ include "laravel-app.fullname" . }}-config
           env:
             - name: SSL_MODE
               value: off
