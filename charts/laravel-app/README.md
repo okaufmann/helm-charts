@@ -34,7 +34,7 @@ Ensure dependencies are up to date:
   helm dependency update
 
 Generate manifests into output directory:
-  helm template --output-dir output .
+  helm template --output-dir output . -f values.yaml --debug > output.txt
 
 
 
