@@ -33,6 +33,11 @@ spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
       {{- end }}
+
+      volumes:
+      - name: runtime-cache
+        emptyDir: {}
+
       initContainers:
         - name: artisan
           args:
@@ -43,6 +48,11 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+
+          volumeMounts:
+          - name: runtime-cache
+            mountPath: /var/www/html/bootstrap/cache
+
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:
@@ -66,17 +76,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy | default "Always" }}
-          envFrom:
-            {{- if .Values.envSecretName }}
-            - secretRef:
-                name: {{ .Values.envSecretName }}
-            {{- end }}
-            {{- if .Values.envConfigMapName }}
-            - configMapRef:
-                name: {{ .Values.envConfigMapName }}
-            {{- end }}
-            - configMapRef:
-                name: {{ include "laravel-app.fullname" . }}-config
+          volumeMounts:
+          - name: runtime-cache
+            mountPath: /var/www/html/bootstrap/cache
           env:
             - name: SSL_MODE
               value: off
@@ -86,17 +88,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-          envFrom:
-            {{- if .Values.envSecretName }}
-            - secretRef:
-                name: {{ .Values.envSecretName }}
-            {{- end }}
-            {{- if .Values.envConfigMapName }}
-            - configMapRef:
-                name: {{ .Values.envConfigMapName }}
-            {{- end }}
-            - configMapRef:
-                name: {{ include "laravel-app.fullname" . }}-config
+          volumeMounts:
+          - name: runtime-cache
+            mountPath: /var/www/html/bootstrap/cache
           env:
             - name: SSL_MODE
               value: off
