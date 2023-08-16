@@ -67,6 +67,10 @@ spec:
           env:
             - name: SSL_MODE
               value: off
+            {{- range $key, $value := .Values.envs }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
       containers:
         - name: scheduler
           securityContext:
