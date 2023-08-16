@@ -36,7 +36,8 @@ spec:
 
       volumes:
       - name: runtime-cache
-        emptyDir: {}
+        emptyDir:
+          sizeLimit: 1Mi
 
       initContainers:
         - name: artisan
@@ -116,9 +117,4 @@ spec:
       tolerations:
           {{- toYaml . | nindent 8 }}
       {{- end }}
-#          volumeMounts:
-#            - mountPath: /var/www
-#              name: codebase
-#      volumes:
-#        - emptyDir: {}
-#          name: codebase
+

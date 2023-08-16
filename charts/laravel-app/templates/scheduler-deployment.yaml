@@ -37,7 +37,8 @@ spec:
 
       volumes:
       - name: runtime-cache
-        emptyDir: {}
+        emptyDir:
+          sizeLimit: 1Mi
 
       initContainers:
         - name: artisan
