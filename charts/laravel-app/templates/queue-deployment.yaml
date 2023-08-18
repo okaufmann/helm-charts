@@ -12,10 +12,6 @@ spec:
   selector:
     matchLabels:
       {{- include "laravel-app.selectorLabels" . | nindent 6 }}
-  # scale via ui or cli. this can not be here as it will overwrite the current replica count
-  #  replicas: 3
-#   minReadySeconds: 5
-#   revisionHistoryLimit: 1
   strategy:
     {{- toYaml .Values.queue.strategy | nindent 4 }}
   template:
