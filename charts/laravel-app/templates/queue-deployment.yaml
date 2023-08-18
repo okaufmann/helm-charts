@@ -1,4 +1,4 @@
-{{- if not .Values.queue.enabled }}
+{{- if .Values.queue.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
