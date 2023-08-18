@@ -45,7 +45,7 @@ spec:
           args:
             - /bin/bash
             - -c
-            - php artisan optimize
+            - php artisan optimize && php artisan view:cache
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
