@@ -23,6 +23,14 @@ app:
 
   replicaCount: 1
 
+  nodeSelector: {}
+
+  tolerations: []
+
+  podAnnotations:
+
+  podSecurityContext: {}
+
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -35,13 +43,6 @@ app:
   #   cpu: 50m
   #   memory: 100M
 
-  nodeSelector: {}
-
-  tolerations: []
-
-  podAnnotations:
-
-  podSecurityContext: {}
 
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
@@ -72,6 +73,9 @@ app:
     loadBalancerIP: "" # To set a specific IP for a LoadBalancer type service.
     loadBalancerSourceRanges: [] # IP whitelist for LoadBalancers.
 
+  serviceMonitor:
+    enabled: false
+
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -86,17 +90,18 @@ app:
     type: RollingUpdate
 
   livenessProbe:
-    httpGet:
-      path: /
-      port: 80
     initialDelaySeconds: 10
     periodSeconds: 15
     timeoutSeconds: 30
+    httpGet:
+      path: /health
+      port: 80
 
   readinessProbe:
     initialDelaySeconds: 10
     periodSeconds: 10
-    tcpSocket:
+    httpGet:
+      path: /health
       port: 80
 
   ingress:

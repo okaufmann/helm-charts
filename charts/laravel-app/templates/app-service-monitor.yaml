@@ -1,0 +1,20 @@
+{{- if not .Values.app.serviceMonitor }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-service-monitor
+  namespace: kube-system
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - port: metrics
+    scheme: http
+  jobLabel: app
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "laravel-app.selectorLabels" . | nindent 6 }}
+{{- end }}
