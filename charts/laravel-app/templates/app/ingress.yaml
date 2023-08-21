@@ -9,7 +9,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}-ingress
+  name: {{ $fullName }}-app-ingress
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
   {{- with .Values.app.ingress.annotations }}
