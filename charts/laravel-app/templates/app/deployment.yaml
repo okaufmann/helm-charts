@@ -4,6 +4,8 @@ metadata:
   name: {{ include "laravel-app.fullname" . }}-webapp
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
@@ -67,10 +69,6 @@ spec:
           env:
             - name: SSL_MODE
               value: off
-            {{- range $key, $value := .Values.envs }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
         - name: migrate
           args:
             - /bin/bash

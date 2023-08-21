@@ -5,6 +5,8 @@ metadata:
   name: {{ include "laravel-app.fullname" . }}-scheduler
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
 spec:
   {{- if not .Values.scheduler.autoscaling.enabled }}
   replicas: {{ .Values.scheduler.replicaCount }}
@@ -66,10 +68,6 @@ spec:
           env:
             - name: SSL_MODE
               value: off
-            {{- range $key, $value := .Values.envs }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
       containers:
         - name: scheduler
           securityContext:
