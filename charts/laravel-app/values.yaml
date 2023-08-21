@@ -78,6 +78,7 @@ app:
 
   serviceMonitor:
     enabled: false
+    namespace: monitoring
 
   autoscaling:
     enabled: false

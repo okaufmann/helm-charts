@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "laravel-app.fullname" . }}-app-service-monitor
-  namespace: monitoring
+  namespace: {{ .Values.app.serviceMonitor.namespace }}
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
 spec:
