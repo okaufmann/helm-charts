@@ -62,7 +62,6 @@ spec:
                 secretKeyRef:
                   name: "{{ if .Values.secret.existingSecretName }}{{ .Values.secret.existingSecretName }}{{ else }}{{ include "common.names.fullname" . }}{{ end }}"
                   key: {{ .Values.secret.tokenKey | default "token" }}
-                  namespace: {{ .Release.Namespace }}
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: 9189
