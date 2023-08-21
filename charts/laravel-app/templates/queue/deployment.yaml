@@ -36,7 +36,7 @@ spec:
         emptyDir:
           sizeLimit: 1Mi
       {{- with .Values.queue.extraVolumes }}
-      {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
 
       initContainers:
@@ -80,7 +80,7 @@ spec:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
           {{- with .Values.queue.extraVolumeMounts }}
-          {{- toYaml . | nindent 12 }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
             - name: SSL_MODE
