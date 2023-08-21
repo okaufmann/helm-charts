@@ -8,7 +8,7 @@ metadata:
     {{- include "laravel-app.labels" . | nindent 4 }}
 spec:
   endpoints:
-  - port: metrics
+  - port: http
     scheme: http
   jobLabel: app
   namespaceSelector:

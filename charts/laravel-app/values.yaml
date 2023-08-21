@@ -15,9 +15,6 @@ serviceAccount:
 
 envs: {}
 
-metrics:
-  enabled: false
-
 app:
   image:
     repository: serversideup/php:8.2-fpm-nginx
