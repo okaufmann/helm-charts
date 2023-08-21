@@ -35,6 +35,9 @@ spec:
       - name: runtime-cache
         emptyDir:
           sizeLimit: 1Mi
+      {{- with .Values.scheduler.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
 
       initContainers:
         - name: artisan
@@ -49,6 +52,9 @@ spec:
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
+          {{- with .Values.scheduler.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:

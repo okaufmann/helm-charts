@@ -43,11 +43,14 @@ app:
   #   cpu: 50m
   #   memory: 100M
 
-
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
-  # - name: some-folder
-  #   mountPath: /some/path
+  # - name: my-extra-volume
+  #   mountPath: /path/in/container
+
+  extraVolumes: []
+  # - name: my-extra-volume
+  #   emptyDir: {}
 
   affinity: {}
   #     podAntiAffinity:
@@ -149,8 +152,12 @@ queue:
 
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
-  # - name: some-folder
-  #   mountPath: /some/path
+  # - name: my-extra-volume
+  #   mountPath: /path/in/container
+
+  extraVolumes: []
+  # - name: my-extra-volume
+  #   emptyDir: {}
 
   affinity: {}
   #     podAntiAffinity:
@@ -210,8 +217,12 @@ scheduler:
 
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
-  # - name: some-folder
-  #   mountPath: /some/path
+  # - name: my-extra-volume
+  #   mountPath: /path/in/container
+
+  extraVolumes: []
+  # - name: my-extra-volume
+  #   emptyDir: {}
 
   affinity: {}
   #     podAntiAffinity:
