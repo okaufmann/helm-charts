@@ -23,6 +23,19 @@ app:
 
   replicaCount: 1
 
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 50%
+    type: RollingUpdate
+
   nodeSelector: {}
 
   tolerations: []
@@ -80,19 +93,6 @@ app:
     enabled: false
     namespace: monitoring
 
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
-
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 50%
-    type: RollingUpdate
-
   livenessProbe:
     initialDelaySeconds: 10
     periodSeconds: 15
@@ -131,6 +131,19 @@ queue:
 
   replicaCount: 1
 
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 50%
+    type: RollingUpdate
+
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -173,18 +186,6 @@ queue:
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
 
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
-
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 50%
-    type: RollingUpdate
 
 scheduler:
   enabled: false
@@ -196,6 +197,19 @@ scheduler:
 
   replicaCount: 1
 
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 50%
+    type: RollingUpdate
+
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -238,18 +252,7 @@ scheduler:
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
 
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
 
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 50%
-    type: RollingUpdate
 
 redis:
   # https://artifacthub.io/packages/helm/bitnami/redis
