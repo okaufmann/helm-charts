@@ -87,7 +87,7 @@ spec:
           args:
             - /bin/bash
             - -c
-            - php artisan horizon --quiet
+            - php artisan horizon > /dev/null
           resources:
             {{- toYaml .Values.queue.resources | nindent 12 }}
       {{- with .Values.queue.nodeSelector }}
