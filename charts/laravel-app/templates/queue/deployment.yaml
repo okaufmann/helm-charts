@@ -25,6 +25,7 @@ spec:
       {{- end }}
       labels:
         {{- include "laravel-app.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: queue
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
