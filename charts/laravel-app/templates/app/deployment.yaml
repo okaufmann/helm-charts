@@ -4,6 +4,7 @@ metadata:
   name: {{ include "laravel-app.fullname" . }}-webapp
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webapp
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
 spec:

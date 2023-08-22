@@ -4,6 +4,7 @@ metadata:
   name: {{ include "laravel-app.fullname" . }}-app-service
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webapp
 spec:
   type: {{ .Values.app.service.type }}
   ports:

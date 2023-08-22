@@ -12,6 +12,7 @@ metadata:
   name: {{ $fullName }}-app-ingress
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webapp
   {{- with .Values.app.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

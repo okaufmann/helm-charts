@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.app.serviceMonitor.namespace }}
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webapp
 spec:
   endpoints:
   - port: http

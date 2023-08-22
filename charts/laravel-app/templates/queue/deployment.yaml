@@ -5,6 +5,7 @@ metadata:
   name: {{ include "laravel-app.fullname" . }}-queue
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: queue
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
 spec:
