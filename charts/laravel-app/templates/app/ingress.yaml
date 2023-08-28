@@ -1,11 +1,6 @@
 {{- if .Values.app.ingress.enabled -}}
 {{- $fullName := include "laravel-app.fullname" . -}}
 {{- $svcPort := .Values.app.service.port -}}
-{{- if and .Values.app.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.app.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.app.ingress.annotations "kubernetes.io/ingress.class" .Values.app.ingress.className}}
-  {{- end }}
-{{- end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -18,8 +13,8 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.app.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.app.ingress.className }}
+  {{- if and .Values.server.ingress.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.server.ingress.ingressClassName | quote }}
   {{- end }}
   {{- if .Values.app.ingress.tls }}
   tls:

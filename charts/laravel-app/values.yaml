@@ -111,6 +111,7 @@ app:
 
   ingress:
     enabled: false # By default, do not create an ingress.
+    ingressClassName: "" # Set to the name of the ingress class to use annotations.
     annotations: {} # Allow users to add any ingress annotations.
     hosts:
     - host: chart-example.local # Default host, users should override.
