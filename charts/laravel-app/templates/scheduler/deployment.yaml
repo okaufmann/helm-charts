@@ -67,9 +67,6 @@ spec:
             {{- end }}
             - configMapRef:
                 name: {{ include "laravel-app.fullname" . }}-config
-          env:
-            - name: SSL_MODE
-              value: off
       containers:
         - name: scheduler
           securityContext:
@@ -82,9 +79,6 @@ spec:
           {{- with .Values.scheduler.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          env:
-            - name: SSL_MODE
-              value: off
           args:
             - /bin/bash
             - -c

@@ -68,9 +68,6 @@ spec:
             {{- end }}
             - configMapRef:
                 name: {{ include "laravel-app.fullname" . }}-config
-          env:
-            - name: SSL_MODE
-              value: off
         - name: migrate
           args:
             - /bin/bash
@@ -83,9 +80,6 @@ spec:
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
-          env:
-            - name: SSL_MODE
-              value: off
       containers:
         - name: app
           securityContext:
@@ -98,9 +92,6 @@ spec:
           {{- with .Values.app.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          env:
-            - name: SSL_MODE
-              value: off
           ports:
             - name: http
               containerPort: {{ .Values.app.service.port }}
