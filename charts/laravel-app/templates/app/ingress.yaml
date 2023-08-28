@@ -13,8 +13,8 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.server.ingress.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.server.ingress.ingressClassName | quote }}
+  {{- if and .Values.app.ingress.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.app.ingress.ingressClassName | quote }}
   {{- end }}
   {{- if .Values.app.ingress.tls }}
   tls:
