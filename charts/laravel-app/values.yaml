@@ -13,7 +13,10 @@ serviceAccount:
   # Additional annotations for the ServiceAccount
   annotations: {}
 
-envs: {}
+meiliMasterKey: ""
+
+# ensure meilisearch.auth.existingMasterKeySecret is set to this exact same value!
+meiliMasterKeySecretName: "meilisearch-master-key"
 
 app:
   image:
@@ -310,6 +313,6 @@ meilisearch:
 
   auth:
     # -- Use an existing Kubernetes secret for the MEILI_MASTER_KEY
-    existingMasterKeySecret: ""
+    existingMasterKeySecret: "meilisearch-master-key"
 
   # any other MeiliSearch-specific overrides...

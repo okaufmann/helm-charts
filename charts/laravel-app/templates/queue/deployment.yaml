@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/component: queue
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
+    checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
 spec:
   {{- if not .Values.queue.autoscaling.enabled }}
   replicas: {{ .Values.queue.replicaCount }}
@@ -67,6 +68,14 @@ spec:
             {{- end }}
             - configMapRef:
                 name: {{ include "laravel-app.fullname" . }}-config
+          {{- if and .Values.meilisearch.enabled .Values.meiliMasterKey }}
+          env:
+          - name: MEILISEARCH_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.meiliMasterKeySecretName }}
+                key: MEILI_MASTER_KEY
+          {{- end }}
       containers:
         - name: queue
           securityContext:

@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/component: webapp
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
+    checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
@@ -56,7 +57,6 @@ spec:
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
-
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:
@@ -68,6 +68,14 @@ spec:
             {{- end }}
             - configMapRef:
                 name: {{ include "laravel-app.fullname" . }}-config
+          {{- if and .Values.meilisearch.enabled .Values.meiliMasterKey }}
+          env:
+          - name: MEILISEARCH_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.meiliMasterKeySecretName }}
+                key: MEILI_MASTER_KEY
+          {{- end }}
         - name: migrate
           args:
             - /bin/bash
