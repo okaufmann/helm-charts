@@ -214,7 +214,7 @@ scheduler:
   strategy:
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 50%
+      maxUnavailable: 0
     type: RollingUpdate
 
   # We usually recommend not to specify default resources and to leave this as a conscious
