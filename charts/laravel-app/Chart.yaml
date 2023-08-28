@@ -25,8 +25,10 @@ appVersion: "10.0.0"
 
 dependencies:
 - name: redis
+  condition: redis.enabled
   version: "18.0.x"
   repository: "https://charts.bitnami.com/bitnami"
 - name: meilisearch
+  condition: meilisearch.enabled
   version: "0.2.x"
   repository: "https://meilisearch.github.io/meilisearch-kubernetes"
