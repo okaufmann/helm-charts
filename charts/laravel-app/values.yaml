@@ -262,62 +262,31 @@ redis:
     enabled: false
     password: "yourpassword"
 
+  ## @param architecture Redis&reg; architecture. Allowed values: `standalone` or `replication`
+  ##
   architecture: standalone
 
-  persistance:
-    ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
-    ##
-    enabled: false
-    ## @param master.persistence.medium Provide a medium for `emptyDir` volumes.
-    ##
-    medium: ""
-    ## @param master.persistence.sizeLimit Set this to enable a size limit for `emptyDir` volumes.
-    ##
-    sizeLimit: ""
-    ## @param master.persistence.path The path the volume will be mounted at on Redis&reg; master containers
-    ## NOTE: Useful when using different Redis&reg; images
-    ##
-    path: /data
-    ## @param master.persistence.subPath The subdirectory of the volume to mount on Redis&reg; master containers
-    ## NOTE: Useful in dev environments
-    ##
-    subPath: ""
-    ## @param master.persistence.subPathExpr Used to construct the subPath subdirectory of the volume to mount on Redis&reg; master containers
-    ##
-    subPathExpr: ""
-    ## @param master.persistence.storageClass Persistent Volume storage class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
-    ##
-    storageClass: ""
-    ## @param master.persistence.accessModes Persistent Volume access modes
-    ##
-    accessModes:
-    - ReadWriteOnce
-    ## @param master.persistence.size Persistent Volume size
-    ##
-    size: 8Gi
-    ## @param master.persistence.annotations Additional custom annotations for the PVC
-    ##
-    annotations: {}
-    ## @param master.persistence.labels Additional custom labels for the PVC
-    ##
-    labels: {}
-    ## @param master.persistence.selector Additional labels to match for the PVC
-    ## e.g:
-    ## selector:
-    ##   matchLabels:
-    ##     app: my-app
-    ##
-    selector: {}
-    ## @param master.persistence.dataSource Custom PVC data source
-    ##
-    dataSource: {}
-    ## @param master.persistence.existingClaim Use a existing PVC which must be created manually before bound
-    ## NOTE: requires master.persistence.enabled: true
-    ##
-    existingClaim: ""
+  master:
+    persistance:
+      ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
+      ##
+      enabled: true
+
+      ## @param master.persistence.storageClass Persistent Volume storage class
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
+      ##
+      storageClass: ""
+
+      ## @param master.persistence.accessModes Persistent Volume access modes
+      ##
+      accessModes:
+      - ReadWriteOnce
+
+      ## @param master.persistence.size Persistent Volume size
+      ##
+      size: 8Gi
 
   # any other Redis-specific overrides...
 

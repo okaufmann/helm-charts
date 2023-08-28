@@ -25,7 +25,7 @@ appVersion: "10.0.0"
 
 dependencies:
 - name: redis
-  version: "17.15.x"
+  version: "18.0.x"
   repository: "https://charts.bitnami.com/bitnami"
 - name: meilisearch
   version: "0.2.x"
