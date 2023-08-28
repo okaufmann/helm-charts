@@ -18,6 +18,9 @@ meiliMasterKey: ""
 # ensure meilisearch.auth.existingMasterKeySecret is set to this exact same value!
 meiliMasterKeySecretName: "meilisearch-master-key"
 
+metrics:
+  enabled: true
+
 app:
   image:
     repository: serversideup/php:8.2-fpm-nginx
@@ -36,7 +39,7 @@ app:
   strategy:
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 50%
+      maxUnavailable: 0
     type: RollingUpdate
 
   nodeSelector: {}
@@ -314,5 +317,15 @@ meilisearch:
   auth:
     # -- Use an existing Kubernetes secret for the MEILI_MASTER_KEY
     existingMasterKeySecret: "meilisearch-master-key"
+
+  persistence:
+    enabled: true
+
+    accessMode: "ReadWriteOnce"
+
+    size: "10Gi"
+
+    storageClass: ""
+
 
   # any other MeiliSearch-specific overrides...
