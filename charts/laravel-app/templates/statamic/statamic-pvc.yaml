@@ -3,6 +3,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "laravel-app.fullname" . }}-statamic-pvc
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "4"
 spec:
   storageClassName: {{ .Values.statamic.persistence.storageClass }}
   accessModes:
