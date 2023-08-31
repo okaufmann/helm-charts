@@ -7,9 +7,9 @@ metadata:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: statamic
   annotations:
-    helm.sh/hook": pre-install,pre-upgrade
-    helm.sh/hook-weight": "5"
-    helm.sh/hook-delete-policy": hook-succeeded
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: hook-succeeded
 spec:
   template:
     spec:
@@ -17,6 +17,15 @@ spec:
       - name: secrets
         secret:
           secretName: {{ include "laravel-app.fullname" . }}-statamic-ssh
+          defaultMode: 0400
+          items:
+            - key: id_key
+              path: id_key
+            - key: known_hosts
+              path: known_hosts
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
       containers:
       - name: git-clone
         image: alpine/git
@@ -27,20 +36,11 @@ spec:
           value: {{ .Values.statamic.repo.sshUrl }}
         - name: GIT_SSH_COMMAND
           value: ssh -o StrictHostKeyChecking=no -i /git/.ssh/id_key -o UserKnownHostsFile=/git/.ssh/known_hosts
-
         volumeMounts:
         - name: data
           mountPath: /data
         - name: secrets
-          mountPath: /git/.ssh
-          subPath: id_key
-        - name: secrets
-          mountPath: /git/.ssh
-          subPath: known_hosts
-
+          mountPath: /git/.ssh/
+          readonly: true
       restartPolicy: Never
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: git-claim
 {{- end -}}
