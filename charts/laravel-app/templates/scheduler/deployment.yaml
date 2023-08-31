@@ -35,11 +35,15 @@ spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
       {{- end }}
-
       volumes:
       - name: runtime-cache
         emptyDir:
           sizeLimit: 1Mi
+      {{- if .Values.statamic.enabled }}
+      - name: statamic
+        persistentVolumeClaim:
+          claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
+      {{- end }}
       {{- with .Values.scheduler.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -57,6 +61,10 @@ spec:
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
+          {{- if .Values.statamic.enabled }}
+          - name: statamic
+            mountPath: /data/git
+          {{- end }}
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:
@@ -85,6 +93,10 @@ spec:
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache
+          {{- if .Values.statamic.enabled }}
+          - name: statamic
+            mountPath: /data/git
+          {{- end }}
           {{- with .Values.scheduler.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}

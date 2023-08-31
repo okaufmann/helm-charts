@@ -1,0 +1,46 @@
+{{- if .Values.statamic.enabled  -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-git-clone
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: statamic
+  annotations:
+    helm.sh/hook": pre-install,pre-upgrade
+    helm.sh/hook-weight": "5"
+    helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      volumes:
+      - name: secrets
+        secret:
+          secretName: {{ include "laravel-app.fullname" . }}-statamic-ssh
+      containers:
+      - name: git-clone
+        image: alpine/git
+        command: ["/bin/sh"]
+        args: ["-c", "if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data; git pull; fi"]
+        env:
+        - name: REPO_URL
+          value: {{ .Values.statamic.repo.sshUrl }}
+        - name: GIT_SSH_COMMAND
+          value: ssh -o StrictHostKeyChecking=no -i /git/.ssh/id_key -o UserKnownHostsFile=/git/.ssh/known_hosts
+
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: secrets
+          mountPath: /git/.ssh
+          subPath: id_key
+        - name: secrets
+          mountPath: /git/.ssh
+          subPath: known_hosts
+
+      restartPolicy: Never
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: git-claim
+{{- end -}}

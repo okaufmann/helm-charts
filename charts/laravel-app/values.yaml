@@ -21,6 +21,20 @@ meiliMasterKeySecretName: "meilisearch-master-key"
 metrics:
   enabled: true
 
+statamic:
+  enabled: true
+
+  # this is the repo for the content for the app. as we only map the content folders, we can also use the same repo as the app repo itself.
+  repo:
+    sshUrl: "git@github.com:org/repository.git"
+    sshPrivateKey: ""
+    knownHosts: ""
+
+  persistence:
+    accessMode: "ReadWriteOnce"
+    size: "10Gi"
+    storageClass: ""
+
 app:
   image:
     repository: serversideup/php:8.2-fpm-nginx

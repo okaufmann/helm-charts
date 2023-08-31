@@ -1,0 +1,13 @@
+{{- if .Values.statamic.enabled  -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-statamic-pvc
+spec:
+  storageClassName: {{ .Values.statamic.persistence.storageClass }}
+  accessModes:
+    - {{ .Values.statamic.persistence.accessMode | default "ReadWriteMany" | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.statamic.persistence.size | quote }}
+{{- end -}}
