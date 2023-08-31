@@ -139,8 +139,8 @@ app:
       - / # Default path.
     tls:
     - hosts:
-      - testapp01.k8s01.oli-the.dev
-      secretName: testapp-01-k-8-s-01-oli-the-dev-tls
+      - app.example.com
+      secretName: app.example.com
 
 queue:
   enabled: false
