@@ -22,7 +22,7 @@ metrics:
   enabled: true
 
 statamic:
-  enabled: true
+  enabled: false
 
   # this is the repo for the content for the app. as we only map the content folders, we can also use the same repo as the app repo itself.
   repo:
