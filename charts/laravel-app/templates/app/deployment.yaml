@@ -59,7 +59,7 @@ spec:
           args:
             - /bin/bash
             - -c
-            - app/init.sh
+            - /app/init.sh
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
