@@ -1,0 +1,79 @@
+# laravel-app
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+# Overview
+
+This is a generic Helm Chart for Laravel Applications. It is based on the [serversideup/php](https://serversideup.net/open-source/docker-php/) Docker image.
+
+## Installation
+
+### Add Helm Repository
+
+```
+helm repo add olidev https://helm-charts.oli-the.dev
+helm repo update
+```
+
+### Install to Kubernetes
+
+In order to install laravel-app successfully you can just use this command.
+
+```
+helm install -n <NAMESPACE> laravel-app olidev/laravel-app
+```
+
+## Development
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/)
+- [Helm](https://helm.sh/)
+- [Kubernetes](https://kubernetes.io/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/)
+
+### Setup
+
+Ensure dependencies are up to date:
+  helm dependency update
+
+Generate manifests into output directory:
+  helm template --output-dir output . -f values.yaml --debug > output.txt
+
+{{/*
+  Chart Maintainers
+*/}}
+{{ template "chart.maintainersSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+# Major Changes
+
+Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**
+
+| **Change** | **Chart Version** | **Description** | **Commits/PRs** |
+| :----------- | :---------------- | :--------------------- | :-------------- |
+|||||
+
+{{/*
+  Chart Values
+*/}}
+{{ template "chart.valuesSection" . }}
+
+{{/*
+  helm-docs version
+*/}}
+{{ template "helm-docs.versionFooter" . }}
