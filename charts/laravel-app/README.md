@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.4.10](https://img.shields.io/badge/Version-1.4.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.4.11](https://img.shields.io/badge/Version-1.4.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel Apps on Kubernetes
 
@@ -176,6 +176,9 @@ Major Changes to functions are documented with the version affected. **Before up
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
 | statamic.enabled | bool | `false` |  |
+| statamic.git.email | string | `"<developers@novu.ch>"` |  |
+| statamic.git.message | string | `"Update from production"` |  |
+| statamic.git.user | string | `"novu-developers"` |  |
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
 | statamic.persistence.storageClass | string | `""` |  |
