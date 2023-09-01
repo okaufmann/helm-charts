@@ -1,0 +1,50 @@
+{{- if .Values.statamic.enabled  -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-git-commit
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: statamic
+spec:
+  schedule: {{ .Values.statamic.schedule | quote }}
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: secrets
+            secret:
+              secretName: {{ include "laravel-app.fullname" . }}-statamic-ssh
+              defaultMode: 0400
+              items:
+                - key: id_key
+                  path: id_key
+                - key: known_hosts
+                  path: known_hosts
+          - name: data
+            persistentVolumeClaim:
+              claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
+          containers:
+          - name: git-commit
+            image: alpine/git
+            command: ["/bin/sh"]
+            args:
+              - -c
+              - cd /data && git pull && if [[ `git status --porcelain` ]]; then git add . && git -c user.name={{ .Values.statamic.git.user | quote }} -c user.email={{ .Values.statamic.git.email | quote }} commit -m {{ .Values.statamic.git.message | quote }} && git push; else echo "Nothing todo..."; fi
+            env:
+            - name: REPO_URL
+              value: {{ .Values.statamic.repo.sshUrl }}
+            - name: GIT_SSH_COMMAND
+              value: ssh -i /git/.ssh/id_key -o UserKnownHostsFile=/git/.ssh/known_hosts
+            volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: secrets
+              mountPath: /git/.ssh/
+              readOnly: true
+          restartPolicy: Never
+{{- end -}}

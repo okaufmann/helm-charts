@@ -35,25 +35,31 @@ spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
       {{- end }}
+      
       volumes:
       - name: runtime-cache
         emptyDir:
           sizeLimit: 1Mi
+      - name: data
+        emptyDir: {}
       {{- if .Values.statamic.enabled }}
       - name: statamic
         persistentVolumeClaim:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
       {{- end }}
+      - name: init-script
+        configMap:
+          name: {{ include "laravel-app.fullname" . }}-init-script
       {{- with .Values.scheduler.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
 
       initContainers:
-        - name: artisan
+        - name: init
           args:
             - /bin/bash
             - -c
-            - php artisan optimize && php artisan view:cache
+            - /app/init.sh
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag | default .Chart.AppVersion }}"
@@ -65,6 +71,12 @@ spec:
           - name: statamic
             mountPath: /data/git
           {{- end }}
+          - name: init-script
+            mountPath: /app/init.sh
+            subPath: init.sh
+            readOnly: true
+          - name: data
+            mountPath: /data
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:
@@ -97,6 +109,8 @@ spec:
           - name: statamic
             mountPath: /data/git
           {{- end }}
+          - name: data
+            mountPath: /data
           {{- with .Values.scheduler.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
