@@ -41,6 +41,6 @@ spec:
           mountPath: /data
         - name: secrets
           mountPath: /git/.ssh/
-          readonly: true
+          readOnly: true
       restartPolicy: Never
 {{- end -}}
