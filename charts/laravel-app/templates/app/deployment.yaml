@@ -47,8 +47,8 @@ spec:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
       {{- end }}
       - name: init-script
-        defaultMode: 448
         configMap:
+          defaultMode: 448
           name: {{ include "laravel-app.fullname" . }}-init-script
       {{- with .Values.app.extraVolumes }}
       {{- toYaml . | nindent 6 }}
