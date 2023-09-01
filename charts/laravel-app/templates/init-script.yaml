@@ -8,18 +8,17 @@ data:
   init.sh: |-
     #!/bin/bash
 
-    # Declare an associative array with the source as the key and destination as the value
     declare -A links=(
-        ["/var/www/html/content/"]="/data/git/content/"
-        ["/var/www/html/users/"]="/data/git/users/"
-        ["/var/www/html/resources/blueprints/"]="/data/git/resources/blueprints/"
-        ["/var/www/html/resources/fieldsets/"]="/data/git/resources/fieldsets/"
-        ["/var/www/html/resources/forms/"]="/data/git/resources/forms/"
-        ["/var/www/html/resources/users/"]="/data/git/resources/users/"
-        ["/var/www/html/resources/preferences.yaml"]="/data/git/resources/preferences.yaml"
-        ["/var/www/html/storage/forms/"]="/data/git/storage/forms/"
+        ["/data/git/content/"]="/var/www/html/content"
+        ["/data/git/users/"]="/var/www/html/users"
+        ["/data/git/resources/blueprints/"]="/var/www/html/resources/blueprints"
+        ["/data/git/resources/fieldsets/"]="/var/www/html/resources/fieldsets"
+        ["/data/git/resources/forms/"]="/var/www/html/resources/forms"
+        ["/data/git/resources/users/"]="/var/www/html/resources/users"
+        ["/data/git/resources/preferences.yaml"]="/var/www/html/resources/preferences.yaml"
+        ["/data/git/storage/forms/"]="/var/www/html/storage/forms"
     )
-    ​
+    
     # Loop through the associative array and create the symbolic links
     for source in "${!links[@]}"; do
         destination=${links[$source]}
