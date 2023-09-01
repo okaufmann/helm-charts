@@ -47,7 +47,7 @@ spec:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
       {{- end }}
       - name: init-script
-        defaultMode: 0700
+        defaultMode: 448
         configMap:
           name: {{ include "laravel-app.fullname" . }}-init-script
       {{- with .Values.app.extraVolumes }}
