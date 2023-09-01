@@ -86,14 +86,6 @@ spec:
             mountPath: /var/www/html
           {{- end }}
           envFrom:
-            {{- if .Values.envSecretName }}
-            - secretRef:
-                name: {{ .Values.envSecretName }}
-            {{- end }}
-            {{- if .Values.envConfigMapName }}
-            - configMapRef:
-                name: {{ .Values.envConfigMapName }}
-            {{- end }}
             - configMapRef:
                 name: {{ include "laravel-app.fullname" . }}-config
           {{- if and .Values.meilisearch.enabled .Values.meiliMasterKey }}
