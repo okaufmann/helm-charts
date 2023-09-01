@@ -39,17 +39,19 @@ spec:
       - name: runtime-cache
         emptyDir:
           sizeLimit: 1Mi
+      {{- if .Values.statamic.enabled }}
       - name: data
         emptyDir: {}
-      {{- if .Values.statamic.enabled }}
+      - name: www-data
+        emptyDir: {}
       - name: statamic
         persistentVolumeClaim:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
-      {{- end }}
       - name: init-script
         configMap:
           defaultMode: 448
           name: {{ include "laravel-app.fullname" . }}-init-script
+      {{- end }}
       {{- with .Values.app.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -59,7 +61,11 @@ spec:
           args:
             - /bin/bash
             - -c
+          {{- if .Values.statamic.enabled }}
             - /app/init.sh
+          {{- else }}
+            - php artisan optimize && php artisan view:cache
+          {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
@@ -70,13 +76,15 @@ spec:
           {{- if .Values.statamic.enabled }}
           - name: statamic
             mountPath: /data/git
-          {{- end }}
-          - name: data
-            mountPath: /data
           - name: init-script
             mountPath: /app/init.sh
             subPath: init.sh
             readOnly: true
+          - name: data
+            mountPath: /data
+          - name: www-data
+            mountPath: /var/www/html
+          {{- end }}
           envFrom:
             {{- if .Values.envSecretName }}
             - secretRef:
@@ -111,6 +119,10 @@ spec:
           {{- if .Values.statamic.enabled }}
           - name: statamic
             mountPath: /data/git
+          - name: data
+            mountPath: /data
+          - name: www-data
+            mountPath: /var/www/html
           {{- end }}
       containers:
         - name: app
@@ -124,9 +136,11 @@ spec:
           {{- if .Values.statamic.enabled }}
           - name: statamic
             mountPath: /data/git
-          {{- end }}
           - name: data
             mountPath: /data
+          - name: www-data
+            mountPath: /var/www/html
+          {{- end }}
           {{- with .Values.app.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
