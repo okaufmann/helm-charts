@@ -5,9 +5,6 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: webapp
-  annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
-    checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
@@ -21,6 +18,8 @@ spec:
     metadata:
       {{- with .Values.app.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
+        checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
