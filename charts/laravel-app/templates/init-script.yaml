@@ -30,6 +30,4 @@ data:
             echo "Failed to link $source to $destination. Ensure source exists and destination doesn't."
         fi
     done
-    # PHP Init
-    php artisan optimize && php artisan view:cache
 {{- end }}
