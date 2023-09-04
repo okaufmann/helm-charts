@@ -42,8 +42,6 @@ spec:
       {{- if .Values.statamic.enabled }}
       - name: data
         emptyDir: {}
-      - name: www-data
-        emptyDir: {}
       - name: statamic
         persistentVolumeClaim:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
@@ -82,8 +80,6 @@ spec:
             readOnly: true
           - name: data
             mountPath: /data
-          - name: www-data
-            mountPath: /var/www/html
           {{- end }}
           envFrom:
             - configMapRef:
@@ -110,8 +106,6 @@ spec:
             mountPath: /data/git
           - name: data
             mountPath: /data
-          - name: www-data
-            mountPath: /var/www/html
           {{- end }}
           {{- with .Values.scheduler.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
