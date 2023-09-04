@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.4.23](https://img.shields.io/badge/Version-1.4.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.4.24](https://img.shields.io/badge/Version-1.4.24-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel Apps on Kubernetes
 
