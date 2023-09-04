@@ -28,9 +28,12 @@ spec:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
       containers:
       - name: git-clone
-        image: alpine/git
-        command: ["/bin/sh"]
-        args: ["-c", "if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data/; git pull; fi"]
+        image: bitnami/git
+        command:
+        - /bin/bash
+        args:
+          - "-c"
+          - if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data/; git -c safe.directory="/data" pull; fi
         env:
         - name: REPO_URL
           value: {{ .Values.statamic.repo.sshUrl }}
