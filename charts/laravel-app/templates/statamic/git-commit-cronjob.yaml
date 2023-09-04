@@ -37,7 +37,7 @@ spec:
               - -c
               - cd /data && git config --global --add safe.directory '/data' && git pull &&
                 if [[ `git status --porcelain` ]]; then git add . && git -c user.name="{{ .Values.statamic.git.user }}"
-                -c user.email="<{{ .Values.statamic.git.email }}>" commit -m "Update from production [ci skip]"
+                -c user.email="<{{ .Values.statamic.git.email }}>" commit -m "{{ .Values.statamic.git.message }}"
                 && git push; else echo "Nothing todo..."; fi
             env:
             - name: REPO_URL

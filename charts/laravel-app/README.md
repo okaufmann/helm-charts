@@ -177,7 +177,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | serviceAccount.name | string | `""` |  |
 | statamic.enabled | bool | `false` |  |
 | statamic.git.email | string | `"statamic@example.com"` |  |
-| statamic.git.message | string | `"Update from production"` |  |
+| statamic.git.message | string | `"Update from production [ci skip]"` |  |
 | statamic.git.user | string | `"statamic"` |  |
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
