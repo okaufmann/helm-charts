@@ -29,12 +29,12 @@ statamic:
     sshUrl: "git@github.com:org/repository.git"
     sshPrivateKey: ""
     knownHosts: ""
-  
+
   git:
-    user: "novu-developers"
-    email: "<developers@novu.ch>"
+    user: "statamic"
+    email: "statamic@example.com"
     message: "Update from production"
-  
+
   schedule: "*/10 * * * *"
 
   persistence:

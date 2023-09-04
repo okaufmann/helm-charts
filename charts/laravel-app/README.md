@@ -176,9 +176,9 @@ Major Changes to functions are documented with the version affected. **Before up
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
 | statamic.enabled | bool | `false` |  |
-| statamic.git.email | string | `"<developers@novu.ch>"` |  |
+| statamic.git.email | string | `"statamic@example.com"` |  |
 | statamic.git.message | string | `"Update from production"` |  |
-| statamic.git.user | string | `"novu-developers"` |  |
+| statamic.git.user | string | `"statamic"` |  |
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
 | statamic.persistence.storageClass | string | `""` |  |
