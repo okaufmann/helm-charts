@@ -30,11 +30,15 @@ spec:
               claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
           containers:
           - name: git-commit
-            image: alpine/git
-            command: ["/bin/sh"]
+            image: bitnami/git
+            command:
+            - /bin/bash
             args:
               - -c
-              - cd /data && git pull && if [[ `git status --porcelain` ]]; then git add . && git -c user.name={{ .Values.statamic.git.user | quote }} -c user.email={{ .Values.statamic.git.email | quote }} commit -m {{ .Values.statamic.git.message | quote }} && git push; else echo "Nothing todo..."; fi
+              - cd /data && git config --global --add safe.directory '/data' && git pull &&
+                if [[ `git status --porcelain` ]]; then git add . && git -c user.name="novu-developers"
+                -c user.email="<developers@novu.ch>" commit -m "Update from production [ci skip]"
+                && git push; else echo "Nothing todo..."; fi
             env:
             - name: REPO_URL
               value: {{ .Values.statamic.repo.sshUrl }}
