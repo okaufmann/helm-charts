@@ -33,7 +33,7 @@ spec:
         - /bin/bash
         args:
           - "-c"
-          - if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data/; git -c safe.directory="/data" pull; fi && chown -R 9999:9999 /data
+          - if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data/; git -c safe.directory="/data" pull --rebase; fi && chown -R 9999:9999 /data
         env:
         - name: REPO_URL
           value: {{ .Values.statamic.repo.sshUrl }}
