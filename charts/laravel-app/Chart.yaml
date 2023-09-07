@@ -20,11 +20,11 @@ version: "1.4.28"
 # It is recommended to use it with quotes.
 appVersion: "10.0.0"
 dependencies:
-  - name: redis
-    condition: redis.enabled
-    version: "18.0.x"
-    repository: oci://registry-1.docker.io/bitnamicharts
-  - name: meilisearch
-    condition: meilisearch.enabled
-    version: "0.2.x"
-    repository: "https://meilisearch.github.io/meilisearch-kubernetes"
+- name: redis
+  condition: redis.enabled
+  version: "18.0.x"
+  repository: oci://registry-1.docker.io/bitnamicharts
+- name: meilisearch
+  condition: meilisearch.enabled
+  version: "0.2.x"
+  repository: "https://meilisearch.github.io/meilisearch-kubernetes"
