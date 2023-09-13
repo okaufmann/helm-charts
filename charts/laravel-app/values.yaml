@@ -33,7 +33,7 @@ statamic:
   git:
     user: "statamic"
     email: "statamic@example.com"
-    message: "Update from production"
+    message: "Update from production [ci skip]"
 
   schedule: "*/10 * * * *"
 
@@ -120,7 +120,8 @@ app:
     enabled: false
 
   livenessProbe:
-    initialDelaySeconds: 10
+    failureThreshold: 5
+    initialDelaySeconds: 60
     periodSeconds: 15
     timeoutSeconds: 30
     httpGet:
