@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: scheduler
+    app.kubernetes.io/part-of: laravel
 spec:
   {{- if not .Values.scheduler.autoscaling.enabled }}
   replicas: {{ .Values.scheduler.replicaCount }}
