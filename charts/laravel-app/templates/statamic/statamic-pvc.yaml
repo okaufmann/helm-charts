@@ -1,6 +1,4 @@
-{{- $mypvc := (lookup "v1" "PersistentVolumeClaim" .Release.Namespace (printf "%s-statamic-pvc" (include "laravel-app.fullname" .))) }}
-{{- if not $mypvc }}
-  {{- if .Values.statamic.enabled  -}}
+{{- if .Values.statamic.enabled  -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -9,9 +7,7 @@ metadata:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: statamic
   annotations:
-    helm.sh/hook: pre-install, pre-upgrade
-    helm.sh/hook-weight: "4"
-    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
   storageClassName: {{ .Values.statamic.persistence.storageClass }}
   accessModes:
@@ -19,5 +15,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.statamic.persistence.size | quote }}
-  {{- end -}}
 {{- end -}}
