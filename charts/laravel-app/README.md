@@ -79,9 +79,10 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.ingress.ingressClassName | string | `""` |  |
 | app.ingress.tls[0].hosts[0] | string | `"app.example.com"` |  |
 | app.ingress.tls[0].secretName | string | `"app.example.com"` |  |
+| app.livenessProbe.failureThreshold | int | `5` |  |
 | app.livenessProbe.httpGet.path | string | `"/health"` |  |
 | app.livenessProbe.httpGet.port | int | `80` |  |
-| app.livenessProbe.initialDelaySeconds | int | `10` |  |
+| app.livenessProbe.initialDelaySeconds | int | `60` |  |
 | app.livenessProbe.periodSeconds | int | `15` |  |
 | app.livenessProbe.timeoutSeconds | int | `30` |  |
 | app.nodeSelector | object | `{}` |  |

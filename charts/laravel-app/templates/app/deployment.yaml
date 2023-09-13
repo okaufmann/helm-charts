@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: webapp
+    app.kubernetes.io/part-of: laravel
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}

@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: queue
+    app.kubernetes.io/part-of: laravel
 spec:
   {{- if not .Values.queue.autoscaling.enabled }}
   replicas: {{ .Values.queue.replicaCount }}
