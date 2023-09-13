@@ -5,7 +5,6 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: webapp
-    app.kubernetes.io/part-of: laravel
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
@@ -26,6 +25,7 @@ spec:
       labels:
         {{- include "laravel-app.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: webapp
+        app.kubernetes.io/part-of: laravel
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
