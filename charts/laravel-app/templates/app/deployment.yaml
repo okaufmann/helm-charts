@@ -16,10 +16,10 @@ spec:
     {{- toYaml .Values.app.strategy | nindent 4 }}
   template:
     metadata:
-      {{- with .Values.app.podAnnotations }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
         checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
+      {{- with .Values.app.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
