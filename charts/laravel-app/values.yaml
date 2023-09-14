@@ -67,7 +67,7 @@ app:
 
   tolerations: []
 
-  podAnnotations:
+  podAnnotations: {}
 
   podSecurityContext: {}
 
@@ -188,7 +188,7 @@ queue:
 
   tolerations: []
 
-  podAnnotations:
+  podAnnotations: {}
 
   podSecurityContext: {}
 
@@ -254,7 +254,7 @@ scheduler:
 
   tolerations: []
 
-  podAnnotations:
+  podAnnotations: {}
 
   podSecurityContext: {}
 

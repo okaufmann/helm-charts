@@ -86,7 +86,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.livenessProbe.periodSeconds | int | `15` |  |
 | app.livenessProbe.timeoutSeconds | int | `30` |  |
 | app.nodeSelector | object | `{}` |  |
-| app.podAnnotations | string | `nil` |  |
+| app.podAnnotations | object | `{}` |  |
 | app.podSecurityContext | object | `{}` |  |
 | app.readinessProbe.httpGet.path | string | `"/health"` |  |
 | app.readinessProbe.httpGet.port | int | `80` |  |
@@ -135,7 +135,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | queue.image.repository | string | `"serversideup/php:8.2-fpm-nginx"` |  |
 | queue.image.tag | string | `"1.0.0"` |  |
 | queue.nodeSelector | object | `{}` |  |
-| queue.podAnnotations | string | `nil` |  |
+| queue.podAnnotations | object | `{}` |  |
 | queue.podSecurityContext | object | `{}` |  |
 | queue.replicaCount | int | `1` |  |
 | queue.resources | object | `{}` |  |
@@ -164,7 +164,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | scheduler.image.repository | string | `"serversideup/php:8.2-fpm-nginx"` |  |
 | scheduler.image.tag | string | `"1.0.0"` |  |
 | scheduler.nodeSelector | object | `{}` |  |
-| scheduler.podAnnotations | string | `nil` |  |
+| scheduler.podAnnotations | object | `{}` |  |
 | scheduler.podSecurityContext | object | `{}` |  |
 | scheduler.replicaCount | int | `1` |  |
 | scheduler.resources | object | `{}` |  |
