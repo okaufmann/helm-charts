@@ -17,4 +17,5 @@ spec:
   selector:
     matchLabels:
       {{- include "laravel-app.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webapp
 {{- end }}
