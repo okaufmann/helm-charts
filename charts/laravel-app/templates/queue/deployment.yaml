@@ -13,6 +13,7 @@ spec:
   selector:
     matchLabels:
       {{- include "laravel-app.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: queue
   strategy:
     {{- toYaml .Values.queue.strategy | nindent 4 }}
   template:
