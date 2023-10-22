@@ -13,3 +13,6 @@ set-version:
 		exit 1; \
 	fi
 	@yq eval -i '.version = "$(VERSION)"' Chart.yaml
+
+release : set-version
+	helm-docs
