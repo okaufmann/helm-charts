@@ -26,7 +26,7 @@ spec:
       labels:
         {{- include "laravel-app.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: webapp
-        app.kubernetes.io/part-of: laravel
+        app.kubernetes.io/part-of: laravel-app
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

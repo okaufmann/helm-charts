@@ -46,7 +46,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "laravel-app.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "laravel-app.name" . }}
+app.kubernetes.io/name: laravel-app
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
