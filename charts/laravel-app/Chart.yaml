@@ -22,7 +22,7 @@ appVersion: "10.0.0"
 dependencies:
 - name: redis
   condition: redis.enabled
-  version: "18.0.x"
+  version: "18.1.x"
   repository: oci://registry-1.docker.io/bitnamicharts
 - name: meilisearch
   condition: meilisearch.enabled
