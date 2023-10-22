@@ -248,6 +248,25 @@ entries:
   laravel-app:
   - apiVersion: v2
     appVersion: 10.0.0
+    created: "2023-10-22T15:38:13.14346984Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 18.1.x
+    - condition: meilisearch.enabled
+      name: meilisearch
+      repository: https://meilisearch.github.io/meilisearch-kubernetes
+      version: 0.2.x
+    description: A Helm chart for running Laravel Apps on Kubernetes
+    digest: fbeb37a245646e1e1b8b61d779de202b091d1e027bf3b00024546832c7e22b71
+    name: laravel-app
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-1.6.0/laravel-app-1.6.0.tgz
+    version: 1.6.0
+  - apiVersion: v2
+    appVersion: 10.0.0
     created: "2023-09-14T09:59:12.959198516Z"
     dependencies:
     - condition: redis.enabled
@@ -1413,4 +1432,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2023-09-14T09:59:12.959684217Z"
+generated: "2023-10-22T15:38:13.143877746Z"
