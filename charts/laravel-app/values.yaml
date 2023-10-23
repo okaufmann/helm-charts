@@ -325,6 +325,8 @@ meilisearch:
   # https://artifacthub.io/packages/helm/meilisearch-kubernetes/meilisearch
   enabled: false
 
+  fullnameOverride: laravel-meilisearch
+
   # Environment loaded into the configMap
   environment:
     # -- Deactivates analytics
