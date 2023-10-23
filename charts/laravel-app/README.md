@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.8.0](https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel Apps on Kubernetes
 
@@ -117,6 +117,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | meilisearch.enabled | bool | `false` |  |
 | meilisearch.environment.MEILI_ENV | string | `"production"` | Sets the environment. Either **production** or **development** |
 | meilisearch.environment.MEILI_NO_ANALYTICS | bool | `true` | Deactivates analytics |
+| meilisearch.fullnameOverride | string | `"laravel-meilisearch"` |  |
 | meilisearch.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | meilisearch.persistence.enabled | bool | `true` |  |
 | meilisearch.persistence.size | string | `"10Gi"` |  |
