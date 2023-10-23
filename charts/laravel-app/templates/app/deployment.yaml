@@ -57,7 +57,7 @@ spec:
 
       initContainers:
         - name: init
-          args:
+          command:
             - /bin/bash
             - -c
             - php artisan optimize && php artisan view:cache
@@ -86,7 +86,7 @@ spec:
                 key: MEILI_MASTER_KEY
           {{- end }}
         - name: migrate
-          args:
+          command:
             - /bin/bash
             - -c
             - php artisan migrate --force

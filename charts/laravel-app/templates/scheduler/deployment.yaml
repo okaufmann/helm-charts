@@ -58,7 +58,7 @@ spec:
 
       initContainers:
         - name: init
-          args:
+          command:
             - /bin/bash
             - -c
             - php artisan optimize && php artisan view:cache
@@ -113,7 +113,7 @@ spec:
           - name: STARTUP_SCRIPT_PATH
             value: /app/init.sh
           {{- end }}
-          args:
+          command:
             - /bin/bash
             - -c
             - php artisan schedule:work > /dev/null
