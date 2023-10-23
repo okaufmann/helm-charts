@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.6.0](https://img.shields.io/badge/Version-1.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel Apps on Kubernetes
 
@@ -147,6 +147,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | redis.auth.enabled | bool | `false` |  |
 | redis.auth.password | string | `"yourpassword"` |  |
 | redis.enabled | bool | `false` |  |
+| redis.fullnameOverride | string | `"laravel-redis"` |  |
 | redis.master.persistance.accessModes[0] | string | `"ReadWriteOnce"` |  |
 | redis.master.persistance.enabled | bool | `true` |  |
 | redis.master.persistance.size | string | `"8Gi"` |  |
