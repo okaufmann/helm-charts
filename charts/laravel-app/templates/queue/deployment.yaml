@@ -116,7 +116,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - php artisan horizon > /dev/null
+            - php artisan horizon
           resources:
             {{- toYaml .Values.queue.resources | nindent 12 }}
       {{- with .Values.queue.nodeSelector }}

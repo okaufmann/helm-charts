@@ -116,7 +116,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - php artisan schedule:work > /dev/null
+            - php artisan schedule:work
           resources:
             {{- toYaml .Values.scheduler.resources | nindent 12 }}
       {{- with .Values.scheduler.nodeSelector }}
