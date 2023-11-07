@@ -89,7 +89,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - php artisan migrate --force
+            - php artisan migrate --isolated --force
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
