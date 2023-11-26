@@ -1,4 +1,4 @@
-{{- if .Values.statamic.enabled  -}}
+{{- if and .Values.statamic.enabled (default true .Values.statamic.git.push) -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
