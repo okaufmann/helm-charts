@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.8.2](https://img.shields.io/badge/Version-1.8.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel Apps on Kubernetes
 
@@ -181,6 +181,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.enabled | bool | `false` |  |
 | statamic.git.email | string | `"statamic@example.com"` |  |
 | statamic.git.message | string | `"Update from production [ci skip]"` |  |
+| statamic.git.push | bool | `true` |  |
 | statamic.git.user | string | `"statamic"` |  |
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
