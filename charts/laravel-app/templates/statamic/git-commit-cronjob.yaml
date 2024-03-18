@@ -35,9 +35,10 @@ spec:
             - /bin/bash
             args:
               - -c
-              - cd /data && git config --global --add safe.directory '/data' && git pull --rebase &&
+              - cd /data && git config --global --add safe.directory '/data' &&
                 if [[ `git status --porcelain` ]]; then git add . && git -c user.name="{{ .Values.statamic.git.user }}"
                 -c user.email="<{{ .Values.statamic.git.email }}>" commit -m "{{ .Values.statamic.git.message }}"
+                && git pull --rebase
                 && git push; else echo "Nothing todo..."; fi
             env:
             - name: REPO_URL
