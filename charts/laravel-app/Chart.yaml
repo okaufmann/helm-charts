@@ -1,6 +1,6 @@
 apiVersion: v2
 name: laravel-app
-description: A Helm chart for running Laravel Apps on Kubernetes
+description: A Helm chart for running Laravel or Statamic Apps
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -20,11 +20,11 @@ version: "1.9.0"
 # It is recommended to use it with quotes.
 appVersion: "10.0.0"
 dependencies:
-  - name: redis
-    condition: redis.enabled
-    version: "18.1.x"
-    repository: oci://registry-1.docker.io/bitnamicharts
-  - name: meilisearch
-    condition: meilisearch.enabled
-    version: "0.2.x"
-    repository: "https://meilisearch.github.io/meilisearch-kubernetes"
+- name: redis
+  condition: redis.enabled
+  version: "18.1.x"
+  repository: oci://registry-1.docker.io/bitnamicharts
+- name: meilisearch
+  condition: meilisearch.enabled
+  version: "0.2.x"
+  repository: "https://meilisearch.github.io/meilisearch-kubernetes"
