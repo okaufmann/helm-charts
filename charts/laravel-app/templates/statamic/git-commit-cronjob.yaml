@@ -31,6 +31,9 @@ spec:
           containers:
           - name: git-commit
             image: bitnami/git
+            securityContext:
+                runAsUser: 9999
+                runAsGroup: 9999
             command:
             - /bin/bash
             args:
