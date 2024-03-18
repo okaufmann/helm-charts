@@ -38,6 +38,8 @@ data:
             # Attempt to create the symlink after ensuring the destination is clear
             if ln -s "$source" "$destination"; then
                 echo "Linked $source to $destination"
+                chown -h 9999:9999 "$destination"  # Change the owner of the symlink to user 9999
+                echo "Changed ownership of $destination to user 9999"
             else
                 echo "Failed to link $source to $destination. Check permissions and source existence."
             fi
@@ -45,4 +47,5 @@ data:
             echo "Source $source does not exist. Skipping."
         fi
     done
+
 {{- end }}
