@@ -23,14 +23,26 @@ data:
     # Loop through the associative array and create the symbolic links
     for source in "${!links[@]}"; do
         destination=${links[$source]}
-        if [ -e "$source" ] && [ ! -e "$destination" ]; then
-            ln -s "$source" "$destination"
-            echo "Linked $source to $destination"
+        if [ -e "$source" ]; then  # Check if the source exists
+            if [ -e "$destination" ] && [ ! -L "$destination" ]; then  # Check if the destination exists and is not a symlink
+                echo "Destination $destination already exists and is not a symlink. Attempting to remove."
+                rm -rf "$destination"  # Remove the destination directory
+                if [ $? -eq 0 ]; then  # Check if the removal was successful
+                    echo "Removed existing destination $destination."
+                else
+                    echo "Failed to remove existing destination $destination. Check permissions."
+                    continue  # Skip to the next iteration if removal failed
+                fi
+            fi
+
+            # Attempt to create the symlink after ensuring the destination is clear
+            if ln -s "$source" "$destination"; then
+                echo "Linked $source to $destination"
+            else
+                echo "Failed to link $source to $destination. Check permissions and source existence."
+            fi
         else
-            echo "Failed to link $source to $destination. Ensure source exists and destination doesn't."
+            echo "Source $source does not exist. Skipping."
         fi
     done
-
-    # Refreshing Statamic Stache
-    php /var/www/html/artisan statamic:stache:refresh
 {{- end }}
