@@ -298,6 +298,9 @@ redis:
   architecture: standalone
 
   master:
+    disableCommands:
+    - FLUSHALL
+
     persistance:
       ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
       ##
