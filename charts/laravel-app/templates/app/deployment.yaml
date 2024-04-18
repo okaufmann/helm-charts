@@ -1,3 +1,4 @@
+{{- if .Values.app.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -60,7 +61,11 @@ spec:
           command:
             - /bin/bash
             - -c
-            - php artisan optimize && php artisan view:cache
+            - |
+              {{- range .Values.app.initCommands }}
+              {{ . }} &&
+              {{- end }}
+              true # This is to prevent the last command from appending '&&'
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
@@ -154,3 +159,4 @@ spec:
       tolerations:
           {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
