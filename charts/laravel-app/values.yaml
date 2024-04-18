@@ -106,6 +106,10 @@ app:
   #             topologyKey: kubernetes.io/hostname
   #           weight: 100
 
+  migrate:
+    enabled: true
+    command: "php artisan migrate --isolated --force"
+
   service:
     type: ClusterIP # Default service type.
     port: 80 # Default port the service listens on.
