@@ -44,6 +44,8 @@ statamic:
     storageClass: ""
 
 app:
+  enabled: true
+
   image:
     repository: serversideup/php:8.2-fpm-nginx
     pullPolicy: Always

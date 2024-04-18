@@ -91,7 +91,7 @@ spec:
                 name: {{ .Values.meiliMasterKeySecretName }}
                 key: MEILI_MASTER_KEY
           {{- end }}
-        {{- if .Values.app.migrate.enabled }}
+        {{- if default true .Values.app.migrate.enabled }}
         - name: migrate
           command:
             - /bin/bash
