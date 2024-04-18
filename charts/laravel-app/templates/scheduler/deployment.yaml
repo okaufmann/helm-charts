@@ -65,7 +65,7 @@ spec:
               {{- range .Values.scheduler.initCommands }}
               {{ . }} &&
               {{- end }}
-              true # This is to prevent the last command from appending '&&'
+              true
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag | default .Chart.AppVersion }}"

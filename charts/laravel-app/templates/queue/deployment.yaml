@@ -65,7 +65,7 @@ spec:
               {{- range .Values.queue.initCommands }}
               {{ . }} &&
               {{- end }}
-              true # This is to prevent the last command from appending '&&'
+              true
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
