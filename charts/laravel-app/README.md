@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.10.0](https://img.shields.io/badge/Version-1.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.10.1](https://img.shields.io/badge/Version-1.10.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -67,6 +67,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.autoscaling.minReplicas | int | `1` |  |
 | app.autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | app.autoscaling.targetMemoryUtilizationPercentage | int | `80` |  |
+| app.enabled | bool | `true` |  |
 | app.extraVolumeMounts | list | `[]` |  |
 | app.extraVolumes | list | `[]` |  |
 | app.image.pullPolicy | string | `"Always"` |  |
