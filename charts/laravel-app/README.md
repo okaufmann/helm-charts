@@ -142,8 +142,6 @@ Major Changes to functions are documented with the version affected. **Before up
 | queue.image.tag | string | `"1.0.0"` |  |
 | queue.initCommands[0] | string | `"php artisan optimize"` |  |
 | queue.initCommands[1] | string | `"php artisan view:cache"` |  |
-| queue.migrate.command | string | `"php artisan migrate --isolated --force"` |  |
-| queue.migrate.enabled | bool | `false` |  |
 | queue.nodeSelector | object | `{}` |  |
 | queue.podAnnotations | object | `{}` |  |
 | queue.podSecurityContext | object | `{}` |  |
@@ -177,8 +175,6 @@ Major Changes to functions are documented with the version affected. **Before up
 | scheduler.image.tag | string | `"1.0.0"` |  |
 | scheduler.initCommands[0] | string | `"php artisan optimize"` |  |
 | scheduler.initCommands[1] | string | `"php artisan view:cache"` |  |
-| scheduler.migrate.command | string | `"php artisan migrate --isolated --force"` |  |
-| scheduler.migrate.enabled | bool | `false` |  |
 | scheduler.nodeSelector | object | `{}` |  |
 | scheduler.podAnnotations | object | `{}` |  |
 | scheduler.podSecurityContext | object | `{}` |  |
