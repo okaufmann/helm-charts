@@ -117,10 +117,12 @@ spec:
           - name: STARTUP_SCRIPT_PATH
             value: /app/init.sh
           {{- end }}
+          {{- if .Values.queue.command }}
           command:
             - /bin/bash
             - -c
-            - php artisan horizon
+            - {{ .Values.queue.command }}
+          {{- end }}
           resources:
             {{- toYaml .Values.queue.resources | nindent 12 }}
       {{- with .Values.queue.nodeSelector }}

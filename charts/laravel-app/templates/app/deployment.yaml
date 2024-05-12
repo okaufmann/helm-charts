@@ -117,6 +117,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          {{- if .Values.app.command }}
+          command:
+            - /bin/bash
+            - -c
+            - {{ .Values.app.command }}
+          {{- end }}
           volumeMounts:
           - name: runtime-cache
             mountPath: /var/www/html/bootstrap/cache

@@ -113,6 +113,8 @@ app:
   - php artisan optimize
   - php artisan view:cache
 
+  command:
+
   migrate:
     enabled: true
     command: "php artisan migrate --isolated --force"
@@ -231,6 +233,8 @@ queue:
   - php artisan optimize
   - php artisan view:cache
 
+  command: php artisan horizon
+
 scheduler:
   enabled: false
 
@@ -301,6 +305,7 @@ scheduler:
   - php artisan optimize
   - php artisan view:cache
 
+  command: php artisan schedule:work
 
 redis:
   # https://artifacthub.io/packages/helm/bitnami/redis
