@@ -146,7 +146,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.app.service.port }}
+              containerPort: {{ .Values.app.service.targetPort }}
               protocol: TCP
           livenessProbe:
             {{- toYaml .Values.app.livenessProbe | nindent 12 }}
