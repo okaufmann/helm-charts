@@ -72,7 +72,7 @@ spec:
           imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
           volumeMounts:
           - name: runtime-cache
-            mountPath: /var/www/html/bootstrap/cache
+            mountPath: {{ .Values.webRoot }}/bootstrap/cache
           {{- if .Values.statamic.enabled }}
           - name: statamic
             mountPath: /data/git
@@ -98,7 +98,7 @@ spec:
           imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
           volumeMounts:
           - name: runtime-cache
-            mountPath: /var/www/html/bootstrap/cache
+            mountPath: {{ .Values.webRoot }}/bootstrap/cache
           {{- if .Values.statamic.enabled }}
           - name: statamic
             mountPath: /data/git

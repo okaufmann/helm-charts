@@ -10,14 +10,14 @@ data:
     #!/bin/bash
 
     declare -A links=(
-        ["/data/git/content/"]="/var/www/html/content"
-        ["/data/git/users/"]="/var/www/html/users"
-        ["/data/git/resources/blueprints/"]="/var/www/html/resources/blueprints"
-        ["/data/git/resources/fieldsets/"]="/var/www/html/resources/fieldsets"
-        ["/data/git/resources/forms/"]="/var/www/html/resources/forms"
-        ["/data/git/resources/users/"]="/var/www/html/resources/users"
-        ["/data/git/resources/preferences.yaml"]="/var/www/html/resources/preferences.yaml"
-        ["/data/git/storage/forms/"]="/var/www/html/storage/forms"
+        ["/data/git/content/"]="{{ .Values.webRoot }}/content"
+        ["/data/git/users/"]="{{ .Values.webRoot }}/users"
+        ["/data/git/resources/blueprints/"]="{{ .Values.webRoot }}/resources/blueprints"
+        ["/data/git/resources/fieldsets/"]="{{ .Values.webRoot }}/resources/fieldsets"
+        ["/data/git/resources/forms/"]="{{ .Values.webRoot }}/resources/forms"
+        ["/data/git/resources/users/"]="{{ .Values.webRoot }}/resources/users"
+        ["/data/git/resources/preferences.yaml"]="{{ .Values.webRoot }}/resources/preferences.yaml"
+        ["/data/git/storage/forms/"]="{{ .Values.webRoot }}/storage/forms"
     )
 
     # Loop through the associative array and create the symbolic links

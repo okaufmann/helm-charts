@@ -21,6 +21,8 @@ meiliMasterKeySecretName: "meilisearch-master-key"
 metrics:
   enabled: true
 
+webRoot: "/var/www/html"
+
 statamic:
   enabled: false
 
