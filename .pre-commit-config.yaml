@@ -4,8 +4,10 @@ repos:
   hooks:
   - id: end-of-file-fixer
     exclude_types: ['markdown']
+    exclude: ^(public/css/filament/.*|public/js/filament/.*|public/vendor/.*)
   - id: trailing-whitespace
     exclude_types: ['markdown']
+    exclude: ^(public/css/filament/.*|public/js/filament/.*|public/vendor/.*)
   - id: mixed-line-ending
   - id: fix-byte-order-marker
   - id: check-executables-have-shebangs
@@ -15,8 +17,22 @@ repos:
   hooks:
   - id: gitleaks
 - repo: https://github.com/compilerla/conventional-pre-commit
-  rev: v2.4.0
+  rev: v3.2.0
   hooks:
   - id: conventional-pre-commit
     stages: [commit-msg]
-    args: [] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+    # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+    args:
+    - fix
+    - feat
+    - ops
+    - chore
+    - build
+    - chore
+    - ci
+    - docs
+    - perf
+    - refactor
+    - revert
+    - style
+    - test
