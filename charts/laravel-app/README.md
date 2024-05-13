@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.10.2](https://img.shields.io/badge/Version-1.10.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.10.3](https://img.shields.io/badge/Version-1.10.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -203,4 +203,5 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.repo.sshPrivateKey | string | `""` |  |
 | statamic.repo.sshUrl | string | `"git@github.com:org/repository.git"` |  |
 | statamic.schedule | string | `"*/10 * * * *"` |  |
+| webRoot | string | `"/var/www/html"` |  |
 
