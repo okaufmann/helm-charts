@@ -30,7 +30,7 @@ spec:
               claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
           containers:
           - name: git-commit
-            image: bitnami/git
+            image: bitnamilegacy/git
             command:
             - /bin/bash
             args:
