@@ -313,6 +313,9 @@ redis:
   # https://artifacthub.io/packages/helm/bitnami/redis
   enabled: false
 
+  image:
+    repository: bitnamilegacy/redis
+
   fullnameOverride: laravel-redis
 
   auth:
