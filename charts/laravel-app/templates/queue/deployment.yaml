@@ -80,8 +80,7 @@ spec:
             mountPath: /data
           {{- end }}
           envFrom:
-            - configMapRef:
-                name: {{ include "laravel-app.fullname" . }}-config
+            {{- include "laravel-app.envFrom" . | nindent 12 }}
           {{- if and .Values.meilisearch.enabled .Values.meiliMasterKey }}
           env:
           - name: MEILISEARCH_KEY
@@ -112,6 +111,8 @@ spec:
           {{- with .Values.queue.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
+          envFrom:
+            {{- include "laravel-app.envFrom" . | nindent 12 }}
           {{- if .Values.statamic.enabled }}
           env:
           - name: STARTUP_SCRIPT_PATH

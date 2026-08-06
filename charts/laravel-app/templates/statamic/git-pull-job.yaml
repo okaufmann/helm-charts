@@ -14,7 +14,7 @@ spec:
       volumes:
       - name: secrets
         secret:
-          secretName: {{ include "laravel-app.fullname" . }}-statamic-ssh
+          secretName: {{ include "laravel-app.statamicSshSecretName" . }}
           defaultMode: 0400
           items:
             - key: id_key

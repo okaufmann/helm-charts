@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.10.6](https://img.shields.io/badge/Version-1.10.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.11.0](https://img.shields.io/badge/Version-1.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -115,6 +115,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.strategy.rollingUpdate.maxUnavailable | int | `0` |  |
 | app.strategy.type | string | `"RollingUpdate"` |  |
 | app.tolerations | list | `[]` |  |
+| existingEnvSecret | string | `""` | Existing Secret whose keys are exposed to all application workloads |
 | global | object | `{}` |  |
 | imagePullSecrets[0].name | string | `"regcred"` |  |
 | meiliMasterKey | string | `""` |  |
@@ -200,6 +201,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
 | statamic.persistence.storageClass | string | `""` |  |
+| statamic.repo.existingSecret | string | `""` | Existing Secret containing `id_key` and `known_hosts` |
 | statamic.repo.knownHosts | string | `""` |  |
 | statamic.repo.sshPrivateKey | string | `""` |  |
 | statamic.repo.sshUrl | string | `"git@github.com:org/repository.git"` |  |

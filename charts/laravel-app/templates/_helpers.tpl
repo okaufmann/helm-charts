@@ -60,3 +60,22 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Statamic SSH Secret name.
+*/}}
+{{- define "laravel-app.statamicSshSecretName" -}}
+{{- default (printf "%s-statamic-ssh" (include "laravel-app.fullname" .)) .Values.statamic.repo.existingSecret }}
+{{- end }}
+
+{{/*
+Environment sources shared by application workloads.
+*/}}
+{{- define "laravel-app.envFrom" -}}
+- configMapRef:
+    name: {{ include "laravel-app.fullname" . }}-config
+{{- with .Values.existingEnvSecret }}
+- secretRef:
+    name: {{ . }}
+{{- end }}
+{{- end }}
