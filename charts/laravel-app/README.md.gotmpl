@@ -40,10 +40,6 @@ a custom image with a different user.
 Values under `envs` are rendered into a ConfigMap and are not secret. Put
 `APP_KEY`, database credentials, and other sensitive values in one or more
 pre-created Secrets and list their names under `existingEnvSecrets`.
-When supplying a Meilisearch master-key Secret, set both
-`meiliMasterKeyExistingSecret` and
-`meilisearch.auth.existingMasterKeySecret` to that same Secret name so the
-application and dependency consume the same key.
 Valkey authentication is enabled when the dependency is enabled. Prefer a
 pre-created `valkey.auth.existingSecret` so the Laravel application can consume
 the same password through `existingEnvSecrets`.

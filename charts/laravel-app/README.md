@@ -39,10 +39,6 @@ a custom image with a different user.
 Values under `envs` are rendered into a ConfigMap and are not secret. Put
 `APP_KEY`, database credentials, and other sensitive values in one or more
 pre-created Secrets and list their names under `existingEnvSecrets`.
-When supplying a Meilisearch master-key Secret, set both
-`meiliMasterKeyExistingSecret` and
-`meilisearch.auth.existingMasterKeySecret` to that same Secret name so the
-application and dependency consume the same key.
 Valkey authentication is enabled when the dependency is enabled. Prefer a
 pre-created `valkey.auth.existingSecret` so the Laravel application can consume
 the same password through `existingEnvSecrets`.
@@ -91,7 +87,6 @@ Kubernetes: `>=1.25.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://meilisearch.github.io/meilisearch-kubernetes | meilisearch | 0.2.x |
 | oci://registry-1.docker.io/bitnamicharts | valkey | 6.2.x |
 
 ## Source Code
@@ -217,17 +212,6 @@ Major Changes to functions are documented with the version affected. **Before up
 | existingEnvSecrets | list | `[]` |  |
 | global | object | `{}` |  |
 | imagePullSecrets | list | `[]` |  |
-| meiliMasterKey | string | `""` |  |
-| meiliMasterKeyExistingSecret | string | `""` |  |
-| meiliMasterKeySecretName | string | `""` |  |
-| meilisearch.auth.existingMasterKeySecret | string | `""` | Use an existing Kubernetes secret for the MEILI_MASTER_KEY Keep this equal to meiliMasterKeyExistingSecret (or the generated meiliMasterKeySecretName) when supplying the parent-chart key. |
-| meilisearch.enabled | bool | `false` |  |
-| meilisearch.environment.MEILI_ENV | string | `"production"` | Sets the environment. Either **production** or **development** |
-| meilisearch.environment.MEILI_NO_ANALYTICS | bool | `true` | Deactivates analytics |
-| meilisearch.persistence.accessMode | string | `"ReadWriteOnce"` |  |
-| meilisearch.persistence.enabled | bool | `true` |  |
-| meilisearch.persistence.size | string | `"10Gi"` |  |
-| meilisearch.persistence.storageClass | string | `""` |  |
 | networkPolicy.egress.additionalRules | list | `[]` |  |
 | networkPolicy.enabled | bool | `false` |  |
 | networkPolicy.ingress.namespaceSelector.matchLabels."kubernetes.io/metadata.name" | string | `"ingress-nginx"` |  |

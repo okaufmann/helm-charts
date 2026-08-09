@@ -66,7 +66,6 @@ initContainers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
-    {{- include "laravel-app.meilisearchEnv" $root | nindent 4 }}
   {{- end }}
   {{- if and (eq $component "app") $values.migrate.enabled (eq $values.migrate.mode "initContainer") }}
   - name: migrate
@@ -88,7 +87,6 @@ initContainers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
-    {{- include "laravel-app.meilisearchEnv" $root | nindent 4 }}
   {{- end }}
 {{- end }}
 containers:
@@ -124,13 +122,10 @@ containers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
-    {{- if or (and $root.Values.statamic.enabled (ne $component "reverb")) (include "laravel-app.meilisearchSecretName" $root) }}
+    {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
     env:
-      {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
       - name: STARTUP_SCRIPT_PATH
         value: /app/init.sh
-      {{- end }}
-      {{- include "laravel-app.meilisearchEnvList" $root | nindent 6 }}
     {{- end }}
     {{- if or (eq $component "app") (eq $component "reverb") }}
     ports:

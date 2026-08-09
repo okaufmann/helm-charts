@@ -2,7 +2,6 @@ suite: app deployment
 templates:
 - templates/app/deployment.yaml
 - templates/configmap-envs.yaml
-- templates/meilisearch-masterkey-secret.yaml
 tests:
 - it: renders restricted security defaults
   template: templates/app/deployment.yaml

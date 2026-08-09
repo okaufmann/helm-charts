@@ -42,7 +42,3 @@ dependencies:
     condition: valkey.enabled
     version: "6.2.x"
     repository: oci://registry-1.docker.io/bitnamicharts
-  - name: meilisearch
-    condition: meilisearch.enabled
-    version: 0.36.x
-    repository: "https://meilisearch.github.io/meilisearch-kubernetes"

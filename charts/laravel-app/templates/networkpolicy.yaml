@@ -49,16 +49,6 @@ spec:
     - protocol: TCP
       port: 6379
   {{- end }}
-  {{- if .Values.meilisearch.enabled }}
-  - to:
-    - podSelector:
-        matchLabels:
-          app.kubernetes.io/name: meilisearch
-          app.kubernetes.io/instance: {{ .Release.Name }}
-    ports:
-    - protocol: TCP
-      port: 7700
-  {{- end }}
   {{- with .Values.networkPolicy.egress.additionalRules }}
   {{- toYaml . | nindent 2 }}
   {{- end }}

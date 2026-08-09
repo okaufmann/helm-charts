@@ -21,7 +21,6 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
-        checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
         {{- with .Values.reverb.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

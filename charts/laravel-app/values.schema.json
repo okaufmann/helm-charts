@@ -41,9 +41,6 @@
       },
       "additionalProperties": false
     },
-    "meiliMasterKey": { "type": "string" },
-    "meiliMasterKeyExistingSecret": { "type": "string" },
-    "meiliMasterKeySecretName": { "type": "string" },
     "webRoot": { "type": "string", "pattern": "^/" },
     "networkPolicy": {
       "type": "object",
@@ -75,8 +72,7 @@
     "queue": { "$ref": "#/definitions/scalableWorker" },
     "reverb": { "$ref": "#/definitions/reverb" },
     "scheduler": { "$ref": "#/definitions/scheduler" },
-    "valkey": { "type": "object" },
-    "meilisearch": { "type": "object" }
+    "valkey": { "type": "object" }
   },
   "required": [
     "envs",
@@ -125,39 +121,6 @@
                 ]
               }
             }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "anyOf": [
-          {
-            "properties": {
-              "meiliMasterKey": { "type": "string", "minLength": 1 }
-            },
-            "required": ["meiliMasterKey"]
-          },
-          {
-            "properties": {
-              "meiliMasterKeyExistingSecret": { "type": "string", "minLength": 1 }
-            },
-            "required": ["meiliMasterKeyExistingSecret"]
-          }
-        ]
-      },
-      "then": {
-        "properties": {
-          "meilisearch": {
-            "properties": {
-              "auth": {
-                "properties": {
-                  "existingMasterKeySecret": { "type": "string", "minLength": 1 }
-                },
-                "required": ["existingMasterKeySecret"]
-              }
-            },
-            "required": ["auth"]
           }
         }
       }

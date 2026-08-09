@@ -21,7 +21,6 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
-        checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
         {{- if .Values.statamic.enabled }}
         checksum/statamic-init: {{ include (print $.Template.BasePath "/init-script.yaml") . | sha256sum }}
         {{- end }}

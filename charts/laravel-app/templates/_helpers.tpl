@@ -81,49 +81,6 @@ Environment sources shared by application workloads.
 {{- end }}
 
 {{/*
-Name of the Secret containing MEILI_MASTER_KEY. An existing Secret takes
-precedence; otherwise the chart-managed Secret is release-scoped.
-*/}}
-{{- define "laravel-app.meilisearchSecretName" -}}
-{{- if .Values.meilisearch.enabled -}}
-  {{- if .Values.meiliMasterKeyExistingSecret -}}
-    {{- .Values.meiliMasterKeyExistingSecret -}}
-  {{- else if .Values.meilisearch.auth.existingMasterKeySecret -}}
-    {{- .Values.meilisearch.auth.existingMasterKeySecret -}}
-  {{- else if .Values.meiliMasterKey -}}
-    {{- default (printf "%s-meilisearch-master-key" (include "laravel-app.fullname" .)) .Values.meiliMasterKeySecretName -}}
-  {{- else -}}
-    {{- $dependencyName := "meilisearch" -}}
-    {{- $dependencyFullname := ternary .Release.Name (printf "%s-%s" .Release.Name $dependencyName) (contains $dependencyName .Release.Name) -}}
-    {{- printf "%s-master-key" ($dependencyFullname | trunc 63 | trimSuffix "-") -}}
-  {{- end -}}
-{{- end -}}
-{{- end }}
-
-{{/*
-MEILISEARCH_KEY environment variable as a list item.
-*/}}
-{{- define "laravel-app.meilisearchEnvList" -}}
-{{- with (include "laravel-app.meilisearchSecretName" .) }}
-- name: MEILISEARCH_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ . | quote }}
-      key: MEILI_MASTER_KEY
-{{- end }}
-{{- end }}
-
-{{/*
-MEILISEARCH_KEY environment block for containers without another env block.
-*/}}
-{{- define "laravel-app.meilisearchEnv" -}}
-{{- with (include "laravel-app.meilisearchSecretName" .) }}
-env:
-  {{- include "laravel-app.meilisearchEnvList" $ | nindent 2 }}
-{{- end }}
-{{- end }}
-
-{{/*
 Deployment name for a component.
 */}}
 {{- define "laravel-app.componentDeploymentName" -}}

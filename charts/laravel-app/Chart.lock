@@ -2,8 +2,5 @@ dependencies:
 - name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 6.2.7
-- name: meilisearch
-  repository: https://meilisearch.github.io/meilisearch-kubernetes
-  version: 0.36.0
-digest: sha256:c641b41817b62a0d65abe56640499ab48cce9b2c727bee3aa08a51544b44ed99
-generated: "2026-08-09T21:38:04.917702448Z"
+digest: sha256:e0c04870a92bc63c648128aa984e8e3fb942410c8d8ad2b9fece473b6998a389
+generated: "2026-08-10T00:23:21.794668+02:00"
