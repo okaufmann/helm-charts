@@ -246,6 +246,39 @@ entries:
     - https://github.com/okaufmann/helm-charts/releases/download/hcloud-csi-driver-0.0.4/hcloud-csi-driver-0.0.4.tgz
     version: 0.0.4
   laravel-app:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Secure application workloads with restricted Pod Security Standard defaults.
+        - kind: added
+          description: Add autoscaling, disruption budgets, network policies, schema validation, and chart tests.
+        - kind: fixed
+          description: Fix ignored pod and Service values, shell command rendering, and the Helm connection test.
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-09T22:28:17.274237894Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 30c057c63dc26586eab28752395417cce84664d1d0439325f4a55cfabd32b016
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.0/laravel-app-2.0.0.tgz
+    version: 2.0.0
   - apiVersion: v2
     appVersion: 10.0.0
     created: "2026-08-09T21:25:18.93801758Z"
@@ -1812,4 +1845,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-09T21:25:18.938177757Z"
+generated: "2026-08-09T22:28:17.274505824Z"
