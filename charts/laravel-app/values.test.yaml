@@ -336,46 +336,49 @@ scheduler:
     enabled: false
     command: "php artisan migrate --isolated --force"
 
-redis:
-  # https://artifacthub.io/packages/helm/bitnami/redis
+valkey:
+  # https://artifacthub.io/packages/helm/bitnami/valkey
   enabled: false
 
-  fullnameOverride: laravel-redis
+  image:
+    repository: bitnamilegacy/valkey
+
+  fullnameOverride: laravel-valkey
 
   auth:
     enabled: false
     password: "yourpassword"
 
-  ## @param architecture Redis&reg; architecture. Allowed values: `standalone` or `replication`
+  ## @param architecture Valkey architecture. Allowed values: `standalone` or `replication`
   ##
   architecture: standalone
 
-  master:
+  primary:
     disableCommands:
     - FLUSHALL
 
-    persistance:
-      ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
+    persistence:
+      ## @param primary.persistence.enabled Enable persistence on Valkey primary nodes using Persistent Volume Claims
       ##
       enabled: true
 
-      ## @param master.persistence.storageClass Persistent Volume storage class
+      ## @param primary.persistence.storageClass Persistent Volume storage class
       ## If defined, storageClassName: <storageClass>
       ## If set to "-", storageClassName: "", which disables dynamic provisioning
       ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
       ##
       storageClass: ""
 
-      ## @param master.persistence.accessModes Persistent Volume access modes
+      ## @param primary.persistence.accessModes Persistent Volume access modes
       ##
       accessModes:
       - ReadWriteOnce
 
-      ## @param master.persistence.size Persistent Volume size
+      ## @param primary.persistence.size Persistent Volume size
       ##
       size: 8Gi
 
-  # any other Redis-specific overrides...
+  # any other Valkey-specific overrides...
 
 
 meilisearch:

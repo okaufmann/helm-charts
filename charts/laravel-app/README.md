@@ -47,7 +47,7 @@ Generate manifests into output directory:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://meilisearch.github.io/meilisearch-kubernetes | meilisearch | 0.2.x |
-| oci://registry-1.docker.io/bitnamicharts | redis | 18.19.x |
+| oci://registry-1.docker.io/bitnamicharts | valkey | 6.2.x |
 
 # Major Changes
 
@@ -171,17 +171,6 @@ Major Changes to functions are documented with the version affected. **Before up
 | queue.strategy.rollingUpdate.maxUnavailable | string | `"50%"` |  |
 | queue.strategy.type | string | `"RollingUpdate"` |  |
 | queue.tolerations | list | `[]` |  |
-| redis.architecture | string | `"standalone"` |  |
-| redis.auth.enabled | bool | `false` |  |
-| redis.auth.password | string | `"yourpassword"` |  |
-| redis.enabled | bool | `false` |  |
-| redis.fullnameOverride | string | `"laravel-redis"` |  |
-| redis.image.repository | string | `"bitnamilegacy/redis"` |  |
-| redis.master.disableCommands[0] | string | `"FLUSHALL"` |  |
-| redis.master.persistance.accessModes[0] | string | `"ReadWriteOnce"` |  |
-| redis.master.persistance.enabled | bool | `true` |  |
-| redis.master.persistance.size | string | `"8Gi"` |  |
-| redis.master.persistance.storageClass | string | `""` |  |
 | reverb.affinity | object | `{}` |  |
 | reverb.command | string | `"php artisan reverb:start --host=0.0.0.0 --port=8080"` |  |
 | reverb.enabled | bool | `false` |  |
@@ -259,6 +248,17 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.repo.sshPrivateKey | string | `""` |  |
 | statamic.repo.sshUrl | string | `"git@github.com:org/repository.git"` |  |
 | statamic.schedule | string | `"*/10 * * * *"` |  |
+| valkey.architecture | string | `"standalone"` |  |
+| valkey.auth.enabled | bool | `false` |  |
+| valkey.auth.password | string | `"yourpassword"` |  |
+| valkey.enabled | bool | `false` |  |
+| valkey.fullnameOverride | string | `"laravel-valkey"` |  |
+| valkey.image.repository | string | `"bitnamilegacy/valkey"` |  |
+| valkey.primary.disableCommands[0] | string | `"FLUSHALL"` |  |
+| valkey.primary.persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| valkey.primary.persistence.enabled | bool | `true` |  |
+| valkey.primary.persistence.size | string | `"8Gi"` |  |
+| valkey.primary.persistence.storageClass | string | `""` |  |
 | webRoot | string | `"/var/www/html"` |  |
 
 ----------------------------------------------

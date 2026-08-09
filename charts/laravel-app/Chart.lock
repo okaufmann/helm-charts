@@ -1,9 +1,9 @@
 dependencies:
-- name: redis
+- name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 18.19.4
+  version: 6.2.7
 - name: meilisearch
   repository: https://meilisearch.github.io/meilisearch-kubernetes
   version: 0.2.8
-digest: sha256:8ae0bc88f3f855baaa6a3ac47a4c135781a675bee64c55ca577a913556ffc810
-generated: "2024-03-18T20:48:27.299688+01:00"
+digest: sha256:344f109ca049c92abc1308aae4676cd463649acd20a328365be4b1a783b12618
+generated: "2026-08-09T23:23:52.210569+02:00"
