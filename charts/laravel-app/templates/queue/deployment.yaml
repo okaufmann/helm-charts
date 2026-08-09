@@ -10,6 +10,7 @@ spec:
   {{- if not .Values.queue.autoscaling.enabled }}
   replicas: {{ .Values.queue.replicaCount }}
   {{- end }}
+  revisionHistoryLimit: {{ .Values.queue.revisionHistoryLimit }}
   selector:
     matchLabels:
       {{- include "laravel-app.selectorLabels" . | nindent 6 }}
@@ -21,121 +22,16 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
         checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
-      {{- with .Values.queue.podAnnotations }}
+        {{- if .Values.statamic.enabled }}
+        checksum/statamic-init: {{ include (print $.Template.BasePath "/init-script.yaml") . | sha256sum }}
+        {{- end }}
+        {{- with .Values.queue.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "laravel-app.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: queue
         app.kubernetes.io/part-of: laravel-app
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
-      {{- end }}
-
-      volumes:
-      - name: runtime-cache
-        emptyDir:
-          sizeLimit: 1Mi
-      {{- if .Values.statamic.enabled }}
-      - name: data
-        emptyDir: {}
-      - name: statamic
-        persistentVolumeClaim:
-          claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
-      - name: init-script
-        configMap:
-          defaultMode: 448
-          name: {{ include "laravel-app.fullname" . }}-init-script
-      {{- end }}
-      {{- with .Values.queue.extraVolumes }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}
-
-      initContainers:
-        - name: init
-          command:
-            - /bin/bash
-            - -c
-            - |
-              {{- range .Values.queue.initCommands }}
-              {{ . }} &&
-              {{- end }}
-              true
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
-          volumeMounts:
-          - name: runtime-cache
-            mountPath: {{ .Values.webRoot }}/bootstrap/cache
-          {{- if .Values.statamic.enabled }}
-          - name: statamic
-            mountPath: /data/git
-          - name: data
-            mountPath: /data
-          {{- end }}
-          envFrom:
-            {{- include "laravel-app.envFrom" . | nindent 12 }}
-          {{- if and .Values.meilisearch.enabled .Values.meiliMasterKey }}
-          env:
-          - name: MEILISEARCH_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.meiliMasterKeySecretName }}
-                key: MEILI_MASTER_KEY
-          {{- end }}
-      containers:
-        - name: queue
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
-          volumeMounts:
-          - name: runtime-cache
-            mountPath: {{ .Values.webRoot }}/bootstrap/cache
-          {{- if .Values.statamic.enabled }}
-          - name: statamic
-            mountPath: /data/git
-          - name: data
-            mountPath: /data
-          - name: init-script
-            mountPath: /app/init.sh
-            subPath: init.sh
-            readOnly: true
-          {{- end }}
-          {{- with .Values.queue.extraVolumeMounts }}
-          {{- toYaml . | nindent 10 }}
-          {{- end }}
-          envFrom:
-            {{- include "laravel-app.envFrom" . | nindent 12 }}
-          {{- if .Values.statamic.enabled }}
-          env:
-          - name: STARTUP_SCRIPT_PATH
-            value: /app/init.sh
-          {{- end }}
-          {{- if .Values.queue.command }}
-          command:
-            - /bin/bash
-            - -c
-            - {{ .Values.queue.command }}
-          {{- end }}
-          resources:
-            {{- toYaml .Values.queue.resources | nindent 12 }}
-      {{- with .Values.queue.nodeSelector }}
-      nodeSelector:
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.queue.affinity }}
-      affinity:
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.queue.tolerations }}
-      tolerations:
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- include "laravel-app.podSpec" (dict "ctx" . "component" "queue" "values" .Values.queue) | nindent 6 }}
 {{- end }}

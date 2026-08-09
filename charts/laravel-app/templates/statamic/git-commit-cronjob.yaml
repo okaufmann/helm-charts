@@ -1,4 +1,4 @@
-{{- if and .Values.statamic.enabled (default true .Values.statamic.git.push) -}}
+{{- if and .Values.statamic.enabled (default true .Values.statamic.git.push) }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -13,44 +13,77 @@ spec:
   successfulJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: {{ .Values.statamic.git.backoffLimit }}
+      ttlSecondsAfterFinished: {{ .Values.statamic.git.ttlSecondsAfterFinished }}
       template:
+        metadata:
+          labels:
+            {{- include "laravel-app.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: statamic-git-commit
+            app.kubernetes.io/part-of: laravel-app
         spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          securityContext:
+            {{- toYaml .Values.statamic.git.podSecurityContext | nindent 12 }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumes:
-          - name: secrets
+          - name: ssh
             secret:
               secretName: {{ include "laravel-app.statamicSshSecretName" . }}
-              defaultMode: 0400
+              defaultMode: 0440
               items:
-                - key: id_key
-                  path: id_key
-                - key: known_hosts
-                  path: known_hosts
+              - key: id_key
+                path: id_key
+              - key: known_hosts
+                path: known_hosts
           - name: data
             persistentVolumeClaim:
               claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
+          - name: scripts
+            configMap:
+              name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
+              defaultMode: 0550
           containers:
           - name: git-commit
-            image: bitnamilegacy/git
-            command:
-            - /bin/bash
-            args:
-              - -c
-              - cd /data && git config --global --add safe.directory '/data' &&
-                if [[ `git status --porcelain` ]]; then git add . && git -c user.name="{{ .Values.statamic.git.user }}"
-                -c user.email="<{{ .Values.statamic.git.email }}>" commit -m "{{ .Values.statamic.git.message }}"
-                && git -c user.name="{{ .Values.statamic.git.user }}" -c user.email="<{{ .Values.statamic.git.email }}>" pull --rebase
-                && git push
-                && chown -R 9999:9999 /data; else echo "Nothing todo..."; fi
+            image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"
+            imagePullPolicy: {{ .Values.statamic.git.image.pullPolicy }}
+            securityContext:
+              {{- toYaml .Values.statamic.git.containerSecurityContext | nindent 14 }}
+            command: [/scripts/commit.sh]
             env:
-            - name: REPO_URL
-              value: {{ .Values.statamic.repo.sshUrl }}
+            - name: GIT_USER
+              value: {{ .Values.statamic.git.user | quote }}
+            - name: GIT_EMAIL
+              value: {{ .Values.statamic.git.email | quote }}
+            - name: GIT_MESSAGE
+              value: {{ .Values.statamic.git.message | quote }}
             - name: GIT_SSH_COMMAND
-              value: ssh -i /git/.ssh/id_key -o UserKnownHostsFile=/git/.ssh/known_hosts
+              value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
             volumeMounts:
             - name: data
               mountPath: /data
-            - name: secrets
-              mountPath: /git/.ssh/
+            - name: ssh
+              mountPath: /git/.ssh
               readOnly: true
-          restartPolicy: Never
-{{- end -}}
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+            resources:
+              {{- toYaml .Values.statamic.git.resources | nindent 14 }}
+          {{- with .Values.statamic.git.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.statamic.git.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.statamic.git.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

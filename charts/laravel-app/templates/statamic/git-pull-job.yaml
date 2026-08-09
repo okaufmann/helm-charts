@@ -1,47 +1,89 @@
-{{- if .Values.statamic.enabled  -}}
+{{- if .Values.statamic.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "laravel-app.fullname" . }}-git-clone
+  name: {{ include "laravel-app.fullname" . }}-git-{{ ternary "pull" (printf "clone-%v" .Release.Revision) .Release.IsUpgrade }}
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: statamic
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
+    {{- if .Release.IsUpgrade }}
+    # The PVC already exists on upgrades, so Helm can safely pull content
+    # before updating workloads. On first install this remains a normal Job
+    # because pre-install hooks cannot mount a PVC that has not been created.
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-1"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    {{- end }}
 spec:
+  backoffLimit: {{ .Values.statamic.git.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.statamic.git.ttlSecondsAfterFinished }}
   template:
+    metadata:
+      labels:
+        {{- include "laravel-app.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: statamic-git-clone
+        app.kubernetes.io/part-of: laravel-app
     spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext:
+        {{- toYaml .Values.statamic.git.podSecurityContext | nindent 8 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
-      - name: secrets
+      - name: ssh
         secret:
           secretName: {{ include "laravel-app.statamicSshSecretName" . }}
-          defaultMode: 0400
+          defaultMode: 0440
           items:
-            - key: id_key
-              path: id_key
-            - key: known_hosts
-              path: known_hosts
+          - key: id_key
+            path: id_key
+          - key: known_hosts
+            path: known_hosts
       - name: data
         persistentVolumeClaim:
           claimName: {{ include "laravel-app.fullname" . }}-statamic-pvc
+      - name: scripts
+        configMap:
+          name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
+          defaultMode: 0550
       containers:
       - name: git-clone
-        image: bitnamilegacy/git
-        command:
-        - /bin/bash
-        args:
-          - "-c"
-          - if [ ! -d /data/.git ]; then git clone $REPO_URL /data; else cd /data/; git -c safe.directory="/data" pull --rebase; fi && chown -R 9999:9999 /data
+        image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"
+        imagePullPolicy: {{ .Values.statamic.git.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.statamic.git.containerSecurityContext | nindent 10 }}
+        command: [/scripts/clone.sh]
         env:
         - name: REPO_URL
-          value: {{ .Values.statamic.repo.sshUrl }}
+          value: {{ .Values.statamic.repo.sshUrl | quote }}
         - name: GIT_SSH_COMMAND
-          value: ssh -i /git/.ssh/id_key -o UserKnownHostsFile=/git/.ssh/known_hosts
+          value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
         volumeMounts:
         - name: data
           mountPath: /data
-        - name: secrets
-          mountPath: /git/.ssh/
+        - name: ssh
+          mountPath: /git/.ssh
           readOnly: true
-      restartPolicy: Never
-{{- end -}}
+        - name: scripts
+          mountPath: /scripts
+          readOnly: true
+        resources:
+          {{- toYaml .Values.statamic.git.resources | nindent 10 }}
+      {{- with .Values.statamic.git.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.statamic.git.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.statamic.git.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

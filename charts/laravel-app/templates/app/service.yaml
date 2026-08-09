@@ -1,3 +1,4 @@
+{{- if default true .Values.app.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,13 +6,34 @@ metadata:
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: webapp
+    {{- with .Values.app.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.app.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.app.service.type }}
+  {{- if and (ne .Values.app.service.type "ClusterIP") .Values.app.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.app.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and (eq .Values.app.service.type "LoadBalancer") .Values.app.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.app.service.loadBalancerIP | quote }}
+  {{- end }}
+  {{- with .Values.app.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   ports:
     - port: {{ .Values.app.service.port }}
       targetPort: http
       protocol: TCP
       name: http
+      {{- if and (eq .Values.app.service.type "NodePort") .Values.app.service.nodePort }}
+      nodePort: {{ .Values.app.service.nodePort }}
+      {{- end }}
   selector:
     {{- include "laravel-app.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: webapp
+{{- end }}

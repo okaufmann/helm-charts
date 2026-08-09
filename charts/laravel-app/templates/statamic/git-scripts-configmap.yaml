@@ -1,0 +1,35 @@
+{{- if .Values.statamic.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: statamic
+data:
+  clone.sh: |-
+    #!/bin/sh
+    set -eu
+
+    if [ ! -d /data/.git ]; then
+      git clone "$REPO_URL" /data
+    else
+      git -C /data -c safe.directory=/data pull --rebase
+    fi
+  commit.sh: |-
+    #!/bin/sh
+    set -eu
+
+    if [ -z "$(git -C /data -c safe.directory=/data status --porcelain)" ]; then
+      echo "No Statamic content changes to commit."
+      exit 0
+    fi
+
+    git -C /data -c safe.directory=/data add .
+    git -C /data -c safe.directory=/data \
+      -c user.name="$GIT_USER" \
+      -c user.email="$GIT_EMAIL" \
+      commit -m "$GIT_MESSAGE"
+    git -C /data -c safe.directory=/data pull --rebase
+    git -C /data -c safe.directory=/data push
+{{- end }}

@@ -7,7 +7,10 @@ metadata:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: reverb
 spec:
+  {{- if not .Values.reverb.autoscaling.enabled }}
   replicas: {{ .Values.reverb.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: {{ .Values.reverb.revisionHistoryLimit }}
   selector:
     matchLabels:
       {{- include "laravel-app.selectorLabels" . | nindent 6 }}
@@ -18,67 +21,14 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
-      {{- with .Values.reverb.podAnnotations }}
+        checksum/meilisearch-key: {{ include (print $.Template.BasePath "/meilisearch-masterkey-secret.yaml") . | sha256sum }}
+        {{- with .Values.reverb.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "laravel-app.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: reverb
         app.kubernetes.io/part-of: laravel-app
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
-      {{- end }}
-      {{- with .Values.reverb.podSecurityContext }}
-      securityContext:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.reverb.extraVolumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      containers:
-        - name: reverb
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.reverb.image.repository }}:{{ .Values.reverb.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.reverb.image.pullPolicy }}
-          {{- with .Values.reverb.command }}
-          command:
-            - /bin/bash
-            - -c
-            - {{ . }}
-          {{- end }}
-          {{- with .Values.reverb.extraVolumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          envFrom:
-            {{- include "laravel-app.envFrom" . | nindent 12 }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.reverb.service.targetPort }}
-              protocol: TCP
-          livenessProbe:
-            {{- toYaml .Values.reverb.livenessProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.reverb.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.reverb.resources | nindent 12 }}
-      {{- with .Values.reverb.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.reverb.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.reverb.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- include "laravel-app.podSpec" (dict "ctx" . "component" "reverb" "values" .Values.reverb) | nindent 6 }}
 {{- end }}

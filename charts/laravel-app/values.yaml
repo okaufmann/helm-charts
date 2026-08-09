@@ -1,13 +1,37 @@
 global: {}
 
-# Existing Secret whose keys are exposed as environment variables to the app,
-# queue, scheduler, and their init/migration containers.
-existingEnvSecret: ""
+# Non-sensitive environment variables shared by all application workloads.
+# Never put APP_KEY, database passwords, or other secrets here: this renders
+# into a ConfigMap. Use existingEnvSecrets for sensitive values.
+envs: {}
 
-imagePullSecrets:
-- name: regcred
+# Existing Secrets whose keys are exposed as environment variables to the app,
+# queue, scheduler, reverb, and their init/migration containers.
+existingEnvSecrets: []
 
-securityContext: {}
+imagePullSecrets: []
+
+# Application workloads do not need Kubernetes API credentials by default.
+automountServiceAccountToken: false
+
+# Restricted Pod Security Standard-compatible defaults. Each component can
+# override individual fields with its own podSecurityContext and
+# containerSecurityContext.
+podSecurityContext:
+  runAsNonRoot: true
+  # The default Debian-based serversideup/php image runs as www-data (33).
+  # Override this for Alpine-based or custom images.
+  fsGroup: 33
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
@@ -16,14 +40,18 @@ serviceAccount:
   name: ""
   # Additional annotations for the ServiceAccount
   annotations: {}
+  # Override the global token-automount setting for the ServiceAccount.
+  automountServiceAccountToken: false
 
 meiliMasterKey: ""
 
-# ensure meilisearch.auth.existingMasterKeySecret is set to this exact same value!
-meiliMasterKeySecretName: "meilisearch-master-key"
+# Existing Secret containing the MEILI_MASTER_KEY key. Prefer this over putting
+# the key in Helm values. When Meilisearch is enabled, set
+# meilisearch.auth.existingMasterKeySecret to the exact same name.
+meiliMasterKeyExistingSecret: ""
 
-metrics:
-  enabled: true
+# Optional name for a chart-managed Secret. Empty uses a release-scoped name.
+meiliMasterKeySecretName: ""
 
 webRoot: "/var/www/html"
 
@@ -44,6 +72,30 @@ statamic:
     email: "statamic@example.com"
     message: "Update from production [ci skip]"
     push: true
+    image:
+      repository: alpine/git
+      tag: "2.49.1"
+      pullPolicy: IfNotPresent
+    resources: {}
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 33
+      runAsGroup: 33
+      fsGroup: 33
+      fsGroupChangePolicy: OnRootMismatch
+      seccompProfile:
+        type: RuntimeDefault
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: false
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    ttlSecondsAfterFinished: 300
+    backoffLimit: 3
 
   schedule: "*/10 * * * *"
 
@@ -51,6 +103,21 @@ statamic:
     accessMode: "ReadWriteOnce"
     size: "10Gi"
     storageClass: ""
+
+networkPolicy:
+  enabled: false
+  ingress:
+    # Select the ingress controller namespace/pods allowed to reach app and
+    # Reverb. Empty selectors allow ingress from every namespace/pod.
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ingress-nginx
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+  egress:
+    # Additional egress rules appended after DNS and enabled in-chart services.
+    additionalRules: []
 
 app:
   enabled: true
@@ -68,6 +135,12 @@ app:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
+    behavior: {}
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: null
 
   strategy:
     rollingUpdate:
@@ -82,6 +155,17 @@ app:
   podAnnotations: {}
 
   podSecurityContext: {}
+  containerSecurityContext: {}
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  topologySpreadConstraints: []
+
+  runtimeCache:
+    sizeLimit: 64Mi
+
+  lifecycle: {}
 
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -151,13 +235,19 @@ app:
 
   migrate:
     enabled: true
+    # initContainer runs once per new pod. hook runs once per Helm
+    # install/upgrade and is usually preferable for multiple replicas.
+    mode: initContainer
     command: "php artisan migrate --isolated --force"
+    ttlSecondsAfterFinished: 300
+    backoffLimit: 3
+    resources: {}
 
   service:
     type: ClusterIP # Default service type.
     port: 80 # Default port the service listens on.
-    targetPort: 80 # Default port the pods are exposing.
-    nodePort: "" # For when service.type is NodePort.
+    targetPort: 8080 # serversideup/php v3 listens as a non-root user on 8080.
+    nodePort: null # Optional fixed port for service.type=NodePort.
     annotations: {} # Annotations to add to the service.
     labels: {} # Additional labels to add to the service.
     externalTrafficPolicy: Cluster # Can be set to Local to preserve source IP, or Cluster for default behavior.
@@ -171,18 +261,26 @@ app:
     failureThreshold: 5
     initialDelaySeconds: 60
     periodSeconds: 15
-    timeoutSeconds: 30
+    timeoutSeconds: 5
     httpGet:
-      path: /health
-      port: 80
+      path: /up
+      port: http
 
   readinessProbe:
     initialDelaySeconds: 10
     periodSeconds: 10
-    timeoutSeconds: 10
+    timeoutSeconds: 5
     httpGet:
-      path: /health
-      port: 80
+      path: /up
+      port: http
+
+  startupProbe:
+    failureThreshold: 30
+    periodSeconds: 5
+    timeoutSeconds: 5
+    httpGet:
+      path: /up
+      port: http
 
   ingress:
     enabled: false # By default, do not create an ingress.
@@ -213,6 +311,12 @@ queue:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
+    behavior: {}
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: null
 
   strategy:
     rollingUpdate:
@@ -239,6 +343,18 @@ queue:
   podAnnotations: {}
 
   podSecurityContext: {}
+  containerSecurityContext: {}
+
+  terminationGracePeriodSeconds: 300
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  topologySpreadConstraints: []
+
+  runtimeCache:
+    sizeLimit: 64Mi
+
+  # Horizon receives SIGTERM and drains active workers during this grace period.
+  lifecycle: {}
 
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
@@ -279,6 +395,19 @@ reverb:
 
   replicaCount: 1
 
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+    behavior: {}
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: null
+
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -290,6 +419,17 @@ reverb:
   podAnnotations: {}
 
   podSecurityContext: {}
+  containerSecurityContext: {}
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  topologySpreadConstraints: []
+
+  runtimeCache:
+    sizeLimit: 64Mi
+
+  lifecycle: {}
 
   resources: {}
 
@@ -307,8 +447,12 @@ reverb:
     type: ClusterIP
     port: 8080
     targetPort: 8080
+    nodePort: null
     annotations: {}
     labels: {}
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
 
   livenessProbe:
     tcpSocket:
@@ -323,6 +467,12 @@ reverb:
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
+
+  startupProbe:
+    tcpSocket:
+      port: http
+    failureThreshold: 30
+    periodSeconds: 2
 
   ingress:
     enabled: false
@@ -342,20 +492,8 @@ scheduler:
     pullPolicy: Always
     tag: "8.5-cli"
 
-  replicaCount: 1
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
-
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
+  # The scheduler always runs exactly one replica with a Recreate strategy to
+  # prevent scheduled commands from running more than once.
 
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -376,6 +514,17 @@ scheduler:
   podAnnotations: {}
 
   podSecurityContext: {}
+  containerSecurityContext: {}
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  topologySpreadConstraints: []
+
+  runtimeCache:
+    sizeLimit: 64Mi
+
+  lifecycle: {}
 
   # Extra volumes to mount on the container.
   extraVolumeMounts: []
@@ -410,14 +559,11 @@ valkey:
   # https://artifacthub.io/packages/helm/bitnami/valkey
   enabled: false
 
-  image:
-    repository: bitnamilegacy/valkey
-
-  fullnameOverride: laravel-valkey
-
   auth:
-    enabled: false
-    password: "yourpassword"
+    enabled: true
+    # Empty lets the dependency generate a random password. Prefer
+    # auth.existingSecret so the application can consume the same credential.
+    password: ""
 
   ## @param architecture Valkey architecture. Allowed values: `standalone` or `replication`
   ##
@@ -455,8 +601,6 @@ meilisearch:
   # https://artifacthub.io/packages/helm/meilisearch-kubernetes/meilisearch
   enabled: false
 
-  fullnameOverride: laravel-meilisearch
-
   # Environment loaded into the configMap
   environment:
     # -- Deactivates analytics
@@ -471,7 +615,9 @@ meilisearch:
 
   auth:
     # -- Use an existing Kubernetes secret for the MEILI_MASTER_KEY
-    existingMasterKeySecret: "meilisearch-master-key"
+    # Keep this equal to meiliMasterKeyExistingSecret (or the generated
+    # meiliMasterKeySecretName) when supplying the parent-chart key.
+    existingMasterKeySecret: ""
 
   persistence:
     enabled: true

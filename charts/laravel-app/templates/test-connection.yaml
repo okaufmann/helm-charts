@@ -1,0 +1,33 @@
+{{- if default true .Values.app.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "laravel-app.fullname" . }}-test-connection"
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsNonRoot: true
+    runAsUser: 65534
+  containers:
+    - name: wget
+      image: busybox:1.37.0
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+      command: [wget]
+      args:
+      - -qO-
+      - http://{{ include "laravel-app.fullname" . }}-app-service:{{ .Values.app.service.port }}/up
+  restartPolicy: Never
+{{- end }}

@@ -15,11 +15,24 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.reverb.service.type }}
+  {{- if and (ne .Values.reverb.service.type "ClusterIP") .Values.reverb.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.reverb.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and (eq .Values.reverb.service.type "LoadBalancer") .Values.reverb.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.reverb.service.loadBalancerIP | quote }}
+  {{- end }}
+  {{- with .Values.reverb.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   ports:
     - name: http
       port: {{ .Values.reverb.service.port }}
       targetPort: http
       protocol: TCP
+      {{- if and (eq .Values.reverb.service.type "NodePort") .Values.reverb.service.nodePort }}
+      nodePort: {{ .Values.reverb.service.nodePort }}
+      {{- end }}
   selector:
     {{- include "laravel-app.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: reverb

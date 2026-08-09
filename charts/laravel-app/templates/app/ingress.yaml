@@ -1,4 +1,4 @@
-{{- if .Values.app.ingress.enabled -}}
+{{- if and (default true .Values.app.enabled) .Values.app.ingress.enabled -}}
 {{- $fullName := include "laravel-app.fullname" . -}}
 {{- $svcPort := .Values.app.service.port -}}
 apiVersion: networking.k8s.io/v1

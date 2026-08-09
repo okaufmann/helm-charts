@@ -1,0 +1,24 @@
+{{- $root := . -}}
+{{- range $component := list "app" "queue" "reverb" }}
+{{- $values := index $root.Values $component -}}
+{{- if and $values.enabled $values.podDisruptionBudget.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "laravel-app.componentDeploymentName" (dict "ctx" $root "component" $component) }}
+  labels:
+    {{- include "laravel-app.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ ternary "webapp" $component (eq $component "app") }}
+spec:
+  {{- if ne $values.podDisruptionBudget.maxUnavailable nil }}
+  maxUnavailable: {{ $values.podDisruptionBudget.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ $values.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "laravel-app.selectorLabels" $root | nindent 6 }}
+      app.kubernetes.io/component: {{ ternary "webapp" $component (eq $component "app") }}
+{{- end }}
+{{- end }}

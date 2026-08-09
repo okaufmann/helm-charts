@@ -1,4 +1,4 @@
-{{- if .Values.app.serviceMonitor.enabled }}
+{{- if and (default true .Values.app.enabled) .Values.app.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -10,7 +10,7 @@ spec:
   endpoints:
   - port: http
     scheme: http
-  jobLabel: app
+  jobLabel: app.kubernetes.io/name
   namespaceSelector:
     matchNames:
     - {{ .Release.Namespace }}

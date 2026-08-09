@@ -9,9 +9,13 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
-  storageClassName: {{ .Values.statamic.persistence.storageClass }}
+  {{- if eq .Values.statamic.persistence.storageClass "-" }}
+  storageClassName: ""
+  {{- else if .Values.statamic.persistence.storageClass }}
+  storageClassName: {{ .Values.statamic.persistence.storageClass | quote }}
+  {{- end }}
   accessModes:
-    - {{ .Values.statamic.persistence.accessMode | default "ReadWriteMany" | quote }}
+    - {{ .Values.statamic.persistence.accessMode | quote }}
   resources:
     requests:
       storage: {{ .Values.statamic.persistence.size | quote }}

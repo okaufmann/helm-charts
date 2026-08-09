@@ -1,0 +1,48 @@
+{{- $root := . -}}
+{{- range $component := list "app" "queue" "reverb" }}
+{{- $values := index $root.Values $component -}}
+{{- if and $values.enabled $values.autoscaling.enabled }}
+{{- if not (or $values.autoscaling.targetCPUUtilizationPercentage $values.autoscaling.targetMemoryUtilizationPercentage) -}}
+{{- fail (printf "%s.autoscaling requires at least one CPU or memory utilization target" $component) -}}
+{{- end }}
+{{- if gt (int $values.autoscaling.minReplicas) (int $values.autoscaling.maxReplicas) -}}
+{{- fail (printf "%s.autoscaling.minReplicas must not exceed maxReplicas" $component) -}}
+{{- end }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "laravel-app.componentDeploymentName" (dict "ctx" $root "component" $component) }}
+  labels:
+    {{- include "laravel-app.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ ternary "webapp" $component (eq $component "app") }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "laravel-app.componentDeploymentName" (dict "ctx" $root "component" $component) }}
+  minReplicas: {{ $values.autoscaling.minReplicas }}
+  maxReplicas: {{ $values.autoscaling.maxReplicas }}
+  metrics:
+    {{- with $values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ . }}
+    {{- end }}
+    {{- with $values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ . }}
+    {{- end }}
+  {{- with $values.autoscaling.behavior }}
+  behavior:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
