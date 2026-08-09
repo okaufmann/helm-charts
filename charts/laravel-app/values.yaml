@@ -234,15 +234,15 @@ app:
     resources: {}
 
   service:
-    type: ClusterIP # Default service type.
-    port: 80 # Default port the service listens on.
-    targetPort: 8080 # serversideup/php v3 listens as a non-root user on 8080.
-    nodePort: null # Optional fixed port for service.type=NodePort.
-    annotations: {} # Annotations to add to the service.
-    labels: {} # Additional labels to add to the service.
-    externalTrafficPolicy: Cluster # Can be set to Local to preserve source IP, or Cluster for default behavior.
-    loadBalancerIP: "" # To set a specific IP for a LoadBalancer type service.
-    loadBalancerSourceRanges: [] # IP whitelist for LoadBalancers.
+    type: ClusterIP  # Default service type.
+    port: 80  # Default port the service listens on.
+    targetPort: 8080  # serversideup/php v3 listens as a non-root user on 8080.
+    nodePort: null  # Optional fixed port for service.type=NodePort.
+    annotations: {}  # Annotations to add to the service.
+    labels: {}  # Additional labels to add to the service.
+    externalTrafficPolicy: Cluster  # Can be set to Local to preserve source IP, or Cluster for default behavior.
+    loadBalancerIP: ""  # To set a specific IP for a LoadBalancer type service.
+    loadBalancerSourceRanges: []  # IP whitelist for LoadBalancers.
 
   serviceMonitor:
     enabled: false
@@ -273,13 +273,13 @@ app:
       port: http
 
   ingress:
-    enabled: false # By default, do not create an ingress.
-    ingressClassName: "" # Set to the name of the ingress class to use annotations.
-    annotations: {} # Allow users to add any ingress annotations.
+    enabled: false  # By default, do not create an ingress.
+    ingressClassName: ""  # Set to the name of the ingress class to use annotations.
+    annotations: {}  # Allow users to add any ingress annotations.
     hosts:
-    - host: chart-example.local # Default host, users should override.
+    - host: chart-example.local  # Default host, users should override.
       paths:
-      - / # Default path.
+      - /  # Default path.
     tls:
     - hosts:
       - app.example.com
