@@ -248,6 +248,41 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: fixed
+          description: Pin the default application UID and GID so Kubernetes can enforce non-root execution.
+        - kind: changed
+          description: Secure application workloads with restricted Pod Security Standard defaults.
+        - kind: added
+          description: Add autoscaling, disruption budgets, network policies, schema validation, and chart tests.
+        - kind: fixed
+          description: Fix ignored pod and Service values, shell command rendering, and the Helm connection test.
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-09T23:26:27.470216383Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: e984e84112e435b0fda52acde4991125f366719a60d617686ab8c63a50584189
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.1/laravel-app-2.0.1.tgz
+    version: 2.0.1
+  - annotations:
+      artifacthub.io/changes: |
         - kind: changed
           description: Secure application workloads with restricted Pod Security Standard defaults.
         - kind: added
@@ -1845,4 +1880,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-09T22:28:17.274505824Z"
+generated: "2026-08-09T23:26:27.47051983Z"
