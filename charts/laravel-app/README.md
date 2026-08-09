@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -218,7 +218,9 @@ Major Changes to functions are documented with the version affected. **Before up
 | networkPolicy.ingress.podSelector.matchLabels."app.kubernetes.io/name" | string | `"ingress-nginx"` |  |
 | podSecurityContext.fsGroup | int | `33` |  |
 | podSecurityContext.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
+| podSecurityContext.runAsGroup | int | `33` |  |
 | podSecurityContext.runAsNonRoot | bool | `true` |  |
+| podSecurityContext.runAsUser | int | `33` |  |
 | podSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | queue.affinity | object | `{}` |  |
 | queue.autoscaling.behavior | object | `{}` |  |

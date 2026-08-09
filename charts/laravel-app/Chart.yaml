@@ -12,6 +12,8 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
+    - kind: fixed
+      description: Pin the default application UID and GID so Kubernetes can enforce non-root execution.
     - kind: changed
       description: Secure application workloads with restricted Pod Security Standard defaults.
     - kind: added
@@ -31,7 +33,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.0"
+version: "2.0.1"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

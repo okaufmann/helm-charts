@@ -19,6 +19,8 @@ automountServiceAccountToken: false
 # containerSecurityContext.
 podSecurityContext:
   runAsNonRoot: true
+  runAsUser: 33
+  runAsGroup: 33
   # The default Debian-based serversideup/php image runs as www-data (33).
   # Override this for Alpine-based or custom images.
   fsGroup: 33
