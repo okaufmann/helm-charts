@@ -28,6 +28,41 @@ In order to install laravel-app successfully you can just use this command.
 helm install -n <NAMESPACE> laravel-app olidev/laravel-app
 ```
 
+## Security
+
+Version 2 defaults application pods to the Kubernetes restricted Pod Security
+Standard: pods run as non-root, use the runtime-default seccomp profile, drop
+all Linux capabilities, disable privilege escalation, and do not mount a
+Kubernetes API token. The default `serversideup/php` Debian image runs as
+`www-data` (UID/GID 33). Override the pod security context when using Alpine or
+a custom image with a different user.
+
+Values under `envs` are rendered into a ConfigMap and are not secret. Put
+`APP_KEY`, database credentials, and other sensitive values in one or more
+pre-created Secrets and list their names under `existingEnvSecrets`.
+When supplying a Meilisearch master-key Secret, set both
+`meiliMasterKeyExistingSecret` and
+`meilisearch.auth.existingMasterKeySecret` to that same Secret name so the
+application and dependency consume the same key.
+Valkey authentication is enabled when the dependency is enabled. Prefer a
+pre-created `valkey.auth.existingSecret` so the Laravel application can consume
+the same password through `existingEnvSecrets`.
+
+`networkPolicy.enabled` applies default-deny ingress and egress to application
+pods. Before enabling it, add egress rules for external databases, mail
+providers, object storage, and any third-party APIs the application needs.
+
+## Operations
+
+CPU/memory HPAs require matching resource requests on the scaled component.
+Configure `resources.requests` before enabling autoscaling.
+
+The default migration mode runs `php artisan migrate --isolated --force` as an
+init container. `--isolated` requires a shared cache driver that supports
+atomic locks. For multi-replica releases, `app.migrate.mode: hook` instead runs
+one Helm pre-install/pre-upgrade Job. Hook mode injects ConfigMap values
+directly because pre-install hooks run before normal chart resources exist.
+
 ## Development
 
 ### Prerequisites
@@ -66,7 +101,14 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | **Change** | **Chart Version** | **Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
-|||||
+| Secure workload defaults | 2.0.0 | `securityContext` was replaced by global and per-component `podSecurityContext` / `containerSecurityContext`. API token automounting now defaults off. | |
+| Secret environment sources | 2.0.0 | Replace `existingEnvSecret: name` with `existingEnvSecrets: [name]`. | |
+| Registry credentials | 2.0.0 | `imagePullSecrets` now defaults to an empty list instead of the cluster-specific `regcred`. | |
+| Non-root HTTP port | 2.0.0 | `app.service.targetPort` now defaults to `8080`, matching serversideup/php v3. | |
+| Health endpoint | 2.0.0 | App probes now use Laravel's `/up` endpoint and include a startup probe. Override probe values for older applications. | |
+| Scheduler safety | 2.0.0 | Scheduler replica/autoscaling values were removed; it always runs one replica with a `Recreate` strategy. | |
+| Statamic Git image | 2.0.0 | Untagged `bitnamilegacy/git` was replaced by pinned, configurable `statamic.git.image` values. | |
+| Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 {{/*
   Chart Values

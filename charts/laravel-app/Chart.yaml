@@ -1,6 +1,24 @@
 apiVersion: v2
 name: laravel-app
 description: A Helm chart for running Laravel or Statamic Apps
+home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+sources:
+  - https://github.com/okaufmann/helm-charts
+  - https://github.com/serversideup/docker-php
+maintainers:
+  - name: okaufmann
+    url: https://github.com/okaufmann
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/changes: |
+    - kind: changed
+      description: Secure application workloads with restricted Pod Security Standard defaults.
+    - kind: added
+      description: Add autoscaling, disruption budgets, network policies, schema validation, and chart tests.
+    - kind: fixed
+      description: Fix ignored pod and Service values, shell command rendering, and the Helm connection test.
+  artifacthub.io/containsSecurityUpdates: "true"
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -13,7 +31,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "1.12.0"
+version: "2.0.0"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
