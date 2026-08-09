@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 1.11.0](https://img.shields.io/badge/Version-1.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.12.0](https://img.shields.io/badge/Version-1.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -72,8 +72,8 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.extraVolumeMounts | list | `[]` |  |
 | app.extraVolumes | list | `[]` |  |
 | app.image.pullPolicy | string | `"Always"` |  |
-| app.image.repository | string | `"serversideup/php:8.2-fpm-nginx"` |  |
-| app.image.tag | string | `"1.0.0"` |  |
+| app.image.repository | string | `"serversideup/php"` |  |
+| app.image.tag | string | `"8.5-fpm-nginx"` |  |
 | app.ingress.annotations | object | `{}` |  |
 | app.ingress.enabled | bool | `false` |  |
 | app.ingress.hosts[0].host | string | `"chart-example.local"` |  |
@@ -92,6 +92,23 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.migrate.command | string | `"php artisan migrate --isolated --force"` |  |
 | app.migrate.enabled | bool | `true` |  |
 | app.nodeSelector | object | `{}` |  |
+| app.octane.enabled | bool | `false` |  |
+| app.octane.host | string | `"0.0.0.0"` |  |
+| app.octane.livenessProbe.failureThreshold | int | `5` |  |
+| app.octane.livenessProbe.httpGet.path | string | `"/up"` |  |
+| app.octane.livenessProbe.httpGet.port | string | `"http"` |  |
+| app.octane.livenessProbe.initialDelaySeconds | int | `15` |  |
+| app.octane.livenessProbe.periodSeconds | int | `15` |  |
+| app.octane.livenessProbe.timeoutSeconds | int | `5` |  |
+| app.octane.maxRequests | int | `500` |  |
+| app.octane.port | int | `8080` |  |
+| app.octane.readinessProbe.httpGet.path | string | `"/up"` |  |
+| app.octane.readinessProbe.httpGet.port | string | `"http"` |  |
+| app.octane.readinessProbe.initialDelaySeconds | int | `5` |  |
+| app.octane.readinessProbe.periodSeconds | int | `10` |  |
+| app.octane.readinessProbe.timeoutSeconds | int | `5` |  |
+| app.octane.server | string | `"frankenphp"` |  |
+| app.octane.workers | string | `""` |  |
 | app.podAnnotations | object | `{}` |  |
 | app.podSecurityContext | object | `{}` |  |
 | app.readinessProbe.httpGet.path | string | `"/health"` |  |
@@ -115,7 +132,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.strategy.rollingUpdate.maxUnavailable | int | `0` |  |
 | app.strategy.type | string | `"RollingUpdate"` |  |
 | app.tolerations | list | `[]` |  |
-| existingEnvSecret | string | `""` | Existing Secret whose keys are exposed to all application workloads |
+| existingEnvSecret | string | `""` |  |
 | global | object | `{}` |  |
 | imagePullSecrets[0].name | string | `"regcred"` |  |
 | meiliMasterKey | string | `""` |  |
@@ -141,8 +158,8 @@ Major Changes to functions are documented with the version affected. **Before up
 | queue.extraVolumeMounts | list | `[]` |  |
 | queue.extraVolumes | list | `[]` |  |
 | queue.image.pullPolicy | string | `"Always"` |  |
-| queue.image.repository | string | `"serversideup/php:8.2-fpm-nginx"` |  |
-| queue.image.tag | string | `"1.0.0"` |  |
+| queue.image.repository | string | `"serversideup/php"` |  |
+| queue.image.tag | string | `"8.5-cli"` |  |
 | queue.initCommands[0] | string | `"php artisan optimize"` |  |
 | queue.initCommands[1] | string | `"php artisan view:cache"` |  |
 | queue.nodeSelector | object | `{}` |  |
@@ -165,6 +182,42 @@ Major Changes to functions are documented with the version affected. **Before up
 | redis.master.persistance.enabled | bool | `true` |  |
 | redis.master.persistance.size | string | `"8Gi"` |  |
 | redis.master.persistance.storageClass | string | `""` |  |
+| reverb.affinity | object | `{}` |  |
+| reverb.command | string | `"php artisan reverb:start --host=0.0.0.0 --port=8080"` |  |
+| reverb.enabled | bool | `false` |  |
+| reverb.extraVolumeMounts | list | `[]` |  |
+| reverb.extraVolumes | list | `[]` |  |
+| reverb.image.pullPolicy | string | `"Always"` |  |
+| reverb.image.repository | string | `"serversideup/php"` |  |
+| reverb.image.tag | string | `"8.5-cli"` |  |
+| reverb.ingress.annotations | object | `{}` |  |
+| reverb.ingress.enabled | bool | `false` |  |
+| reverb.ingress.hosts[0].host | string | `"reverb.example.com"` |  |
+| reverb.ingress.hosts[0].paths[0] | string | `"/"` |  |
+| reverb.ingress.ingressClassName | string | `""` |  |
+| reverb.ingress.tls | list | `[]` |  |
+| reverb.livenessProbe.initialDelaySeconds | int | `15` |  |
+| reverb.livenessProbe.periodSeconds | int | `20` |  |
+| reverb.livenessProbe.tcpSocket.port | string | `"http"` |  |
+| reverb.livenessProbe.timeoutSeconds | int | `5` |  |
+| reverb.nodeSelector | object | `{}` |  |
+| reverb.podAnnotations | object | `{}` |  |
+| reverb.podSecurityContext | object | `{}` |  |
+| reverb.readinessProbe.initialDelaySeconds | int | `5` |  |
+| reverb.readinessProbe.periodSeconds | int | `10` |  |
+| reverb.readinessProbe.tcpSocket.port | string | `"http"` |  |
+| reverb.readinessProbe.timeoutSeconds | int | `5` |  |
+| reverb.replicaCount | int | `1` |  |
+| reverb.resources | object | `{}` |  |
+| reverb.service.annotations | object | `{}` |  |
+| reverb.service.labels | object | `{}` |  |
+| reverb.service.port | int | `8080` |  |
+| reverb.service.targetPort | int | `8080` |  |
+| reverb.service.type | string | `"ClusterIP"` |  |
+| reverb.strategy.rollingUpdate.maxSurge | int | `1` |  |
+| reverb.strategy.rollingUpdate.maxUnavailable | int | `0` |  |
+| reverb.strategy.type | string | `"RollingUpdate"` |  |
+| reverb.tolerations | list | `[]` |  |
 | scheduler.affinity | object | `{}` |  |
 | scheduler.autoscaling.enabled | bool | `false` |  |
 | scheduler.autoscaling.maxReplicas | int | `100` |  |
@@ -176,8 +229,8 @@ Major Changes to functions are documented with the version affected. **Before up
 | scheduler.extraVolumeMounts | list | `[]` |  |
 | scheduler.extraVolumes | list | `[]` |  |
 | scheduler.image.pullPolicy | string | `"Always"` |  |
-| scheduler.image.repository | string | `"serversideup/php:8.2-fpm-nginx"` |  |
-| scheduler.image.tag | string | `"1.0.0"` |  |
+| scheduler.image.repository | string | `"serversideup/php"` |  |
+| scheduler.image.tag | string | `"8.5-cli"` |  |
 | scheduler.initCommands[0] | string | `"php artisan optimize"` |  |
 | scheduler.initCommands[1] | string | `"php artisan view:cache"` |  |
 | scheduler.nodeSelector | object | `{}` |  |
@@ -201,7 +254,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
 | statamic.persistence.storageClass | string | `""` |  |
-| statamic.repo.existingSecret | string | `""` | Existing Secret containing `id_key` and `known_hosts` |
+| statamic.repo.existingSecret | string | `""` |  |
 | statamic.repo.knownHosts | string | `""` |  |
 | statamic.repo.sshPrivateKey | string | `""` |  |
 | statamic.repo.sshUrl | string | `"git@github.com:org/repository.git"` |  |

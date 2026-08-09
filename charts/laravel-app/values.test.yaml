@@ -1,9 +1,5 @@
 global: {}
 
-# Existing Secret whose keys are exposed as environment variables to the app,
-# queue, scheduler, and their init/migration containers.
-existingEnvSecret: ""
-
 imagePullSecrets:
 - name: regcred
 
@@ -25,17 +21,14 @@ meiliMasterKeySecretName: "meilisearch-master-key"
 metrics:
   enabled: true
 
-webRoot: "/var/www/html"
+webRoot: "/app"
 
 statamic:
-  enabled: false
+  enabled: true
 
   # this is the repo for the content for the app. as we only map the content folders, we can also use the same repo as the app repo itself.
   repo:
     sshUrl: "git@github.com:org/repository.git"
-    # Existing Secret with `id_key` and `known_hosts` keys. When set, the chart
-    # does not render SSH credentials from Helm values.
-    existingSecret: ""
     sshPrivateKey: ""
     knownHosts: ""
 
@@ -58,7 +51,7 @@ app:
   image:
     repository: serversideup/php
     pullPolicy: Always
-    tag: "8.5-fpm-nginx"
+    tag: "8.5-frankenphp"
 
   replicaCount: 1
 
@@ -124,14 +117,12 @@ app:
 
   command:
 
-  # Run the application with Laravel Octane. app.command takes precedence when set.
   octane:
-    enabled: false
+    enabled: true
     server: frankenphp
     host: 0.0.0.0
     port: 8080
     maxRequests: 500
-    # Leave empty to let Octane choose the worker count.
     workers: ""
     livenessProbe:
       httpGet:
@@ -198,7 +189,7 @@ app:
       secretName: app.example.com
 
 queue:
-  enabled: false
+  enabled: true
 
   image:
     repository: serversideup/php
@@ -267,75 +258,12 @@ queue:
   - php artisan optimize
   - php artisan view:cache
 
-  command: php artisan horizon
-
-reverb:
-  enabled: false
-
-  image:
-    repository: serversideup/php
-    pullPolicy: Always
-    tag: "8.5-cli"
-
-  replicaCount: 1
-
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
-
-  command: php artisan reverb:start --host=0.0.0.0 --port=8080
-
-  podAnnotations: {}
-
-  podSecurityContext: {}
-
-  resources: {}
-
-  extraVolumeMounts: []
-
-  extraVolumes: []
-
-  nodeSelector: {}
-
-  affinity: {}
-
-  tolerations: []
-
-  service:
-    type: ClusterIP
-    port: 8080
-    targetPort: 8080
-    annotations: {}
-    labels: {}
-
-  livenessProbe:
-    tcpSocket:
-      port: http
-    initialDelaySeconds: 15
-    periodSeconds: 20
-    timeoutSeconds: 5
-
-  readinessProbe:
-    tcpSocket:
-      port: http
-    initialDelaySeconds: 5
-    periodSeconds: 10
-    timeoutSeconds: 5
-
-  ingress:
+  migrate:
     enabled: false
-    ingressClassName: ""
-    annotations: {}
-    hosts:
-    - host: reverb.example.com
-      paths:
-      - /
-    tls: []
+    command: "php artisan migrate --isolated --force"
 
 scheduler:
-  enabled: false
+  enabled: true
 
   image:
     repository: serversideup/php
@@ -404,14 +332,13 @@ scheduler:
   - php artisan optimize
   - php artisan view:cache
 
-  command: php artisan schedule:work
+  migrate:
+    enabled: false
+    command: "php artisan migrate --isolated --force"
 
 redis:
   # https://artifacthub.io/packages/helm/bitnami/redis
   enabled: false
-
-  image:
-    repository: bitnamilegacy/redis
 
   fullnameOverride: laravel-redis
 

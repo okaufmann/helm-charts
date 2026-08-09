@@ -123,6 +123,11 @@ spec:
             - /bin/bash
             - -c
             - {{ .Values.app.command }}
+          {{- else if .Values.app.octane.enabled }}
+          command:
+            - /bin/bash
+            - -c
+            - php artisan octane:start --server={{ .Values.app.octane.server }} --host={{ .Values.app.octane.host }} --port={{ .Values.app.octane.port }} --max-requests={{ .Values.app.octane.maxRequests }}{{ with .Values.app.octane.workers }} --workers={{ . }}{{ end }}
           {{- end }}
           volumeMounts:
           - name: runtime-cache
@@ -149,12 +154,24 @@ spec:
           {{- end }}
           ports:
             - name: http
+              {{- if .Values.app.octane.enabled }}
+              containerPort: {{ .Values.app.octane.port }}
+              {{- else }}
               containerPort: {{ .Values.app.service.targetPort }}
+              {{- end }}
               protocol: TCP
           livenessProbe:
+            {{- if .Values.app.octane.enabled }}
+            {{- toYaml .Values.app.octane.livenessProbe | nindent 12 }}
+            {{- else }}
             {{- toYaml .Values.app.livenessProbe | nindent 12 }}
+            {{- end }}
           readinessProbe:
+            {{- if .Values.app.octane.enabled }}
+            {{- toYaml .Values.app.octane.readinessProbe | nindent 12 }}
+            {{- else }}
             {{- toYaml .Values.app.readinessProbe | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.app.resources | nindent 12 }}
       {{- with .Values.app.nodeSelector }}
