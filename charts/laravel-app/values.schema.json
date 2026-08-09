@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "laravel-app values",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "global": { "type": "object" },
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "envs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "integer", "boolean"]
+      }
+    },
+    "existingEnvSecrets": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": { "name": { "type": "string", "minLength": 1 } },
+        "additionalProperties": false
+      }
+    },
+    "automountServiceAccountToken": { "type": "boolean" },
+    "podSecurityContext": { "type": "object" },
+    "containerSecurityContext": { "type": "object" },
+    "serviceAccount": {
+      "type": "object",
+      "required": ["create", "name", "annotations", "automountServiceAccountToken"],
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "type": "object" },
+        "automountServiceAccountToken": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "meiliMasterKey": { "type": "string" },
+    "meiliMasterKeyExistingSecret": { "type": "string" },
+    "meiliMasterKeySecretName": { "type": "string" },
+    "webRoot": { "type": "string", "pattern": "^/" },
+    "networkPolicy": {
+      "type": "object",
+      "required": ["enabled", "ingress", "egress"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ingress": {
+          "type": "object",
+          "required": ["namespaceSelector", "podSelector"],
+          "properties": {
+            "namespaceSelector": { "type": "object" },
+            "podSelector": { "type": "object" }
+          },
+          "additionalProperties": false
+        },
+        "egress": {
+          "type": "object",
+          "required": ["additionalRules"],
+          "properties": {
+            "additionalRules": { "type": "array", "items": { "type": "object" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "statamic": { "$ref": "#/definitions/statamic" },
+    "app": { "$ref": "#/definitions/app" },
+    "queue": { "$ref": "#/definitions/scalableWorker" },
+    "reverb": { "$ref": "#/definitions/reverb" },
+    "scheduler": { "$ref": "#/definitions/scheduler" },
+    "valkey": { "type": "object" },
+    "meilisearch": { "type": "object" }
+  },
+  "required": [
+    "envs",
+    "existingEnvSecrets",
+    "automountServiceAccountToken",
+    "podSecurityContext",
+    "containerSecurityContext",
+    "serviceAccount",
+    "webRoot",
+    "statamic",
+    "app",
+    "queue",
+    "reverb",
+    "scheduler",
+    "networkPolicy"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "statamic": {
+            "properties": { "enabled": { "const": true } },
+            "required": ["enabled"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "statamic": {
+            "properties": {
+              "repo": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "existingSecret": { "type": "string", "minLength": 1 }
+                    },
+                    "required": ["existingSecret"]
+                  },
+                  {
+                    "properties": {
+                      "sshPrivateKey": { "type": "string", "minLength": 1 },
+                      "knownHosts": { "type": "string", "minLength": 1 }
+                    },
+                    "required": ["sshPrivateKey", "knownHosts"]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {
+              "meiliMasterKey": { "type": "string", "minLength": 1 }
+            },
+            "required": ["meiliMasterKey"]
+          },
+          {
+            "properties": {
+              "meiliMasterKeyExistingSecret": { "type": "string", "minLength": 1 }
+            },
+            "required": ["meiliMasterKeyExistingSecret"]
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "meilisearch": {
+            "properties": {
+              "auth": {
+                "properties": {
+                  "existingMasterKeySecret": { "type": "string", "minLength": 1 }
+                },
+                "required": ["existingMasterKeySecret"]
+              }
+            },
+            "required": ["auth"]
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "image": {
+      "type": "object",
+      "required": ["repository", "pullPolicy", "tag"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "tag": { "type": "string", "minLength": 1 },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "autoscaling": {
+      "type": "object",
+      "required": ["enabled", "minReplicas", "maxReplicas"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minReplicas": { "type": "integer", "minimum": 1 },
+        "maxReplicas": { "type": "integer", "minimum": 1 },
+        "targetCPUUtilizationPercentage": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 100
+        },
+        "targetMemoryUtilizationPercentage": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 100
+        },
+        "behavior": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "pdb": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minAvailable": { "type": ["integer", "string", "null"] },
+        "maxUnavailable": { "type": ["integer", "string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "required": ["type", "port", "targetPort"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+        },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "targetPort": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "nodePort": { "type": ["integer", "null"], "minimum": 30000, "maximum": 32767 },
+        "annotations": { "type": "object" },
+        "labels": { "type": "object" },
+        "externalTrafficPolicy": { "type": "string", "enum": ["Cluster", "Local"] },
+        "loadBalancerIP": { "type": "string" },
+        "loadBalancerSourceRanges": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "commonWorkloadProperties": {
+      "enabled": { "type": "boolean" },
+      "image": { "$ref": "#/definitions/image" },
+      "replicaCount": { "type": "integer", "minimum": 1 },
+      "resources": { "type": "object" },
+      "nodeSelector": { "type": "object" },
+      "tolerations": { "type": "array", "items": { "type": "object" } },
+      "podAnnotations": { "type": "object" },
+      "podSecurityContext": { "type": "object" },
+      "containerSecurityContext": { "type": "object" },
+      "extraVolumeMounts": { "type": "array", "items": { "type": "object" } },
+      "extraVolumes": { "type": "array", "items": { "type": "object" } },
+      "affinity": { "type": "object" },
+      "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+      "priorityClassName": { "type": "string" },
+      "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+      "revisionHistoryLimit": { "type": "integer", "minimum": 0 },
+      "runtimeCache": {
+        "type": "object",
+        "required": ["sizeLimit"],
+        "properties": {
+          "sizeLimit": { "type": "string", "pattern": "^[0-9]+([EPTGMK]i?|m)?$" }
+        },
+        "additionalProperties": false
+      },
+      "lifecycle": { "type": "object" },
+      "startupProbe": { "type": ["object", "null"] },
+      "livenessProbe": { "type": ["object", "null"] },
+      "readinessProbe": { "type": ["object", "null"] },
+      "initCommands": { "type": "array", "items": { "type": "string" } },
+      "command": { "type": ["string", "null"] },
+      "strategy": { "type": "object" }
+    },
+    "app": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "image",
+        "replicaCount",
+        "autoscaling",
+        "podDisruptionBudget",
+        "service",
+        "migrate",
+        "runtimeCache"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/definitions/image" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "autoscaling": { "$ref": "#/definitions/autoscaling" },
+        "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
+        "strategy": { "type": "object" },
+        "nodeSelector": { "type": "object" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "podAnnotations": { "type": "object" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "resources": { "type": "object" },
+        "extraVolumeMounts": { "type": "array", "items": { "type": "object" } },
+        "extraVolumes": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+        "revisionHistoryLimit": { "type": "integer", "minimum": 0 },
+        "runtimeCache": {
+          "type": "object",
+          "required": ["sizeLimit"],
+          "properties": { "sizeLimit": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "lifecycle": { "type": "object" },
+        "initCommands": { "type": "array", "items": { "type": "string" } },
+        "command": { "type": ["string", "null"] },
+        "octane": {
+          "type": "object",
+          "required": ["enabled", "server", "host", "port", "maxRequests"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "server": { "type": "string", "enum": ["frankenphp", "roadrunner", "swoole"] },
+            "host": { "type": "string" },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "maxRequests": { "type": "integer", "minimum": 1 },
+            "workers": { "type": ["integer", "string"] },
+            "livenessProbe": { "type": "object" },
+            "readinessProbe": { "type": "object" }
+          },
+          "additionalProperties": false
+        },
+        "migrate": {
+          "type": "object",
+          "required": ["enabled", "mode", "command"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "mode": { "type": "string", "enum": ["initContainer", "hook"] },
+            "command": { "type": "string", "minLength": 1 },
+            "ttlSecondsAfterFinished": { "type": "integer", "minimum": 0 },
+            "backoffLimit": { "type": "integer", "minimum": 0 },
+            "resources": { "type": "object" }
+          },
+          "additionalProperties": false
+        },
+        "service": { "$ref": "#/definitions/service" },
+        "serviceMonitor": { "type": "object" },
+        "startupProbe": { "type": ["object", "null"] },
+        "livenessProbe": { "type": ["object", "null"] },
+        "readinessProbe": { "type": ["object", "null"] },
+        "ingress": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "scalableWorker": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "image",
+        "replicaCount",
+        "autoscaling",
+        "podDisruptionBudget",
+        "runtimeCache"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/definitions/image" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "autoscaling": { "$ref": "#/definitions/autoscaling" },
+        "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
+        "strategy": { "type": "object" },
+        "resources": { "type": "object" },
+        "nodeSelector": { "type": "object" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "podAnnotations": { "type": "object" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "extraVolumeMounts": { "type": "array", "items": { "type": "object" } },
+        "extraVolumes": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+        "revisionHistoryLimit": { "type": "integer", "minimum": 0 },
+        "runtimeCache": { "type": "object" },
+        "lifecycle": { "type": "object" },
+        "initCommands": { "type": "array", "items": { "type": "string" } },
+        "command": { "type": ["string", "null"] },
+        "startupProbe": { "type": ["object", "null"] },
+        "livenessProbe": { "type": ["object", "null"] },
+        "readinessProbe": { "type": ["object", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "reverb": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "image",
+        "replicaCount",
+        "autoscaling",
+        "podDisruptionBudget",
+        "service",
+        "runtimeCache"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/definitions/image" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "autoscaling": { "$ref": "#/definitions/autoscaling" },
+        "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
+        "strategy": { "type": "object" },
+        "command": { "type": "string" },
+        "podAnnotations": { "type": "object" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "resources": { "type": "object" },
+        "extraVolumeMounts": { "type": "array", "items": { "type": "object" } },
+        "extraVolumes": { "type": "array", "items": { "type": "object" } },
+        "nodeSelector": { "type": "object" },
+        "affinity": { "type": "object" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+        "revisionHistoryLimit": { "type": "integer", "minimum": 0 },
+        "runtimeCache": { "type": "object" },
+        "lifecycle": { "type": "object" },
+        "service": { "$ref": "#/definitions/service" },
+        "startupProbe": { "type": ["object", "null"] },
+        "livenessProbe": { "type": ["object", "null"] },
+        "readinessProbe": { "type": ["object", "null"] },
+        "ingress": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "scheduler": {
+      "type": "object",
+      "required": ["enabled", "image", "runtimeCache"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/definitions/image" },
+        "resources": { "type": "object" },
+        "nodeSelector": { "type": "object" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "podAnnotations": { "type": "object" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "extraVolumeMounts": { "type": "array", "items": { "type": "object" } },
+        "extraVolumes": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+        "revisionHistoryLimit": { "type": "integer", "minimum": 0 },
+        "runtimeCache": { "type": "object" },
+        "lifecycle": { "type": "object" },
+        "initCommands": { "type": "array", "items": { "type": "string" } },
+        "command": { "type": ["string", "null"] },
+        "startupProbe": { "type": ["object", "null"] },
+        "livenessProbe": { "type": ["object", "null"] },
+        "readinessProbe": { "type": ["object", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "statamic": {
+      "type": "object",
+      "required": ["enabled", "repo", "git", "schedule", "persistence"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "repo": {
+          "type": "object",
+          "required": ["sshUrl", "existingSecret", "sshPrivateKey", "knownHosts"],
+          "properties": {
+            "sshUrl": { "type": "string", "minLength": 1 },
+            "existingSecret": { "type": "string" },
+            "sshPrivateKey": { "type": "string" },
+            "knownHosts": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "git": {
+          "type": "object",
+          "required": ["user", "email", "message", "push", "image"],
+          "properties": {
+            "user": { "type": "string", "minLength": 1 },
+            "email": { "type": "string", "minLength": 3 },
+            "message": { "type": "string", "minLength": 1 },
+            "push": { "type": "boolean" },
+            "image": { "$ref": "#/definitions/image" },
+            "resources": { "type": "object" },
+            "podSecurityContext": { "type": "object" },
+            "containerSecurityContext": { "type": "object" },
+            "nodeSelector": { "type": "object" },
+            "tolerations": { "type": "array", "items": { "type": "object" } },
+            "affinity": { "type": "object" },
+            "ttlSecondsAfterFinished": { "type": "integer", "minimum": 0 },
+            "backoffLimit": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "schedule": { "type": "string", "minLength": 1 },
+        "persistence": {
+          "type": "object",
+          "required": ["accessMode", "size", "storageClass"],
+          "properties": {
+            "accessMode": {
+              "type": "string",
+              "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"]
+            },
+            "size": { "type": "string", "minLength": 2 },
+            "storageClass": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

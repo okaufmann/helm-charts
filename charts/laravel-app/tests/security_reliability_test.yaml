@@ -1,0 +1,57 @@
+suite: security and reliability resources
+templates:
+- templates/configmap-envs.yaml
+- templates/migrate-job.yaml
+- templates/networkpolicy.yaml
+- templates/pdb.yaml
+tests:
+- it: renders non-sensitive environment values in the ConfigMap
+  template: templates/configmap-envs.yaml
+  set:
+    envs:
+      APP_ENV: production
+      LOG_STDERR_FORMATTER: Monolog\Formatter\JsonFormatter
+  asserts:
+  - equal:
+      path: data.APP_ENV
+      value: production
+  - equal:
+      path: data.LOG_STDERR_FORMATTER
+      value: Monolog\Formatter\JsonFormatter
+- it: renders a single migration hook job
+  template: templates/migrate-job.yaml
+  set:
+    app.migrate.mode: hook
+    envs.APP_ENV: production
+  asserts:
+  - isKind:
+      of: Job
+  - equal:
+      path: metadata.annotations["helm.sh/hook"]
+      value: pre-install,pre-upgrade
+  - equal:
+      path: spec.template.spec.containers[0].env[0].name
+      value: APP_ENV
+- it: renders a default-deny application network policy
+  template: templates/networkpolicy.yaml
+  set:
+    networkPolicy.enabled: true
+  asserts:
+  - isKind:
+      of: NetworkPolicy
+  - contains:
+      path: spec.policyTypes
+      content: Ingress
+  - contains:
+      path: spec.policyTypes
+      content: Egress
+- it: renders the app disruption budget
+  template: templates/pdb.yaml
+  set:
+    app.podDisruptionBudget.enabled: true
+  asserts:
+  - isKind:
+      of: PodDisruptionBudget
+  - equal:
+      path: spec.minAvailable
+      value: 1

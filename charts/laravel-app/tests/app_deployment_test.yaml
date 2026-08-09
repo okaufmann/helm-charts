@@ -1,0 +1,38 @@
+suite: app deployment
+templates:
+- templates/app/deployment.yaml
+- templates/configmap-envs.yaml
+- templates/meilisearch-masterkey-secret.yaml
+tests:
+- it: renders restricted security defaults
+  template: templates/app/deployment.yaml
+  asserts:
+  - isKind:
+      of: Deployment
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+  - equal:
+      path: spec.template.spec.securityContext.runAsNonRoot
+      value: true
+  - equal:
+      path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+      value: false
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.drop
+      content: ALL
+- it: safely renders shell metacharacters in a custom command
+  template: templates/app/deployment.yaml
+  set:
+    app.command: "php artisan test --filter='value: #1'"
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args[0]
+      value: "php artisan test --filter='value: #1'"
+- it: omits replicas when autoscaling is enabled
+  template: templates/app/deployment.yaml
+  set:
+    app.autoscaling.enabled: true
+  asserts:
+  - notExists:
+      path: spec.replicas

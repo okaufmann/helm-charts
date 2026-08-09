@@ -1,0 +1,23 @@
+suite: horizontal pod autoscaling
+templates:
+- templates/hpa.yaml
+tests:
+- it: renders an autoscaling v2 HPA for the app
+  set:
+    app.autoscaling.enabled: true
+  asserts:
+  - isKind:
+      of: HorizontalPodAutoscaler
+  - equal:
+      path: apiVersion
+      value: autoscaling/v2
+  - equal:
+      path: spec.scaleTargetRef.name
+      value: RELEASE-NAME-laravel-app-webapp
+  - equal:
+      path: spec.metrics[0].resource.target.averageUtilization
+      value: 80
+- it: renders no HPA by default
+  asserts:
+  - hasDocuments:
+      count: 0

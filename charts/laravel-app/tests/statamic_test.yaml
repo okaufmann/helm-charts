@@ -1,0 +1,40 @@
+suite: statamic git workloads
+templates:
+- templates/statamic/git-scripts-configmap.yaml
+- templates/statamic/git-pull-job.yaml
+- templates/statamic/git-commit-cronjob.yaml
+set:
+  statamic.enabled: true
+  statamic.repo.existingSecret: statamic-ssh
+tests:
+- it: keeps user-controlled Git values out of the shell script
+  template: templates/statamic/git-scripts-configmap.yaml
+  set:
+    statamic.git.message: "content: \"quoted\"; echo unsafe"
+  asserts:
+  - notMatchRegex:
+      path: data["commit.sh"]
+      pattern: "echo unsafe"
+  - matchRegex:
+      path: data["commit.sh"]
+      pattern: "\\$GIT_MESSAGE"
+- it: runs the clone job as the shared non-root user
+  template: templates/statamic/git-pull-job.yaml
+  asserts:
+  - equal:
+      path: spec.template.spec.securityContext.runAsUser
+      value: 33
+  - equal:
+      path: spec.template.spec.containers[0].image
+      value: alpine/git:2.49.1
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+- it: passes the commit message as an environment value
+  template: templates/statamic/git-commit-cronjob.yaml
+  set:
+    statamic.git.message: "content: \"quoted\"; echo safe"
+  asserts:
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env[2].value
+      value: "content: \"quoted\"; echo safe"

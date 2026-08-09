@@ -1,0 +1,37 @@
+suite: service and helm test
+templates:
+- templates/app/service.yaml
+- templates/test-connection.yaml
+tests:
+- it: applies optional service settings
+  template: templates/app/service.yaml
+  set:
+    app.service.type: NodePort
+    app.service.nodePort: 32080
+    app.service.externalTrafficPolicy: Local
+    app.service.annotations:
+      example.com/owner: platform
+    app.service.labels:
+      example.com/tier: public
+  asserts:
+  - equal:
+      path: spec.ports[0].nodePort
+      value: 32080
+  - equal:
+      path: spec.externalTrafficPolicy
+      value: Local
+  - equal:
+      path: metadata.annotations["example.com/owner"]
+      value: platform
+  - equal:
+      path: metadata.labels["example.com/tier"]
+      value: public
+- it: targets the actual app service from the Helm test
+  template: templates/test-connection.yaml
+  asserts:
+  - equal:
+      path: spec.containers[0].args[1]
+      value: http://RELEASE-NAME-laravel-app-app-service:80/up
+  - equal:
+      path: spec.automountServiceAccountToken
+      value: false

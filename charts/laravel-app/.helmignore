@@ -21,3 +21,9 @@
 .idea/
 *.tmproj
 .vscode/
+output/
+output.txt
+Makefile
+values.test.yaml
+README.md.gotmpl
+tests/
