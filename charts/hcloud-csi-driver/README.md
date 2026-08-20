@@ -1,43 +1,16 @@
 # Helm Chart for hcloud-csi-driver
 
-This is a community Helm Chart for installing the hcloud-csi-driver in your Hetzner Cloud Kubernetes cluster.
-The original sources of the hcloud-csi-driver can be found at
-[https://github.com/hetznercloud/csi-driver](https://github.com/hetznercloud/csi-driver).
+> **DEPRECATED:** This community chart is no longer maintained and should not be used for new installations.
+> Please use the official Hetzner Cloud CSI Helm chart from [https://charts.hetzner.cloud](https://charts.hetzner.cloud) instead.
 
-**Please note**: This project is a community project from a Hetzner customer, published for use by other Hetzner customers.
-Neither the author nor this project is affiliated with Hetzner Online GmbH.
-
-## Installation
-
-### Add Helm Repository
+Hetzner now publishes an official chart for the CSI driver. Install that one:
 
 ```
-helm repo add olidev https://helm-charts.oli-the.dev
-helm repo update
+helm repo add hcloud https://charts.hetzner.cloud
+helm repo update hcloud
+helm install hcloud-csi hcloud/hcloud-csi -n kube-system
 ```
 
-### Install to Kubernetes
+See the [official CSI driver documentation](https://github.com/hetznercloud/csi-driver) for requirements and configuration.
 
-In order to install the hcloud-csi-driver successfully, you have to provide a [Hetzner API Token](https://wiki.hetzner.de/index.php/API_access_token), which will reside in a Secret resource within Kubernetes.
-For installing this Helm Chart, you can either reuse an existing secret or create a new one.
-
-  * Install without reusing an existing secret:
-    ```
-    helm install -n kube-system hcloud-csi-driver olidev/hcloud-csi-driver \
-      --set secret.hcloudApiToken=<HCLOUD API TOKEN>
-    ```
-  * Install reusing an existing secret:
-    ```
-    helm install -n kube-system hcloud-csi-driver olidev/hcloud-csi-driver \
-      --set secret.existingSecretName=<EXISTING SECRET NAME>
-    ```
-
-
-## Configuration
-
-To see all available configuration options for a deployment using this helm chart,
-please check the [`values.yaml`](https://github.com/okaufmann/helm-charts/tree/main/charts/hcloud-csi-driver/values.yaml) file.
-
-## Test
-
-    helm template --dry-run --skip-crds -f values.yaml hcloud-csi-driver .
+If you are still running this community chart, migrate to `hcloud/hcloud-csi` and then uninstall this release.

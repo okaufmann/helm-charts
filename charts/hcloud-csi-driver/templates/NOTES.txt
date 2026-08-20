@@ -1,7 +1,10 @@
-Thank you for installing {{ .Chart.Name }}!
+DEPRECATED: {{ .Chart.Name }} is no longer maintained.
 
-In case of problems regarding this Helm Chart please help us to improve:
-  https://github.com/okaufmann/helm-charts
+Please migrate to the official Hetzner Cloud CSI Helm chart:
+  helm repo add hcloud https://charts.hetzner.cloud
+  helm repo update hcloud
+  helm install hcloud-csi hcloud/hcloud-csi -n kube-system
 
-In case of general problems with Hetzner Cloud csi-driver you can get help here:
+Documentation:
+  https://charts.hetzner.cloud
   https://github.com/hetznercloud/csi-driver
