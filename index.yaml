@@ -249,6 +249,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Pass --log-level to Octane so FrankenPHP does not rewrite application logs to "unknown error".
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-20T09:26:46.636507907Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 94a13556600449dbca6643f7ac799df0130529f1a0f90697d392aaaa53a95d6c
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.2/laravel-app-2.0.2.tgz
+    version: 2.0.2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Pin the default application UID and GID so Kubernetes can enforce non-root execution.
         - kind: changed
           description: Secure application workloads with restricted Pod Security Standard defaults.
@@ -1880,4 +1909,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-09T23:26:27.47051983Z"
+generated: "2026-08-20T09:26:46.636875827Z"
