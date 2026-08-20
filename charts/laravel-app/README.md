@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.2](https://img.shields.io/badge/Version-2.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -153,13 +153,13 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.nodeSelector | object | `{}` |  |
 | app.octane.enabled | bool | `false` |  |
 | app.octane.host | string | `"0.0.0.0"` |  |
-| app.octane.logLevel | string | `"info"` |  |
 | app.octane.livenessProbe.failureThreshold | int | `5` |  |
 | app.octane.livenessProbe.httpGet.path | string | `"/up"` |  |
 | app.octane.livenessProbe.httpGet.port | string | `"http"` |  |
 | app.octane.livenessProbe.initialDelaySeconds | int | `15` |  |
 | app.octane.livenessProbe.periodSeconds | int | `15` |  |
 | app.octane.livenessProbe.timeoutSeconds | int | `5` |  |
+| app.octane.logLevel | string | `"info"` |  |
 | app.octane.maxRequests | int | `500` |  |
 | app.octane.port | int | `8080` |  |
 | app.octane.readinessProbe.httpGet.path | string | `"/up"` |  |
@@ -352,7 +352,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.git.email | string | `"statamic@example.com"` |  |
 | statamic.git.image.pullPolicy | string | `"IfNotPresent"` |  |
 | statamic.git.image.repository | string | `"alpine/git"` |  |
-| statamic.git.image.tag | string | `"2.49.1"` |  |
+| statamic.git.image.tag | string | `"2.54.0"` |  |
 | statamic.git.message | string | `"Update from production [ci skip]"` |  |
 | statamic.git.nodeSelector | object | `{}` |  |
 | statamic.git.podSecurityContext.fsGroup | int | `33` |  |
