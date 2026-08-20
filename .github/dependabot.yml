@@ -3,7 +3,6 @@ version: 2
 updates:
   - package-ecosystem: "helm"
     directories:
-      - "/charts/hcloud-csi-driver"
       - "/charts/laravel-app"
     schedule:
       interval: "weekly"
