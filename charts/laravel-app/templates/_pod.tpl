@@ -102,7 +102,9 @@ containers:
     {{- else if and (eq $component "app") $values.octane.enabled }}
     command: ["/bin/sh", "-c"]
     args:
-      - {{ printf "php artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v%s" $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests (ternary (printf " --workers=%v" $values.octane.workers) "" (not (empty $values.octane.workers))) | quote }}
+      {{- $workers := ternary (printf " --workers=%v" $values.octane.workers) "" (not (empty $values.octane.workers)) }}
+      {{- $logLevel := default "info" $values.octane.logLevel }}
+      - {{ printf "php artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v --log-level=%s%s" $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests $logLevel $workers | quote }}
     {{- end }}
     volumeMounts:
       - name: runtime-cache

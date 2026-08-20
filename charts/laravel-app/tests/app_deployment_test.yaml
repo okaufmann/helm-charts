@@ -34,6 +34,23 @@ tests:
   - equal:
       path: spec.template.spec.containers[0].args[0]
       value: "php artisan test --filter='value: #1'"
+- it: starts octane with --log-level so FrankenPHP keeps the real log message
+  template: templates/app/deployment.yaml
+  set:
+    app.octane.enabled: true
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args[0]
+      value: "php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080 --max-requests=500 --log-level=info"
+- it: honors a custom octane log level
+  template: templates/app/deployment.yaml
+  set:
+    app.octane.enabled: true
+    app.octane.logLevel: debug
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args[0]
+      value: "php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080 --max-requests=500 --log-level=debug"
 - it: omits replicas when autoscaling is enabled
   template: templates/app/deployment.yaml
   set:

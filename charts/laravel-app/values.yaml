@@ -209,6 +209,8 @@ app:
     maxRequests: 500
     # Leave empty to let Octane choose the worker count.
     workers: ""
+    # FrankenPHP rewrites stderr without this flag to "unknown error".
+    logLevel: info
     livenessProbe:
       httpGet:
         path: /up

@@ -13,13 +13,7 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: fixed
-      description: Pin the default application UID and GID so Kubernetes can enforce non-root execution.
-    - kind: changed
-      description: Secure application workloads with restricted Pod Security Standard defaults.
-    - kind: added
-      description: Add autoscaling, disruption budgets, network policies, schema validation, and chart tests.
-    - kind: fixed
-      description: Fix ignored pod and Service values, shell command rendering, and the Helm connection test.
+      description: Pass --log-level to Octane so FrankenPHP does not rewrite application logs to "unknown error".
   artifacthub.io/containsSecurityUpdates: "true"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -33,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.1"
+version: "2.0.2"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

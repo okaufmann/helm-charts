@@ -153,6 +153,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | app.nodeSelector | object | `{}` |  |
 | app.octane.enabled | bool | `false` |  |
 | app.octane.host | string | `"0.0.0.0"` |  |
+| app.octane.logLevel | string | `"info"` |  |
 | app.octane.livenessProbe.failureThreshold | int | `5` |  |
 | app.octane.livenessProbe.httpGet.path | string | `"/up"` |  |
 | app.octane.livenessProbe.httpGet.port | string | `"http"` |  |
