@@ -12,9 +12,9 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: fixed
-      description: Pass --log-level to Octane so FrankenPHP does not rewrite application logs to "unknown error".
-  artifacthub.io/containsSecurityUpdates: "true"
+    - kind: changed
+      description: Decouple the chart unit tests from the Dependabot-managed alpine/git tag and refresh the generated README.
+  artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.2"
+version: "2.0.3"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
