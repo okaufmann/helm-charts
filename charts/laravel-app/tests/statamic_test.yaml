@@ -20,13 +20,16 @@ tests:
       pattern: "\\$GIT_MESSAGE"
 - it: runs the clone job as the shared non-root user
   template: templates/statamic/git-pull-job.yaml
+  set:
+    statamic.git.image.repository: example/git
+    statamic.git.image.tag: "1.2.3"
   asserts:
   - equal:
       path: spec.template.spec.securityContext.runAsUser
       value: 33
   - equal:
       path: spec.template.spec.containers[0].image
-      value: alpine/git:2.49.1
+      value: example/git:1.2.3
   - equal:
       path: spec.template.spec.automountServiceAccountToken
       value: false
