@@ -248,6 +248,35 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Decouple the chart unit tests from the Dependabot-managed alpine/git tag and refresh the generated README.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-20T09:53:09.528534081Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: d36475890078c99e0cec9557985f054c7c0261a4a821781a1e24f05e7376b881
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.3/laravel-app-2.0.3.tgz
+    version: 2.0.3
+  - annotations:
+      artifacthub.io/changes: |
         - kind: fixed
           description: Pass --log-level to Octane so FrankenPHP does not rewrite application logs to "unknown error".
       artifacthub.io/containsSecurityUpdates: "true"
@@ -1909,4 +1938,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-20T09:26:46.636875827Z"
+generated: "2026-08-20T09:53:09.528766726Z"
