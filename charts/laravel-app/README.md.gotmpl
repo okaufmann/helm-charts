@@ -104,6 +104,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Health endpoint | 2.0.0 | App probes now use Laravel's `/up` endpoint and include a startup probe. Override probe values for older applications. | |
 | Scheduler safety | 2.0.0 | Scheduler replica/autoscaling values were removed; it always runs one replica with a `Recreate` strategy. | |
 | Statamic Git image | 2.0.0 | Untagged `bitnamilegacy/git` was replaced by pinned, configurable `statamic.git.image` values. | |
+| Statamic Git branch | 2.0.4 | `statamic.repo.branch` selects the clone/pull ref. Dirty PVC trees skip pull so in-cluster edits survive upgrades. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 {{/*

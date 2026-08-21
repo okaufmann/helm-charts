@@ -11,10 +11,37 @@ data:
     #!/bin/sh
     set -eu
 
+    git_safe() {
+      git -C /data -c safe.directory=/data "$@"
+    }
+
     if [ ! -d /data/.git ]; then
-      git clone "$REPO_URL" /data
+      if [ -n "${REPO_BRANCH:-}" ]; then
+        git clone --branch "$REPO_BRANCH" --single-branch "$REPO_URL" /data
+      else
+        git clone "$REPO_URL" /data
+      fi
+      exit 0
+    fi
+
+    git_safe fetch origin
+
+    if [ -n "${REPO_BRANCH:-}" ]; then
+      current="$(git_safe rev-parse --abbrev-ref HEAD)"
+      if [ "$current" != "$REPO_BRANCH" ]; then
+        if [ -z "$(git_safe status --porcelain)" ]; then
+          git_safe checkout -B "$REPO_BRANCH" "origin/$REPO_BRANCH"
+        else
+          echo "Working tree is dirty on ${current}; not switching to ${REPO_BRANCH}."
+          exit 0
+        fi
+      fi
+    fi
+
+    if [ -z "$(git_safe status --porcelain)" ]; then
+      git_safe pull --rebase
     else
-      git -C /data -c safe.directory=/data pull --rebase
+      echo "Working tree is dirty; skipping pull to preserve local Statamic changes."
     fi
   commit.sh: |-
     #!/bin/sh

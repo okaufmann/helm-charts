@@ -23,6 +23,7 @@ tests:
   set:
     statamic.git.image.repository: example/git
     statamic.git.image.tag: "1.2.3"
+    statamic.repo.branch: develop
   asserts:
   - equal:
       path: spec.template.spec.securityContext.runAsUser
@@ -33,6 +34,21 @@ tests:
   - equal:
       path: spec.template.spec.automountServiceAccountToken
       value: false
+  - equal:
+      path: spec.template.spec.containers[0].env[1].name
+      value: REPO_BRANCH
+  - equal:
+      path: spec.template.spec.containers[0].env[1].value
+      value: develop
+- it: clones a configured branch and skips pull on a dirty tree
+  template: templates/statamic/git-scripts-configmap.yaml
+  asserts:
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "git clone --branch \"\\$REPO_BRANCH\" --single-branch"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "skipping pull to preserve local Statamic changes"
 - it: passes the commit message as an environment value
   template: templates/statamic/git-commit-cronjob.yaml
   set:

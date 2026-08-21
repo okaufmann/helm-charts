@@ -61,6 +61,8 @@ spec:
         env:
         - name: REPO_URL
           value: {{ .Values.statamic.repo.sshUrl | quote }}
+        - name: REPO_BRANCH
+          value: {{ .Values.statamic.repo.branch | default "" | quote }}
         - name: GIT_SSH_COMMAND
           value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
         volumeMounts:

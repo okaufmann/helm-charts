@@ -53,6 +53,8 @@ statamic:
   # this is the repo for the content for the app. as we only map the content folders, we can also use the same repo as the app repo itself.
   repo:
     sshUrl: "git@github.com:org/repository.git"
+    # Empty uses the remote default branch. Staging should set develop.
+    branch: ""
     # Existing Secret with `id_key` and `known_hosts` keys. When set, the chart
     # does not render SSH credentials from Helm values.
     existingSecret: ""

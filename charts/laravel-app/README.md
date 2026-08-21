@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 2.0.3](https://img.shields.io/badge/Version-2.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.4](https://img.shields.io/badge/Version-2.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -107,6 +107,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Health endpoint | 2.0.0 | App probes now use Laravel's `/up` endpoint and include a startup probe. Override probe values for older applications. | |
 | Scheduler safety | 2.0.0 | Scheduler replica/autoscaling values were removed; it always runs one replica with a `Recreate` strategy. | |
 | Statamic Git image | 2.0.0 | Untagged `bitnamilegacy/git` was replaced by pinned, configurable `statamic.git.image` values. | |
+| Statamic Git branch | 2.0.4 | `statamic.repo.branch` selects the clone/pull ref. Dirty PVC trees skip pull so in-cluster edits survive upgrades. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values
@@ -369,6 +370,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |
 | statamic.persistence.storageClass | string | `""` |  |
+| statamic.repo.branch | string | `""` |  |
 | statamic.repo.existingSecret | string | `""` |  |
 | statamic.repo.knownHosts | string | `""` |  |
 | statamic.repo.sshPrivateKey | string | `""` |  |
