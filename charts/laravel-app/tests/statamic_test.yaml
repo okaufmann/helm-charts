@@ -57,3 +57,17 @@ tests:
   - equal:
       path: spec.jobTemplate.spec.template.spec.containers[0].env[2].value
       value: "content: \"quoted\"; echo safe"
+- it: omits the commit CronJob when git push is disabled
+  template: templates/statamic/git-commit-cronjob.yaml
+  set:
+    statamic.git.push: false
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: still renders the commit CronJob when git push is left at the default
+  template: templates/statamic/git-commit-cronjob.yaml
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: CronJob
