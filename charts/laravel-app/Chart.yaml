@@ -13,7 +13,7 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: fixed
-      description: Copy generated passwd/group into an emptyDir before bind-mounting them over /etc. ConfigMap file mounts are recursively read-only and runc rejects that on a file.
+      description: Stop running the Statamic clone Job as a pre-upgrade hook. Hooks run before the release manifest is applied, so it mounted the previous revision's scripts ConfigMap and SSH Secret.
   artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.7"
+version: "2.0.8"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

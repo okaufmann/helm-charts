@@ -2,20 +2,15 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "laravel-app.fullname" . }}-git-{{ ternary "pull" (printf "clone-%v" .Release.Revision) .Release.IsUpgrade }}
+  # Revision-suffixed because Job specs are immutable. This is deliberately
+  # not a Helm hook: hooks run before the release manifest is applied, so the
+  # Job would mount the previous revision's scripts ConfigMap and SSH Secret.
+  name: {{ include "laravel-app.fullname" . }}-git-clone-{{ .Release.Revision }}
   labels:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: statamic
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
-    {{- if .Release.IsUpgrade }}
-    # The PVC already exists on upgrades, so Helm can safely pull content
-    # before updating workloads. On first install this remains a normal Job
-    # because pre-install hooks cannot mount a PVC that has not been created.
-    helm.sh/hook: pre-upgrade
-    helm.sh/hook-weight: "-1"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    {{- end }}
 spec:
   backoffLimit: {{ .Values.statamic.git.backoffLimit }}
   ttlSecondsAfterFinished: {{ .Values.statamic.git.ttlSecondsAfterFinished }}
@@ -51,9 +46,6 @@ spec:
         configMap:
           name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
           defaultMode: 0550
-      {{- include "laravel-app.statamicGitNssVolume" . | nindent 6 }}
-      initContainers:
-        {{- include "laravel-app.statamicGitNssInit" . | nindent 6 }}
       containers:
       - name: git-clone
         image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"

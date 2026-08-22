@@ -3,6 +3,7 @@ templates:
 - templates/statamic/git-scripts-configmap.yaml
 - templates/statamic/git-pull-job.yaml
 - templates/statamic/git-commit-cronjob.yaml
+- templates/statamic/ssh-secret.yaml
 set:
   statamic.enabled: true
   statamic.repo.existingSecret: statamic-ssh
@@ -47,17 +48,9 @@ tests:
       path: spec.template.spec.containers[0].env[3].value
       value: /tmp
   - contains:
-      path: spec.template.spec.volumes
-      content:
-        name: nss
-        emptyDir: {}
-  - equal:
-      path: spec.template.spec.initContainers[0].name
-      value: nss
-  - contains:
       path: spec.template.spec.containers[0].volumeMounts
       content:
-        name: nss
+        name: scripts
         mountPath: /etc/passwd
         subPath: passwd
 - it: mounts a passwd row for the git uid so alpine/git can SSH
@@ -72,6 +65,14 @@ tests:
   - matchRegex:
       path: data["ssh-env.sh"]
       pattern: "chmod 0400"
+- it: keeps the clone Job in the release manifest so it sees current scripts
+  template: templates/statamic/git-pull-job.yaml
+  asserts:
+  - isNull:
+      path: metadata.annotations["helm.sh/hook"]
+  - matchRegex:
+      path: metadata.name
+      pattern: "-git-clone-[0-9]+$"
 - it: clones a configured branch and skips pull on a dirty tree
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:

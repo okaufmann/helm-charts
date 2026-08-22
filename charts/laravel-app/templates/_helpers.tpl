@@ -103,39 +103,11 @@ www-data (33); the job mounts a generated passwd so OpenSSH can run.
 {{- dig "runAsGroup" 33 (.Values.statamic.git.podSecurityContext | default dict) -}}
 {{- end }}
 
-{{/*
-ConfigMap file mounts are recursively remounted read-only. runc rejects that
-on a file such as /etc/passwd ("not a directory"). Copy the generated NSS
-files into an emptyDir, then bind-mount those regular files.
-*/}}
-{{- define "laravel-app.statamicGitNssVolume" -}}
-- name: nss
-  emptyDir: {}
-{{- end }}
-
-{{- define "laravel-app.statamicGitNssInit" -}}
-- name: nss
-  image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"
-  imagePullPolicy: {{ .Values.statamic.git.image.pullPolicy }}
-  securityContext:
-    {{- toYaml .Values.statamic.git.containerSecurityContext | nindent 4 }}
-  command:
-  - /bin/sh
-  - -c
-  - cp /scripts/passwd /nss/passwd && cp /scripts/group /nss/group
-  volumeMounts:
-  - name: scripts
-    mountPath: /scripts
-    readOnly: true
-  - name: nss
-    mountPath: /nss
-{{- end }}
-
 {{- define "laravel-app.statamicGitNssMounts" -}}
-- name: nss
+- name: scripts
   mountPath: /etc/passwd
   subPath: passwd
-- name: nss
+- name: scripts
   mountPath: /etc/group
   subPath: group
 {{- end }}

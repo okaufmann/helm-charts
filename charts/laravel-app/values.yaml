@@ -66,8 +66,8 @@ statamic:
     email: "statamic@example.com"
     message: "Update from production [ci skip]"
     push: true
-    # Slim git+ssh image. alpine/git has no passwd row for uid 33, so an
-    # init container writes one into an emptyDir and the job bind-mounts it.
+    # Slim git+ssh image. alpine/git has no passwd row for uid 33, so the
+    # jobs mount a generated one over /etc/passwd.
     image:
       repository: alpine/git
       tag: "2.54.0"
