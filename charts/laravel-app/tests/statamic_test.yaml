@@ -47,12 +47,19 @@ tests:
       path: spec.template.spec.containers[0].env[3].value
       value: /tmp
   - contains:
+      path: spec.template.spec.volumes
+      content:
+        name: nss
+        emptyDir: {}
+  - equal:
+      path: spec.template.spec.initContainers[0].name
+      value: nss
+  - contains:
       path: spec.template.spec.containers[0].volumeMounts
       content:
-        name: scripts
+        name: nss
         mountPath: /etc/passwd
         subPath: passwd
-        readOnly: true
 - it: mounts a passwd row for the git uid so alpine/git can SSH
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:

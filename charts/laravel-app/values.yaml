@@ -66,8 +66,8 @@ statamic:
     email: "statamic@example.com"
     message: "Update from production [ci skip]"
     push: true
-    # Slim git+ssh image. alpine/git has no passwd row for uid 33, so the
-    # chart mounts one and copies the deploy key to $HOME before git ssh.
+    # Slim git+ssh image. alpine/git has no passwd row for uid 33, so an
+    # init container writes one into an emptyDir and the job bind-mounts it.
     image:
       repository: alpine/git
       tag: "2.54.0"

@@ -15,8 +15,8 @@ data:
     git:x:{{ include "laravel-app.statamicGitGid" . }}:
   ssh-env.sh: |-
     #!/bin/sh
-    # alpine/git has no passwd entry for uid 33; the chart mounts one at
-    # /etc/passwd. Copy the deploy key to $HOME so OpenSSH accepts 0400
+    # alpine/git has no passwd entry for uid 33; the job bind-mounts one at
+    # /etc/passwd from an emptyDir. Copy the deploy key to $HOME so OpenSSH accepts 0400
     # perms (the Secret is 0440 + fsGroup and would otherwise be ignored).
     HOME=/tmp
     export HOME

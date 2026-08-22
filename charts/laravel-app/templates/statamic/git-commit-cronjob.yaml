@@ -47,6 +47,9 @@ spec:
             configMap:
               name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
               defaultMode: 0550
+          {{- include "laravel-app.statamicGitNssVolume" . | nindent 10 }}
+          initContainers:
+            {{- include "laravel-app.statamicGitNssInit" . | nindent 10 }}
           containers:
           - name: git-commit
             image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"

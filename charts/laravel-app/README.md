@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 2.0.6](https://img.shields.io/badge/Version-2.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.7](https://img.shields.io/badge/Version-2.0.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -110,6 +110,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git branch | 2.0.4 | `statamic.repo.branch` selects the clone/pull ref. Dirty PVC trees skip pull so in-cluster edits survive upgrades. | |
 | Statamic Git push | 2.0.5 | `statamic.git.push: false` omits the commit CronJob. Sprig `default` treated `false` as empty, so the previous gate always stayed on. | |
 | Statamic Git SSH | 2.0.6 | Clone and commit jobs keep `alpine/git`. A generated passwd/group is mounted and the deploy key is copied to `$HOME` so OpenSSH can run as uid 33. | |
+| Statamic Git NSS | 2.0.7 | Do not bind-mount a ConfigMap file over `/etc/passwd`. Copy passwd/group into an emptyDir first; runc rejects a recursive read-only bind on a file. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values
