@@ -282,6 +282,35 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: fixed
+          description: Honour statamic.git.push=false when deciding whether to render the commit CronJob. Sprig default treats false as empty, so the previous gate always stayed on.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-22T10:00:17.847409657Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: f5b497266e55ea5de55f8ce5c9698829dfd55ac38953cca7698b38cb5c2523d8
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.5/laravel-app-2.0.5.tgz
+    version: 2.0.5
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Allow Statamic content clones to target statamic.repo.branch and skip pull when the PVC working tree is dirty.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2001,4 +2030,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-21T21:27:24.070923942Z"
+generated: "2026-08-22T10:00:17.847912286Z"
