@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Copy generated passwd/group into an emptyDir before bind-mounting them over /etc. ConfigMap file mounts are recursively read-only and runc rejects that on a file.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-22T10:27:52.468743304Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: f3a4fa4dfc077e38cd1704e24f865b1189e3fa2ca044cff479e1fe4b5da8b0a5
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.7/laravel-app-2.0.7.tgz
+    version: 2.0.7
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Mount a generated passwd/group and copy the deploy key to HOME so alpine/git can SSH as uid 33.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2059,4 +2088,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-22T10:23:06.832363843Z"
+generated: "2026-08-22T10:27:52.468956663Z"
