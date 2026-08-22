@@ -65,6 +65,8 @@ spec:
           value: {{ .Values.statamic.repo.branch | default "" | quote }}
         - name: GIT_SSH_COMMAND
           value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
+        - name: HOME
+          value: /tmp
         volumeMounts:
         - name: data
           mountPath: /data
@@ -74,6 +76,7 @@ spec:
         - name: scripts
           mountPath: /scripts
           readOnly: true
+        {{- include "laravel-app.statamicGitNssMounts" . | nindent 8 }}
         resources:
           {{- toYaml .Values.statamic.git.resources | nindent 10 }}
       {{- with .Values.statamic.git.nodeSelector }}

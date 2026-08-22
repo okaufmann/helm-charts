@@ -13,7 +13,7 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: fixed
-      description: Honour statamic.git.push=false when deciding whether to render the commit CronJob. Sprig default treats false as empty, so the previous gate always stayed on.
+      description: Mount a generated passwd/group and copy the deploy key to HOME so alpine/git can SSH as uid 33.
   artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.5"
+version: "2.0.6"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

@@ -40,6 +40,31 @@ tests:
   - equal:
       path: spec.template.spec.containers[0].env[1].value
       value: develop
+  - equal:
+      path: spec.template.spec.containers[0].env[3].name
+      value: HOME
+  - equal:
+      path: spec.template.spec.containers[0].env[3].value
+      value: /tmp
+  - contains:
+      path: spec.template.spec.containers[0].volumeMounts
+      content:
+        name: scripts
+        mountPath: /etc/passwd
+        subPath: passwd
+        readOnly: true
+- it: mounts a passwd row for the git uid so alpine/git can SSH
+  template: templates/statamic/git-scripts-configmap.yaml
+  asserts:
+  - matchRegex:
+      path: data["passwd"]
+      pattern: "git:x:33:33:git:/tmp:"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "\\. /scripts/ssh-env\\.sh"
+  - matchRegex:
+      path: data["ssh-env.sh"]
+      pattern: "chmod 0400"
 - it: clones a configured branch and skips pull on a dirty tree
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:

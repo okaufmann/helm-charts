@@ -7,9 +7,30 @@ metadata:
     {{- include "laravel-app.labels" . | nindent 4 }}
     app.kubernetes.io/component: statamic
 data:
+  passwd: |-
+    root:x:0:0:root:/root:/sbin/nologin
+    git:x:{{ include "laravel-app.statamicGitUid" . }}:{{ include "laravel-app.statamicGitGid" . }}:git:/tmp:/sbin/nologin
+  group: |-
+    root:x:0:
+    git:x:{{ include "laravel-app.statamicGitGid" . }}:
+  ssh-env.sh: |-
+    #!/bin/sh
+    # alpine/git has no passwd entry for uid 33; the chart mounts one at
+    # /etc/passwd. Copy the deploy key to $HOME so OpenSSH accepts 0400
+    # perms (the Secret is 0440 + fsGroup and would otherwise be ignored).
+    HOME=/tmp
+    export HOME
+    mkdir -p "$HOME/.ssh"
+    cp /git/.ssh/id_key "$HOME/.ssh/id_key"
+    cp /git/.ssh/known_hosts "$HOME/.ssh/known_hosts"
+    chmod 0400 "$HOME/.ssh/id_key"
+    chmod 0444 "$HOME/.ssh/known_hosts"
+    GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+    export GIT_SSH_COMMAND
   clone.sh: |-
     #!/bin/sh
     set -eu
+    . /scripts/ssh-env.sh
 
     git_safe() {
       git -C /data -c safe.directory=/data "$@"
@@ -46,6 +67,7 @@ data:
   commit.sh: |-
     #!/bin/sh
     set -eu
+    . /scripts/ssh-env.sh
 
     if [ -z "$(git -C /data -c safe.directory=/data status --porcelain)" ]; then
       echo "No Statamic content changes to commit."

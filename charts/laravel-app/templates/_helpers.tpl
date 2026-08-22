@@ -90,3 +90,26 @@ Deployment name for a component.
 {{ include "laravel-app.fullname" .ctx }}-{{ .component }}
 {{- end -}}
 {{- end }}
+
+{{/*
+UID/GID the Statamic git job runs as. alpine/git has no passwd row for
+www-data (33); the job mounts a generated passwd so OpenSSH can run.
+*/}}
+{{- define "laravel-app.statamicGitUid" -}}
+{{- dig "runAsUser" 33 (.Values.statamic.git.podSecurityContext | default dict) -}}
+{{- end }}
+
+{{- define "laravel-app.statamicGitGid" -}}
+{{- dig "runAsGroup" 33 (.Values.statamic.git.podSecurityContext | default dict) -}}
+{{- end }}
+
+{{- define "laravel-app.statamicGitNssMounts" -}}
+- name: scripts
+  mountPath: /etc/passwd
+  subPath: passwd
+  readOnly: true
+- name: scripts
+  mountPath: /etc/group
+  subPath: group
+  readOnly: true
+{{- end }}
