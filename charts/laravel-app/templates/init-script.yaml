@@ -10,6 +10,21 @@ data:
     #!/bin/sh
     set -eu
 
+    # The clone Job runs alongside this pod rather than before it, so the
+    # checkout may not be on the PVC yet. Without this wait every link below
+    # would skip and the app would serve the content baked into the image,
+    # sending Control Panel edits to the container's ephemeral filesystem.
+    waited=0
+    while [ ! -d /data/git/.git ] && [ "$waited" -lt {{ .Values.statamic.contentWaitSeconds }} ]; do
+      sleep 2
+      waited=$((waited + 2))
+    done
+
+    if [ ! -d /data/git/.git ]; then
+      echo "No Statamic checkout at /data/git after ${waited}s; refusing to start with image content."
+      exit 1
+    fi
+
     link_path() {
       source="$1"
       destination="$2"

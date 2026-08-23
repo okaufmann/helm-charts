@@ -4,6 +4,10 @@ templates:
 - templates/statamic/git-pull-job.yaml
 - templates/statamic/git-commit-cronjob.yaml
 - templates/statamic/ssh-secret.yaml
+- templates/init-script.yaml
+- templates/queue/deployment.yaml
+- templates/app/deployment.yaml
+- templates/configmap-envs.yaml
 set:
   statamic.enabled: true
   statamic.repo.existingSecret: statamic-ssh
@@ -73,6 +77,36 @@ tests:
   - matchRegex:
       path: metadata.name
       pattern: "-git-clone-[0-9]+$"
+- it: waits for the checkout instead of linking image content
+  template: templates/init-script.yaml
+  set:
+    statamic.contentWaitSeconds: 42
+  asserts:
+  - matchRegex:
+      path: data["init.sh"]
+      pattern: "-lt 42"
+  - matchRegex:
+      path: data["init.sh"]
+      pattern: "refusing to start with image content"
+- it: runs the linker on components that override the entrypoint
+  template: templates/queue/deployment.yaml
+  set:
+    queue.enabled: true
+    queue.command: php artisan horizon
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args[0]
+      value: "/app/init.sh && php artisan horizon"
+- it: leaves the entrypoint alone when no command is set
+  template: templates/app/deployment.yaml
+  asserts:
+  - isNull:
+      path: spec.template.spec.containers[0].command
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: STARTUP_SCRIPT_PATH
+        value: /app/init.sh
 - it: clones a configured branch and skips pull on a dirty tree
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:

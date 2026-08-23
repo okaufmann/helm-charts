@@ -454,6 +454,7 @@
           "additionalProperties": false
         },
         "schedule": { "type": "string", "minLength": 1 },
+        "contentWaitSeconds": { "type": "integer", "minimum": 0 },
         "persistence": {
           "type": "object",
           "required": ["accessMode", "size", "storageClass"],

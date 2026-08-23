@@ -95,6 +95,10 @@ statamic:
 
   schedule: "*/10 * * * *"
 
+  # How long each workload waits for the clone Job to populate the PVC before
+  # giving up. Workloads fail rather than silently serve image content.
+  contentWaitSeconds: 120
+
   persistence:
     accessMode: "ReadWriteOnce"
     size: "10Gi"

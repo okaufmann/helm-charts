@@ -12,6 +12,13 @@ Expected arguments:
 {{- $values := .values -}}
 {{- $podSecurityContext := mustMergeOverwrite (deepCopy ($root.Values.podSecurityContext | default dict)) ($values.podSecurityContext | default dict) -}}
 {{- $containerSecurityContext := mustMergeOverwrite (deepCopy ($root.Values.containerSecurityContext | default dict)) ($values.containerSecurityContext | default dict) -}}
+{{- $statamic := and $root.Values.statamic.enabled (ne $component "reverb") -}}
+{{/*
+Setting command replaces the image ENTRYPOINT, so the s6 service that honours
+STARTUP_SCRIPT_PATH never runs and the content symlinks are never created.
+Run the linker explicitly whenever we override the entrypoint.
+*/}}
+{{- $linker := ternary "/app/init.sh && " "" $statamic -}}
 automountServiceAccountToken: {{ $root.Values.automountServiceAccountToken }}
 {{- with $root.Values.imagePullSecrets }}
 imagePullSecrets:
@@ -30,7 +37,7 @@ volumes:
   - name: runtime-cache
     emptyDir:
       sizeLimit: {{ $values.runtimeCache.sizeLimit | quote }}
-  {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
+  {{- if $statamic }}
   - name: data
     emptyDir: {}
   - name: statamic
@@ -58,7 +65,7 @@ initContainers:
     volumeMounts:
       - name: runtime-cache
         mountPath: {{ $root.Values.webRoot }}/bootstrap/cache
-      {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
+      {{- if $statamic }}
       - name: statamic
         mountPath: /data/git
       - name: data
@@ -98,18 +105,18 @@ containers:
     {{- if $values.command }}
     command: ["/bin/sh", "-c"]
     args:
-      - {{ $values.command | quote }}
+      - {{ printf "%s%s" $linker $values.command | quote }}
     {{- else if and (eq $component "app") $values.octane.enabled }}
     command: ["/bin/sh", "-c"]
     args:
       {{- $workers := ternary (printf " --workers=%v" $values.octane.workers) "" (not (empty $values.octane.workers)) }}
       {{- $logLevel := default "info" $values.octane.logLevel }}
-      - {{ printf "php artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v --log-level=%s%s" $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests $logLevel $workers | quote }}
+      - {{ printf "%sphp artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v --log-level=%s%s" $linker $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests $logLevel $workers | quote }}
     {{- end }}
     volumeMounts:
       - name: runtime-cache
         mountPath: {{ $root.Values.webRoot }}/bootstrap/cache
-      {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
+      {{- if $statamic }}
       - name: statamic
         mountPath: /data/git
       - name: data
@@ -124,7 +131,7 @@ containers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
-    {{- if and $root.Values.statamic.enabled (ne $component "reverb") }}
+    {{- if $statamic }}
     env:
       - name: STARTUP_SCRIPT_PATH
         value: /app/init.sh

@@ -108,6 +108,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git push | 2.0.5 | `statamic.git.push: false` omits the commit CronJob. Sprig `default` treated `false` as empty, so the previous gate always stayed on. | |
 | Statamic Git SSH | 2.0.6 | Clone and commit jobs keep `alpine/git`. A generated passwd/group is mounted and the deploy key is copied to `$HOME` so OpenSSH can run as uid 33. | |
 | Statamic Git clone Job | 2.0.8 | The clone Job is no longer a `pre-upgrade` hook and is named per revision. As a hook it ran before the release manifest was applied, so it mounted the previous revision's scripts ConfigMap and SSH Secret. | |
+| Statamic content links | 2.0.9 | Workloads wait `statamic.contentWaitSeconds` for the checkout and fail instead of serving image content. Components setting `command` (queue, scheduler, Octane) now run the linker explicitly, because overriding the entrypoint skips the s6 service that honours `STARTUP_SCRIPT_PATH`. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 {{/*
