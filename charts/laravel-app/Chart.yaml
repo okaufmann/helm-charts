@@ -4,11 +4,11 @@ description: A Helm chart for running Laravel or Statamic Apps
 home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
 icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
 sources:
-  - https://github.com/okaufmann/helm-charts
-  - https://github.com/serversideup/docker-php
+- https://github.com/okaufmann/helm-charts
+- https://github.com/serversideup/docker-php
 maintainers:
-  - name: okaufmann
-    url: https://github.com/okaufmann
+- name: okaufmann
+  url: https://github.com/okaufmann
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
@@ -32,9 +32,9 @@ version: "2.0.10"
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "10.0.0"
+appVersion: "13.0.0"
 dependencies:
-  - name: valkey
-    condition: valkey.enabled
-    version: "6.2.x"
-    repository: oci://registry-1.docker.io/bitnamicharts
+- name: valkey
+  condition: valkey.enabled
+  version: "6.2.x"
+  repository: oci://registry-1.docker.io/bitnamicharts
