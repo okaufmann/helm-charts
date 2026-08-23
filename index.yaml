@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Keep incremental Statamic fetches off the index-pack path. It reopens its temporary pack while holding it open for writing, which NFSv4 rejects with a permission error.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-23T16:28:04.750078452Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 4b37cc5ff82cadfdee91095f1e04b902c6b934b8c06244d37e0b59b6a31f1831
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.10/laravel-app-2.0.10.tgz
+    version: 2.0.10
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Wait for the Statamic checkout before linking it, and run the linker on workloads that override the entrypoint. Both cases silently served content baked into the image.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2146,4 +2175,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-23T16:08:46.25845664Z"
+generated: "2026-08-23T16:28:04.750524818Z"
