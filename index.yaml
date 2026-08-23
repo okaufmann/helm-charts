@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Clone Statamic onto local scratch before copying to the PVC. index-pack on NFSv4 cannot reopen tmp_pack_* and fails the initial clone with a permission error.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-08-23T23:59:32.634131603Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: b1953bd6bdd0b60623bc4e69f984d3f5f47f1a97f508724fcf9e930da85d3e5a
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.11/laravel-app-2.0.11.tgz
+    version: 2.0.11
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Keep incremental Statamic fetches off the index-pack path. It reopens its temporary pack while holding it open for writing, which NFSv4 rejects with a permission error.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2367,4 +2396,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-23T23:02:25.733513401Z"
+generated: "2026-08-23T23:59:32.634399833Z"
