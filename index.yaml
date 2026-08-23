@@ -2206,6 +2206,34 @@ entries:
   paperless-ngx:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Use generic OIDC defaults instead of a specific identity provider.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 3.0.5
+    created: "2026-08-23T21:43:52.730206362Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for Paperless-ngx
+    digest: f0c59c93d8bd97768cc82cfe044db58ed8cd3f3195a79c835efae2237a1513c3
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/paperless-ngx
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: paperless-ngx
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/paperless-ngx-1.0.1/paperless-ngx-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Initial Paperless-ngx chart with persistence, optional Valkey, and OIDC bootstrap.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2262,4 +2290,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-23T21:42:07.654261677Z"
+generated: "2026-08-23T21:43:52.730421394Z"
