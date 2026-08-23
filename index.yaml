@@ -2175,4 +2175,32 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-23T16:28:04.750524818Z"
+  node-app:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial Node.js HTTP application chart with rolling updates, probes, and optional Valkey.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 22.0.0
+    created: "2026-08-23T17:39:51.368446912Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Node.js HTTP apps (Nuxt, Nitro, and similar)
+    digest: d633d5ff291f56de8ecdfbc1e9735d1eb0efa0dce09bb02b075b788d9505e068
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/node-app
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: node-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/node-app-1.0.0/node-app-1.0.0.tgz
+    version: 1.0.0
+generated: "2026-08-23T17:39:51.368759716Z"
