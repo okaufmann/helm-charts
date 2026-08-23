@@ -2178,6 +2178,30 @@ entries:
   mailpit:
   - annotations:
       artifacthub.io/changes: |
+        - kind: fixed
+          description: Allow SpamAssassin to setuid to nobody after dropping other capabilities.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: v1.31.0
+    created: "2026-08-23T23:02:25.733262897Z"
+    description: A Helm chart for Mailpit, an email testing tool with SMTP, web UI,
+      and API
+    digest: 9c388e99a084034adca8d98d5f13a85c0fe27f41a09c3dd544930cc966f3c7d5
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/mailpit
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: mailpit
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/axllent/mailpit
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/mailpit-1.0.1/mailpit-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Initial Mailpit chart with SMTP, web UI, persistence, and optional SpamAssassin.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2343,4 +2367,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-23T22:54:49.716243287Z"
+generated: "2026-08-23T23:02:25.733513401Z"
