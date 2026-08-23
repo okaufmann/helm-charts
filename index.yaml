@@ -2175,6 +2175,31 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
+  mailpit:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial Mailpit chart with SMTP, web UI, persistence, and optional SpamAssassin.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: v1.31.0
+    created: "2026-08-23T22:54:49.715952901Z"
+    description: A Helm chart for Mailpit, an email testing tool with SMTP, web UI,
+      and API
+    digest: 44134e7c36eda40be42ac91fccb1ba57546074652a6566f73c2ceee6485fb32b
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/mailpit
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: mailpit
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/axllent/mailpit
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/mailpit-1.0.0/mailpit-1.0.0.tgz
+    version: 1.0.0
   node-app:
   - annotations:
       artifacthub.io/changes: |
@@ -2318,4 +2343,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-23T22:11:27.168708268Z"
+generated: "2026-08-23T22:54:49.716243287Z"
