@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Wait for the Statamic checkout before linking it, and run the linker on workloads that override the entrypoint. Both cases silently served content baked into the image.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2026-08-23T16:08:46.258093713Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: dd6d4d1abc1d52727b726ecd6b2b7269b9832c2c3e43b16bb339eb1a9335c897
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.9/laravel-app-2.0.9.tgz
+    version: 2.0.9
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Stop running the Statamic clone Job as a pre-upgrade hook. Hooks run before the release manifest is applied, so it mounted the previous revision's scripts ConfigMap and SSH Secret.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2117,4 +2146,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-0.1.1/laravel-app-0.1.1.tgz
     version: 0.1.1
-generated: "2026-08-22T12:12:52.407521634Z"
+generated: "2026-08-23T16:08:46.25845664Z"
