@@ -11,9 +11,9 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: added
-      description: Initial Mailpit chart with SMTP, web UI, persistence, and optional SpamAssassin.
+    - kind: fixed
+      description: Allow SpamAssassin to setuid to nobody after dropping other capabilities.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.0"
+version: "1.0.1"
 appVersion: "v1.31.0"

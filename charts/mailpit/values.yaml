@@ -168,11 +168,15 @@ spamassassin:
   affinity: {}
   podAnnotations: {}
   podSecurityContext: {}
+  # Image starts as root and setuid()s to nobody.
   containerSecurityContext:
     allowPrivilegeEscalation: false
     capabilities:
       drop:
       - ALL
+      add:
+      - SETUID
+      - SETGID
 
   extraEnv:
   - name: DNS_CHECKS

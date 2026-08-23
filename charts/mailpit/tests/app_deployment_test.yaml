@@ -134,3 +134,11 @@ tests:
   - isKind:
       of: Service
     documentIndex: 1
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.add
+      content: SETUID
+    documentIndex: 0
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.add
+      content: SETGID
+    documentIndex: 0
