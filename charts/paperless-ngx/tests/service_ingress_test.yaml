@@ -1,0 +1,42 @@
+suite: service and ingress
+templates:
+- templates/service.yaml
+- templates/ingress.yaml
+- templates/networkpolicy.yaml
+tests:
+- it: names the service after the fullname
+  template: templates/service.yaml
+  set:
+    fullnameOverride: paperless
+  asserts:
+  - equal:
+      path: metadata.name
+      value: paperless
+  - equal:
+      path: spec.ports[0].port
+      value: 8000
+- it: renders ingress when enabled
+  template: templates/ingress.yaml
+  set:
+    app.ingress.enabled: true
+    app.ingress.ingressClassName: nginx-external
+    app.ingress.hosts:
+    - host: docs.example.com
+      paths:
+      - /
+  asserts:
+  - isKind:
+      of: Ingress
+  - equal:
+      path: spec.rules[0].host
+      value: docs.example.com
+  - equal:
+      path: spec.rules[0].http.paths[0].pathType
+      value: Prefix
+- it: renders a network policy when enabled
+  template: templates/networkpolicy.yaml
+  set:
+    networkPolicy.enabled: true
+  asserts:
+  - isKind:
+      of: NetworkPolicy

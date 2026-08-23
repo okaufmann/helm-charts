@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "paperless-ngx.fullname" . }}-entrypoint
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+data:
+  entrypoint.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    {{- if .Values.redis.existingSecretPasswordKey }}
+    : "${ {{- .Values.redis.existingSecretPasswordKey -}}:?{{ .Values.redis.existingSecretPasswordKey }} is required}"
+    export PAPERLESS_REDIS="redis://:${ {{- .Values.redis.existingSecretPasswordKey -}} }@{{ .Values.redis.host }}:{{ .Values.redis.port }}"
+    {{- end }}
+
+    {{- if .Values.oidc.enabled }}
+    : "${ {{- .Values.oidc.existingSecretKey -}}:?{{ .Values.oidc.existingSecretKey }} is required}"
+    PAPERLESS_SOCIALACCOUNT_PROVIDERS="$(python3 -c "
+    import json, os
+    print(json.dumps({
+        'openid_connect': {
+            'OAUTH_PKCE_ENABLED': {{ ternary "True" "False" .Values.oidc.pkce }},
+            'APPS': [{
+                'provider_id': {{ .Values.oidc.providerId | quote }},
+                'name': {{ .Values.oidc.name | quote }},
+                'client_id': {{ .Values.oidc.clientId | quote }},
+                'secret': os.environ[{{ .Values.oidc.existingSecretKey | quote }}],
+                'settings': {
+                    'server_url': {{ .Values.oidc.serverUrl | quote }},
+                    'fetch_userinfo': True,
+                },
+            }],
+            'SCOPE': {{ .Values.oidc.scopes | toJson }},
+        }
+    }))
+    ")"
+    export PAPERLESS_SOCIALACCOUNT_PROVIDERS
+    {{- end }}
+
+    exec /init

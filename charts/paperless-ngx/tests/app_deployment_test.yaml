@@ -1,0 +1,131 @@
+suite: app deployment
+templates:
+- templates/deployment.yaml
+- templates/configmap-envs.yaml
+- templates/configmap-entrypoint.yaml
+- templates/pvc.yaml
+tests:
+- it: renders restricted security defaults
+  template: templates/deployment.yaml
+  asserts:
+  - isKind:
+      of: Deployment
+  - equal:
+      path: spec.template.spec.enableServiceLinks
+      value: false
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+  - equal:
+      path: spec.template.spec.securityContext.runAsNonRoot
+      value: true
+  - equal:
+      path: spec.template.spec.securityContext.runAsUser
+      value: 1000
+  - equal:
+      path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+      value: false
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.drop
+      content: ALL
+- it: uses recreate so the media volume has one writer
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.strategy.type
+      value: Recreate
+- it: mounts paperless data subpaths and the entrypoint
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.template.spec.volumes[0].persistentVolumeClaim.claimName
+      value: RELEASE-NAME-paperless-ngx-data
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[0].subPath
+      value: data
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[1].subPath
+      value: media
+  - equal:
+      path: spec.template.spec.containers[0].command[1]
+      value: /scripts/entrypoint.sh
+- it: injects env from config and existing secrets
+  template: templates/deployment.yaml
+  set:
+    existingEnvSecrets:
+    - app-secrets
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+      value: RELEASE-NAME-paperless-ngx-config
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+      value: app-secrets
+- it: maps admin login keys from an existing secret
+  template: templates/deployment.yaml
+  set:
+    admin.existingSecret: app-secrets
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].env[0].name
+      value: PAPERLESS_ADMIN_USER
+  - equal:
+      path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.key
+      value: username
+  - equal:
+      path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.optional
+      value: true
+- it: uses an existing claim when set
+  template: templates/deployment.yaml
+  set:
+    persistence.existingClaim: paperless-data
+  asserts:
+  - equal:
+      path: spec.template.spec.volumes[0].persistentVolumeClaim.claimName
+      value: paperless-data
+- it: adds the ingress host to probes
+  template: templates/deployment.yaml
+  set:
+    app.ingress.enabled: true
+    app.ingress.hosts:
+    - host: docs.example.com
+      paths:
+      - /
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].readinessProbe.httpGet.httpHeaders[0].name
+      value: Host
+  - equal:
+      path: spec.template.spec.containers[0].readinessProbe.httpGet.httpHeaders[0].value
+      value: docs.example.com
+- it: creates a PVC when no existing claim is set
+  template: templates/pvc.yaml
+  asserts:
+  - isKind:
+      of: PersistentVolumeClaim
+  - equal:
+      path: spec.resources.requests.storage
+      value: 10Gi
+- it: skips the PVC when an existing claim is set
+  template: templates/pvc.yaml
+  set:
+    persistence.existingClaim: paperless-data
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: builds redis and oidc in the entrypoint when configured
+  template: templates/configmap-entrypoint.yaml
+  set:
+    redis.existingSecretPasswordKey: VALKEY_PASSWORD
+    oidc.enabled: true
+    oidc.serverUrl: https://sso.example.com/application/o/paperless/.well-known/openid-configuration
+  asserts:
+  - matchRegex:
+      path: data["entrypoint.sh"]
+      pattern: PAPERLESS_REDIS=
+  - matchRegex:
+      path: data["entrypoint.sh"]
+      pattern: PAPERLESS_SOCIALACCOUNT_PROVIDERS=
+  - matchRegex:
+      path: data["entrypoint.sh"]
+      pattern: sso.example.com

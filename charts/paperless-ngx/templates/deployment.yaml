@@ -1,0 +1,156 @@
+{{- if .Values.app.enabled }}
+{{- $podSecurityContext := mustMergeOverwrite (deepCopy (.Values.podSecurityContext | default dict)) (.Values.app.podSecurityContext | default dict) }}
+{{- $containerSecurityContext := mustMergeOverwrite (deepCopy (.Values.containerSecurityContext | default dict)) (.Values.app.containerSecurityContext | default dict) }}
+{{- $probeHost := include "paperless-ngx.probeHost" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "paperless-ngx.fullname" . }}
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  revisionHistoryLimit: {{ .Values.app.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      {{- include "paperless-ngx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: app
+  strategy:
+    {{- toYaml .Values.app.strategy | nindent 4 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-envs.yaml") . | sha256sum }}
+        checksum/entrypoint: {{ include (print $.Template.BasePath "/configmap-entrypoint.yaml") . | sha256sum }}
+        {{- with .Values.app.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "paperless-ngx.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: app
+    spec:
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
+      serviceAccountName: {{ include "paperless-ngx.serviceAccountName" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: {{ .Values.app.terminationGracePeriodSeconds }}
+      {{- with .Values.app.priorityClassName }}
+      priorityClassName: {{ . | quote }}
+      {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "paperless-ngx.pvcName" . }}
+        {{- end }}
+        - name: entrypoint
+          configMap:
+            name: {{ include "paperless-ngx.fullname" . }}-entrypoint
+            defaultMode: 0755
+        {{- with .Values.app.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: paperless
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $containerSecurityContext | nindent 12 }}
+          {{- with .Values.app.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.targetPort }}
+              protocol: TCP
+          envFrom:
+            {{- include "paperless-ngx.envFrom" . | nindent 12 }}
+          {{- if or .Values.admin.existingSecret .Values.app.extraEnv }}
+          env:
+            {{- if .Values.admin.existingSecret }}
+            - name: PAPERLESS_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.existingSecret | quote }}
+                  key: {{ .Values.admin.usernameKey | quote }}
+                  optional: {{ .Values.admin.optional }}
+            - name: PAPERLESS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.existingSecret | quote }}
+                  key: {{ .Values.admin.passwordKey | quote }}
+                  optional: {{ .Values.admin.optional }}
+            {{- end }}
+            {{- with .Values.app.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /usr/src/paperless/data
+              subPath: data
+            - name: data
+              mountPath: /usr/src/paperless/media
+              subPath: media
+            - name: data
+              mountPath: /usr/src/paperless/export
+              subPath: export
+            - name: data
+              mountPath: /usr/src/paperless/consume
+              subPath: consume
+            {{- end }}
+            - name: entrypoint
+              mountPath: /scripts
+              readOnly: true
+            {{- with .Values.app.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with .Values.app.startupProbe }}
+          startupProbe:
+            {{- include "paperless-ngx.probe" (list . $probeHost) | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.livenessProbe }}
+          livenessProbe:
+            {{- include "paperless-ngx.probe" (list . $probeHost) | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.readinessProbe }}
+          readinessProbe:
+            {{- include "paperless-ngx.probe" (list . $probeHost) | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+      {{- with .Values.app.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

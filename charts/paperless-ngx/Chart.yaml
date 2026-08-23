@@ -1,0 +1,24 @@
+apiVersion: v2
+name: paperless-ngx
+description: A Helm chart for Paperless-ngx
+home: https://github.com/okaufmann/helm-charts/tree/main/charts/paperless-ngx
+sources:
+- https://github.com/okaufmann/helm-charts
+- https://github.com/paperless-ngx/paperless-ngx
+maintainers:
+- name: okaufmann
+  url: https://github.com/okaufmann
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Paperless-ngx chart with persistence, optional Valkey, and OIDC bootstrap.
+  artifacthub.io/containsSecurityUpdates: "false"
+type: application
+version: "1.0.0"
+appVersion: "3.0.5"
+dependencies:
+- name: valkey
+  condition: valkey.enabled
+  version: "6.2.x"
+  repository: oci://registry-1.docker.io/bitnamicharts

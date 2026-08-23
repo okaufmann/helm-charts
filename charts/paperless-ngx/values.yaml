@@ -1,0 +1,190 @@
+global: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Non-sensitive environment variables. Never put tokens or passwords here:
+# this renders into a ConfigMap. Use existingEnvSecrets for sensitive values.
+envs: {}
+
+# Existing Secrets whose keys are exposed as environment variables.
+existingEnvSecrets: []
+
+imagePullSecrets: []
+
+# A Service named after the app injects PAPERLESS_PORT=tcp://… which Granian
+# treats as its listen port. Keep this off.
+enableServiceLinks: false
+
+automountServiceAccountToken: false
+
+# Official image runs as uid 1000 (paperless).
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+networkPolicy:
+  enabled: false
+  ingress:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ingress-nginx
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+  egress:
+    additionalRules: []
+
+# Builds PAPERLESS_REDIS from a password already injected via existingEnvSecrets.
+# Leave existingSecretPasswordKey empty to skip (set PAPERLESS_REDIS yourself).
+redis:
+  host: valkey-primary
+  port: 6379
+  existingSecretPasswordKey: ""
+
+# Builds PAPERLESS_SOCIALACCOUNT_PROVIDERS from a client secret already
+# injected via existingEnvSecrets.
+oidc:
+  enabled: false
+  existingSecretKey: PAPERLESS_OIDC_CLIENT_SECRET
+  clientId: paperless
+  name: Authentik
+  providerId: authentik
+  serverUrl: ""
+  scopes:
+  - openid
+  - profile
+  - email
+  - groups
+  pkce: true
+
+# Maps a Login-style Secret (username/password) to PAPERLESS_ADMIN_*.
+admin:
+  existingSecret: ""
+  usernameKey: username
+  passwordKey: password
+  optional: true
+
+persistence:
+  enabled: true
+  existingClaim: ""
+  name: ""
+  storageClass: ""
+  accessModes:
+  - ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+
+app:
+  enabled: true
+
+  image:
+    repository: ghcr.io/paperless-ngx/paperless-ngx
+    pullPolicy: IfNotPresent
+    tag: ""
+
+  replicaCount: 1
+
+  # RWO media volume: rolling updates cannot run two writers.
+  strategy:
+    type: Recreate
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+  podAnnotations: {}
+  podSecurityContext: {}
+  containerSecurityContext: {}
+  extraVolumeMounts: []
+  extraVolumes: []
+  extraEnv: []
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  lifecycle: {}
+  command:
+  - /bin/bash
+  - /scripts/entrypoint.sh
+  args: []
+  resources: {}
+
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+    nodePort: null
+    annotations: {}
+    labels: {}
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+
+  # Host header for probes. Empty uses the first Ingress host when Ingress
+  # is enabled, otherwise no Host header is sent.
+  probeHost: ""
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 90
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  startupProbe: {}
+
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    annotations: {}
+    hosts:
+    - host: chart-example.local
+      paths:
+      - /
+    tls: []
+
+valkey:
+  enabled: false
+  auth:
+    enabled: true
+    password: ""
+  architecture: standalone
+  primary:
+    disableCommands:
+    - FLUSHALL
+    persistence:
+      enabled: true
+      storageClass: ""
+      accessModes:
+      - ReadWriteOnce
+      size: 8Gi

@@ -1,0 +1,43 @@
+existingEnvSecrets:
+- paperless-secrets
+
+envs:
+  PAPERLESS_URL: https://docs.example.com
+  PAPERLESS_ALLOWED_HOSTS: "*"
+
+redis:
+  existingSecretPasswordKey: VALKEY_PASSWORD
+
+oidc:
+  enabled: true
+  serverUrl: https://sso.example.com/application/o/paperless/.well-known/openid-configuration
+
+admin:
+  existingSecret: paperless-secrets
+
+persistence:
+  existingClaim: paperless-data
+
+app:
+  extraVolumes:
+  - name: branding
+    configMap:
+      name: paperless-branding
+  extraVolumeMounts:
+  - name: branding
+    mountPath: /branding
+    readOnly: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+    - host: docs.example.com
+      paths:
+      - /
+    tls:
+    - hosts:
+      - docs.example.com
+      secretName: paperless-tls
+
+networkPolicy:
+  enabled: true
