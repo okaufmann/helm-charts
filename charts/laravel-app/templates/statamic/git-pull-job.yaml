@@ -46,6 +46,8 @@ spec:
         configMap:
           name: {{ include "laravel-app.fullname" . }}-statamic-git-scripts
           defaultMode: 0550
+      - name: scratch
+        emptyDir: {}
       containers:
       - name: git-clone
         image: "{{ .Values.statamic.git.image.repository }}:{{ .Values.statamic.git.image.tag }}"
@@ -65,6 +67,8 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
+        - name: scratch
+          mountPath: /scratch
         - name: ssh
           mountPath: /git/.ssh
           readOnly: true
