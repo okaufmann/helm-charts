@@ -19,9 +19,9 @@ tests:
   template: templates/ingress.yaml
   set:
     app.ingress.enabled: true
-    app.ingress.ingressClassName: nginx-external
+    app.ingress.ingressClassName: nginx
     app.ingress.hosts:
-    - host: docs.example.com
+    - host: paperless.example.com
       paths:
       - /
   asserts:
@@ -29,7 +29,7 @@ tests:
       of: Ingress
   - equal:
       path: spec.rules[0].host
-      value: docs.example.com
+      value: paperless.example.com
   - equal:
       path: spec.rules[0].http.paths[0].pathType
       value: Prefix

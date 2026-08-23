@@ -11,11 +11,11 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: added
-      description: Initial Paperless-ngx chart with persistence, optional Valkey, and OIDC bootstrap.
+    - kind: changed
+      description: Use generic OIDC defaults instead of a specific identity provider.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.0"
+version: "1.0.1"
 appVersion: "3.0.5"
 dependencies:
 - name: valkey

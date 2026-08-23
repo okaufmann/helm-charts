@@ -17,7 +17,8 @@ volume is never mounted by two pods.
 
 The chart writes `PAPERLESS_REDIS` from `redis.existingSecretPasswordKey` when
 that key is set (the password must already be in the pod env). Optional
-`oidc.enabled` builds `PAPERLESS_SOCIALACCOUNT_PROVIDERS` the same way.
+`oidc.enabled` builds `PAPERLESS_SOCIALACCOUNT_PROVIDERS` from any OpenID
+Connect issuer (`oidc.serverUrl`, `oidc.name`, `oidc.providerId`).
 
 Optional Valkey is the Bitnami subchart, gated by `valkey.enabled`. Use
 `fullnameOverride: valkey` and `redis.host: valkey-primary` to match the

@@ -66,8 +66,8 @@ oidc:
   enabled: false
   existingSecretKey: PAPERLESS_OIDC_CLIENT_SECRET
   clientId: paperless
-  name: Authentik
-  providerId: authentik
+  name: OIDC
+  providerId: oidc
   serverUrl: ""
   scopes:
   - openid
@@ -76,7 +76,7 @@ oidc:
   - groups
   pkce: true
 
-# Maps a Login-style Secret (username/password) to PAPERLESS_ADMIN_*.
+# Maps username/password keys from an existing Secret to PAPERLESS_ADMIN_*.
 admin:
   existingSecret: ""
   usernameKey: username

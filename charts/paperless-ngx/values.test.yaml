@@ -2,7 +2,7 @@ existingEnvSecrets:
 - paperless-secrets
 
 envs:
-  PAPERLESS_URL: https://docs.example.com
+  PAPERLESS_URL: https://paperless.example.com
   PAPERLESS_ALLOWED_HOSTS: "*"
 
 redis:
@@ -10,7 +10,7 @@ redis:
 
 oidc:
   enabled: true
-  serverUrl: https://sso.example.com/application/o/paperless/.well-known/openid-configuration
+  serverUrl: https://idp.example.com/.well-known/openid-configuration
 
 admin:
   existingSecret: paperless-secrets
@@ -31,12 +31,12 @@ app:
     enabled: true
     ingressClassName: nginx
     hosts:
-    - host: docs.example.com
+    - host: paperless.example.com
       paths:
       - /
     tls:
     - hosts:
-      - docs.example.com
+      - paperless.example.com
       secretName: paperless-tls
 
 networkPolicy:
