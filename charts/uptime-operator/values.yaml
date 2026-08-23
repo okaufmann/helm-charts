@@ -1,0 +1,109 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: ghcr.io/solid3dlab/uptime-operator
+  pullPolicy: IfNotPresent
+  # Defaults to Chart.appVersion when empty.
+  tag: ""
+
+imagePullSecrets: []
+
+replicaCount: 1
+
+# Single replica talking to Kuma over Socket.IO; Recreate avoids two writers.
+strategy:
+  type: Recreate
+
+revisionHistoryLimit: 10
+
+# Non-secret operator settings. Rendered into a ConfigMap.
+config:
+  resyncInterval: 300
+  logLevel: INFO
+  staticMonitorsPath: /config/monitors.yaml
+
+# Extra non-secret key/value pairs merged into the operator ConfigMap.
+extraEnv: {}
+
+# Extra env vars on the container (value/valueFrom). Use this for secrets
+# beyond the Kuma login.
+extraEnvVars: []
+
+# Existing Secret with Kuma login. Required unless secret.create is true.
+# Expected keys default to url, username, and password.
+existingSecret: uptime-operator
+
+existingSecretKeys:
+  url: url
+  username: username
+  password: password
+
+# Create a Secret from values. Do not commit real credentials; prefer
+# existingSecret (1Password, External Secrets, Sealed Secrets, …).
+secret:
+  create: false
+  url: ""
+  username: ""
+  password: ""
+
+# Optional static monitors mounted at config.staticMonitorsPath.
+# Same schema as the operator's /config/monitors.yaml `monitors` list.
+staticMonitors: []
+# - name: Example
+#   type: http
+#   url: https://example.com/
+#   group: Production
+#   interval: 60
+#   accepted_statuscodes:
+#     - "200-299"
+#   notification: Slack
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: true
+
+# The operator lists Ingresses via the API, so the token must be mounted.
+automountServiceAccountToken: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 64Mi
+
+# Optional Go heap cap (e.g. "58MiB"). Unset: 90% of the memory limit.
+gomemlimit: ""
+
+podAnnotations: {}
+podLabels: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+priorityClassName: ""
+
+extraVolumes: []
+extraVolumeMounts: []

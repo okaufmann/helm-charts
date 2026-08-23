@@ -1,0 +1,31 @@
+existingSecret: kuma-credentials
+
+extraEnv:
+  EXAMPLE_FLAG: "true"
+
+extraEnvVars:
+  - name: EXTRA
+    value: from-list
+
+gomemlimit: 58MiB
+
+staticMonitors:
+  - name: Flux webhook
+    type: http
+    url: https://flux-webhook.example.com/
+    group: Example
+    interval: 60
+    accepted_statuscodes:
+      - "404"
+    notification: Slack
+
+podAnnotations:
+  example.io/owner: test
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 48Mi
+  limits:
+    cpu: 200m
+    memory: 96Mi

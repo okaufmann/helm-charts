@@ -1,0 +1,78 @@
+suite: configmaps
+templates:
+  - templates/configmap.yaml
+  - templates/configmap-static-monitors.yaml
+  - templates/secret.yaml
+tests:
+  - it: writes operator config defaults
+    template: templates/configmap.yaml
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: data.RESYNC_INTERVAL
+          value: "300"
+      - equal:
+          path: data.LOG_LEVEL
+          value: INFO
+      - equal:
+          path: data.STATIC_MONITORS_PATH
+          value: /config/monitors.yaml
+  - it: merges extraEnv into the config ConfigMap
+    template: templates/configmap.yaml
+    set:
+      extraEnv:
+        EXAMPLE_FLAG: "true"
+    asserts:
+      - equal:
+          path: data.EXAMPLE_FLAG
+          value: "true"
+  - it: renders an empty monitors list by default
+    template: templates/configmap-static-monitors.yaml
+    asserts:
+      - matchRegex:
+          path: data["monitors.yaml"]
+          pattern: "(?s)monitors:\\s*\\[\\]"
+  - it: renders static monitors when provided
+    template: templates/configmap-static-monitors.yaml
+    set:
+      staticMonitors:
+        - name: Flux webhook
+          type: http
+          url: https://flux-webhook.example.com/
+          accepted_statuscodes:
+            - "404"
+    asserts:
+      - matchRegex:
+          path: data["monitors.yaml"]
+          pattern: "name: Flux webhook"
+      - matchRegex:
+          path: data["monitors.yaml"]
+          pattern: "url: https://flux-webhook.example.com/"
+      - matchRegex:
+          path: data["monitors.yaml"]
+          pattern: '"404"'
+  - it: omits the Secret unless secret.create is set
+    template: templates/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: creates a Secret from values
+    template: templates/secret.yaml
+    set:
+      secret.create: true
+      secret.url: https://kuma.example.com
+      secret.username: operator
+      secret.password: s3cret
+    asserts:
+      - isKind:
+          of: Secret
+      - equal:
+          path: stringData.url
+          value: https://kuma.example.com
+      - equal:
+          path: stringData.username
+          value: operator
+      - equal:
+          path: stringData.password
+          value: s3cret

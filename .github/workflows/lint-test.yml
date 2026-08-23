@@ -43,7 +43,7 @@ jobs:
       uses: helm/chart-testing-action@v2.8.0
 
     - name: Lint charts
-      run: ct lint --charts charts/laravel-app,charts/node-app
+      run: ct lint --charts charts/laravel-app,charts/node-app,charts/uptime-operator
 
     - name: Install helm-unittest
       # Helm 4 does not support GPG verification for legacy plugin archives.
@@ -53,6 +53,7 @@ jobs:
       run: |
         helm unittest charts/laravel-app
         helm unittest charts/node-app
+        helm unittest charts/uptime-operator
 
     - name: Render smoke-test manifests
       run: |
@@ -67,6 +68,10 @@ jobs:
         helm template smoke charts/node-app \
           --values charts/node-app/values.test.yaml \
           > rendered-node-features.yaml
+        helm template smoke charts/uptime-operator > rendered-uptime-default.yaml
+        helm template smoke charts/uptime-operator \
+          --values charts/uptime-operator/values.test.yaml \
+          > rendered-uptime-features.yaml
 
     - name: Validate Kubernetes manifests
       run: |
@@ -81,4 +86,6 @@ jobs:
           /work/rendered-features.yaml \
           /work/rendered-migrate-hook.yaml \
           /work/rendered-node-default.yaml \
-          /work/rendered-node-features.yaml
+          /work/rendered-node-features.yaml \
+          /work/rendered-uptime-default.yaml \
+          /work/rendered-uptime-features.yaml
