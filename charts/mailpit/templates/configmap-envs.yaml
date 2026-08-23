@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mailpit.fullname" . }}-config
+  labels:
+    {{- include "mailpit.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.envs }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- if and .Values.spamassassin.enabled (not (hasKey .Values.envs "MP_ENABLE_SPAMASSASSIN")) }}
+  MP_ENABLE_SPAMASSASSIN: {{ include "mailpit.spamassassinAddr" . | quote }}
+  {{- end }}

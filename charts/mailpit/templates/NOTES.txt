@@ -1,0 +1,17 @@
+{{- if .Values.app.enabled }}
+Mailpit web UI:
+{{- if .Values.app.ingress.enabled }}
+{{- range $host := .Values.app.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.app.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
+  {{- end }}
+{{- end }}
+{{- else if contains "ClusterIP" .Values.app.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "mailpit.name" . }},app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/component=mailpit" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8025 to use the web UI"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8025:{{ .Values.app.service.targetPort }}
+{{- end }}
+
+SMTP (in-cluster):
+  {{ include "mailpit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.app.service.smtp.port }}
+{{- end }}

@@ -1,0 +1,136 @@
+suite: app deployment
+templates:
+- templates/deployment.yaml
+- templates/configmap-envs.yaml
+- templates/pvc.yaml
+- templates/spamassassin.yaml
+tests:
+- it: renders restricted security defaults
+  template: templates/deployment.yaml
+  asserts:
+  - isKind:
+      of: Deployment
+  - equal:
+      path: spec.template.spec.enableServiceLinks
+      value: false
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+  - equal:
+      path: spec.template.spec.securityContext.runAsNonRoot
+      value: true
+  - equal:
+      path: spec.template.spec.securityContext.runAsUser
+      value: 65534
+  - equal:
+      path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+      value: false
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.drop
+      content: ALL
+  - equal:
+      path: spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem
+      value: true
+- it: uses recreate so the database volume has one writer
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.strategy.type
+      value: Recreate
+- it: mounts the data volume and tmp emptyDir
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.template.spec.volumes[0].persistentVolumeClaim.claimName
+      value: RELEASE-NAME-mailpit-data
+  - equal:
+      path: spec.template.spec.volumes[1].emptyDir
+      value: {}
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+      value: /data
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[1].mountPath
+      value: /tmp
+- it: injects env from config and existing secrets
+  template: templates/deployment.yaml
+  set:
+    existingEnvSecrets:
+    - app-secrets
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+      value: RELEASE-NAME-mailpit-config
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+      value: app-secrets
+- it: uses an existing claim when set
+  template: templates/deployment.yaml
+  set:
+    persistence.existingClaim: mailpit-data
+  asserts:
+  - equal:
+      path: spec.template.spec.volumes[0].persistentVolumeClaim.claimName
+      value: mailpit-data
+- it: creates a PVC when no existing claim is set
+  template: templates/pvc.yaml
+  asserts:
+  - isKind:
+      of: PersistentVolumeClaim
+  - equal:
+      path: spec.resources.requests.storage
+      value: 2Gi
+- it: skips the PVC when an existing claim is set
+  template: templates/pvc.yaml
+  set:
+    persistence.existingClaim: mailpit-data
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: pins the default image tag from appVersion
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].image
+      value: docker.io/axllent/mailpit:v1.31.0
+- it: wires SpamAssassin when enabled and the env is unset
+  template: templates/configmap-envs.yaml
+  set:
+    spamassassin.enabled: true
+  asserts:
+  - equal:
+      path: data.MP_ENABLE_SPAMASSASSIN
+      value: RELEASE-NAME-mailpit-spamassassin:783
+- it: keeps an explicit SpamAssassin env
+  template: templates/configmap-envs.yaml
+  set:
+    spamassassin.enabled: true
+    envs:
+      MP_ENABLE_SPAMASSASSIN: spamassassin:783
+  asserts:
+  - equal:
+      path: data.MP_ENABLE_SPAMASSASSIN
+      value: spamassassin:783
+- it: skips SpamAssassin when disabled
+  template: templates/spamassassin.yaml
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders SpamAssassin when enabled
+  template: templates/spamassassin.yaml
+  set:
+    spamassassin.enabled: true
+    fullnameOverride: mailpit
+  asserts:
+  - hasDocuments:
+      count: 2
+  - isKind:
+      of: Deployment
+    documentIndex: 0
+  - equal:
+      path: metadata.name
+      value: mailpit-spamassassin
+    documentIndex: 0
+  - isKind:
+      of: Service
+    documentIndex: 1

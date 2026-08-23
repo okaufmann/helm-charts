@@ -1,0 +1,66 @@
+suite: service and ingress
+templates:
+- templates/service.yaml
+- templates/ingress.yaml
+- templates/networkpolicy.yaml
+tests:
+- it: names the service after the fullname and exposes http plus smtp
+  template: templates/service.yaml
+  set:
+    fullnameOverride: mailpit
+  asserts:
+  - equal:
+      path: metadata.name
+      value: mailpit
+  - equal:
+      path: spec.ports[0].name
+      value: http
+  - equal:
+      path: spec.ports[0].port
+      value: 8025
+  - equal:
+      path: spec.ports[1].name
+      value: smtp
+  - equal:
+      path: spec.ports[1].port
+      value: 1025
+- it: renders ingress when enabled
+  template: templates/ingress.yaml
+  set:
+    app.ingress.enabled: true
+    app.ingress.ingressClassName: nginx
+    app.ingress.hosts:
+    - host: mailpit.example.com
+      paths:
+      - /
+  asserts:
+  - isKind:
+      of: Ingress
+  - equal:
+      path: spec.rules[0].host
+      value: mailpit.example.com
+  - equal:
+      path: spec.rules[0].http.paths[0].pathType
+      value: Prefix
+- it: skips ingress by default
+  template: templates/ingress.yaml
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders a network policy when enabled
+  template: templates/networkpolicy.yaml
+  set:
+    networkPolicy.enabled: true
+    networkPolicy.smtp.from:
+    - namespaceSelector:
+        matchLabels:
+          app.kubernetes.io/environment: staging
+  asserts:
+  - isKind:
+      of: NetworkPolicy
+  - equal:
+      path: spec.ingress[0].ports[0].port
+      value: 8025
+  - equal:
+      path: spec.ingress[1].ports[0].port
+      value: 1025

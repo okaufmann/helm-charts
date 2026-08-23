@@ -1,0 +1,19 @@
+apiVersion: v2
+name: mailpit
+description: A Helm chart for Mailpit, an email testing tool with SMTP, web UI, and API
+home: https://github.com/okaufmann/helm-charts/tree/main/charts/mailpit
+sources:
+- https://github.com/okaufmann/helm-charts
+- https://github.com/axllent/mailpit
+maintainers:
+- name: okaufmann
+  url: https://github.com/okaufmann
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Mailpit chart with SMTP, web UI, persistence, and optional SpamAssassin.
+  artifacthub.io/containsSecurityUpdates: "false"
+type: application
+version: "1.0.0"
+appVersion: "v1.31.0"

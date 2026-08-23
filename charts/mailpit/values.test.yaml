@@ -1,0 +1,38 @@
+existingEnvSecrets:
+- mailpit-secrets
+
+envs:
+  MP_DATABASE: /data/mailpit.db
+  MP_MAX_MESSAGES: "500"
+  MP_LABEL: Staging
+  TZ: Etc/UTC
+
+persistence:
+  storageClass: standard
+  size: 2Gi
+
+app:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    hosts:
+    - host: mailpit.example.com
+      paths:
+      - /
+    tls:
+    - hosts:
+      - mailpit.example.com
+      secretName: mailpit-tls
+
+spamassassin:
+  enabled: true
+
+networkPolicy:
+  enabled: true
+  smtp:
+    from:
+    - namespaceSelector:
+        matchLabels:
+          app.kubernetes.io/environment: staging

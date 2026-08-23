@@ -1,0 +1,108 @@
+{{- if .Values.spamassassin.enabled }}
+{{- $containerSecurityContext := .Values.spamassassin.containerSecurityContext | default dict }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mailpit.spamassassinName" . }}
+  labels:
+    {{- include "mailpit.labels" . | nindent 4 }}
+    app.kubernetes.io/component: spamassassin
+spec:
+  replicas: {{ .Values.spamassassin.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mailpit.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: spamassassin
+  strategy:
+    {{- toYaml .Values.spamassassin.strategy | nindent 4 }}
+  template:
+    metadata:
+      {{- with .Values.spamassassin.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "mailpit.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: spamassassin
+    spec:
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.spamassassin.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.spamassassin.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: spamassassin
+          image: "{{ .Values.spamassassin.image.repository }}:{{ .Values.spamassassin.image.tag }}"
+          imagePullPolicy: {{ .Values.spamassassin.image.pullPolicy }}
+          {{- with $containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: spamd
+              containerPort: {{ .Values.spamassassin.service.targetPort }}
+              protocol: TCP
+          {{- with .Values.spamassassin.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.spamassassin.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.spamassassin.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.spamassassin.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.spamassassin.resources | nindent 12 }}
+      {{- with .Values.spamassassin.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.spamassassin.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.spamassassin.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailpit.spamassassinName" . }}
+  labels:
+    {{- include "mailpit.labels" . | nindent 4 }}
+    app.kubernetes.io/component: spamassassin
+    {{- with .Values.spamassassin.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.spamassassin.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ports:
+    - name: spamd
+      port: {{ .Values.spamassassin.service.port }}
+      targetPort: spamd
+      protocol: TCP
+  selector:
+    {{- include "mailpit.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: spamassassin
+{{- end }}

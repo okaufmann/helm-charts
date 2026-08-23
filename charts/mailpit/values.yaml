@@ -1,0 +1,200 @@
+global: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Non-sensitive environment variables. Never put tokens or passwords here:
+# this renders into a ConfigMap. Use existingEnvSecrets for sensitive values.
+# Mailpit runtime options: https://mailpit.axllent.org/docs/configuration/runtime-options/
+envs:
+  MP_DATABASE: /data/mailpit.db
+  MP_MAX_MESSAGES: "500"
+  MP_SMTP_AUTH_ACCEPT_ANY: "1"
+  MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+  MP_DISABLE_VERSION_CHECK: "1"
+
+# Existing Secrets whose keys are exposed as environment variables.
+existingEnvSecrets: []
+
+imagePullSecrets: []
+
+enableServiceLinks: false
+
+automountServiceAccountToken: false
+
+# Official image has no USER. nobody (65534) is enough for the static binary.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+networkPolicy:
+  enabled: false
+  ingress:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ingress-nginx
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+  # Extra peers allowed to reach SMTP (port app.service.smtp.port).
+  smtp:
+    from: []
+  egress:
+    additionalRules: []
+
+persistence:
+  enabled: true
+  existingClaim: ""
+  name: ""
+  storageClass: ""
+  accessModes:
+  - ReadWriteOnce
+  size: 2Gi
+  annotations: {}
+
+app:
+  enabled: true
+
+  image:
+    repository: docker.io/axllent/mailpit
+    pullPolicy: IfNotPresent
+    tag: ""
+
+  replicaCount: 1
+
+  # RWO database volume: rolling updates cannot run two writers.
+  strategy:
+    type: Recreate
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+  podAnnotations: {}
+  podSecurityContext: {}
+  containerSecurityContext: {}
+  extraVolumeMounts: []
+  extraVolumes: []
+  extraEnv: []
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  lifecycle: {}
+  command: []
+  args: []
+  resources: {}
+
+  service:
+    type: ClusterIP
+    port: 8025
+    targetPort: 8025
+    nodePort: null
+    annotations: {}
+    labels: {}
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    smtp:
+      port: 1025
+      targetPort: 1025
+      nodePort: null
+
+  livenessProbe:
+    httpGet:
+      path: /livez
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  startupProbe: {}
+
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    annotations: {}
+    hosts:
+    - host: chart-example.local
+      paths:
+      - /
+    tls: []
+
+# Optional SpamAssassin sidecar Service used by MP_ENABLE_SPAMASSASSIN.
+# When enabled, the chart sets that env to "<release>-spamassassin:<port>"
+# unless you already set MP_ENABLE_SPAMASSASSIN in envs.
+spamassassin:
+  enabled: false
+
+  image:
+    repository: docker.io/axllent/spamassassin
+    pullPolicy: IfNotPresent
+    tag: latest
+
+  replicaCount: 1
+  strategy:
+    type: RollingUpdate
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+
+  extraEnv:
+  - name: DNS_CHECKS
+    value: "1"
+  extraVolumeMounts: []
+  extraVolumes: []
+  resources: {}
+
+  service:
+    port: 783
+    targetPort: 783
+    annotations: {}
+    labels: {}
+
+  livenessProbe:
+    tcpSocket:
+      port: spamd
+    initialDelaySeconds: 20
+    periodSeconds: 30
+
+  readinessProbe:
+    tcpSocket:
+      port: spamd
+    initialDelaySeconds: 10
+    periodSeconds: 10
