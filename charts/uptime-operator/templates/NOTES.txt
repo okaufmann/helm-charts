@@ -1,0 +1,22 @@
+uptime-operator {{ .Chart.AppVersion }} is installed as {{ include "uptime-operator.fullname" . }}.
+
+It watches Ingresses annotated with:
+
+  uptime-kuma.io/monitor: "true"
+
+and keeps matching HTTP monitors in Uptime Kuma. Managed monitors are tagged
+managed-by-uptime-operator. Manual monitors are never touched.
+
+Kuma credentials come from Secret {{ include "uptime-operator.secretName" . }}
+(keys {{ .Values.existingSecretKeys.url }}, {{ .Values.existingSecretKeys.username }}, {{ .Values.existingSecretKeys.password }}).
+The Kuma account must not have 2FA enabled; Socket.IO login cannot supply TOTP.
+
+{{- if .Values.staticMonitors }}
+
+{{ len .Values.staticMonitors }} static monitor(s) are mounted at {{ .Values.config.staticMonitorsPath }}.
+{{- end }}
+
+Check the operator:
+
+  kubectl --namespace {{ .Release.Namespace }} get deploy,po -l app.kubernetes.io/name=uptime-operator,app.kubernetes.io/instance={{ .Release.Name }}
+  kubectl --namespace {{ .Release.Namespace }} logs -l app.kubernetes.io/name=uptime-operator,app.kubernetes.io/instance={{ .Release.Name }} -f

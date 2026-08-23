@@ -1,0 +1,56 @@
+suite: rbac
+templates:
+  - templates/rbac.yaml
+  - templates/serviceaccount.yaml
+tests:
+  - it: grants Ingress read access only
+    template: templates/rbac.yaml
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: ClusterRole
+      - equal:
+          path: rules[0].apiGroups[0]
+          value: networking.k8s.io
+      - equal:
+          path: rules[0].resources[0]
+          value: ingresses
+      - equal:
+          path: rules[0].verbs
+          value:
+            - get
+            - list
+            - watch
+      - lengthEqual:
+          path: rules
+          count: 1
+  - it: binds the ServiceAccount in the release namespace
+    template: templates/rbac.yaml
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: ClusterRoleBinding
+      - equal:
+          path: subjects[0].kind
+          value: ServiceAccount
+      - equal:
+          path: subjects[0].name
+          value: RELEASE-NAME-uptime-operator
+      - equal:
+          path: subjects[0].namespace
+          value: NAMESPACE
+  - it: omits RBAC when disabled
+    template: templates/rbac.yaml
+    set:
+      rbac.create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: creates a ServiceAccount that mounts its token
+    template: templates/serviceaccount.yaml
+    asserts:
+      - isKind:
+          of: ServiceAccount
+      - equal:
+          path: automountServiceAccountToken
+          value: true

@@ -1,0 +1,25 @@
+apiVersion: v2
+name: uptime-operator
+description: Sync annotated Kubernetes Ingresses into Uptime Kuma HTTP monitors
+home: https://github.com/okaufmann/helm-charts/tree/main/charts/uptime-operator
+sources:
+- https://github.com/okaufmann/helm-charts
+- https://github.com/solid3dlab/uptime-operator
+maintainers:
+- name: okaufmann
+  url: https://github.com/okaufmann
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial chart for the uptime-operator Deployment, RBAC, config, and optional static monitors.
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/license: MIT
+  artifacthub.io/links: |
+    - name: Operator source
+      url: https://github.com/solid3dlab/uptime-operator
+    - name: Uptime Kuma
+      url: https://github.com/louislam/uptime-kuma
+type: application
+version: "1.0.0"
+appVersion: "0.2.0"
