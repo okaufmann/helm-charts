@@ -1,6 +1,6 @@
 # laravel-app
 
-![Version: 2.0.9](https://img.shields.io/badge/Version-2.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.10](https://img.shields.io/badge/Version-2.0.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for running Laravel or Statamic Apps
 
@@ -111,6 +111,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git push | 2.0.5 | `statamic.git.push: false` omits the commit CronJob. Sprig `default` treated `false` as empty, so the previous gate always stayed on. | |
 | Statamic Git SSH | 2.0.6 | Clone and commit jobs keep `alpine/git`. A generated passwd/group is mounted and the deploy key is copied to `$HOME` so OpenSSH can run as uid 33. | |
 | Statamic Git clone Job | 2.0.8 | The clone Job is no longer a `pre-upgrade` hook and is named per revision. As a hook it ran before the release manifest was applied, so it mounted the previous revision's scripts ConfigMap and SSH Secret. | |
+| Statamic Git fetches | 2.0.10 | Pulls run with `statamic.git.unpackLimit`, so incremental fetches unpack loose objects instead of using `index-pack`. `index-pack` reopens `tmp_pack_*` while it is still open for writing and NFSv4 denies that, failing the pull with a permission error. The initial clone keeps the default and still lands as one pack. | |
 | Statamic content links | 2.0.9 | Workloads wait `statamic.contentWaitSeconds` for the checkout and fail instead of serving image content. Components setting `command` (queue, scheduler, Octane) now run the linker explicitly, because overriding the entrypoint skips the s6 service that honours `STARTUP_SCRIPT_PATH`. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
@@ -371,6 +372,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statamic.git.resources | object | `{}` |  |
 | statamic.git.tolerations | list | `[]` |  |
 | statamic.git.ttlSecondsAfterFinished | int | `300` |  |
+| statamic.git.unpackLimit | int | `100000` |  |
 | statamic.git.user | string | `"statamic"` |  |
 | statamic.persistence.accessMode | string | `"ReadWriteOnce"` |  |
 | statamic.persistence.size | string | `"10Gi"` |  |

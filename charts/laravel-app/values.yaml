@@ -66,6 +66,11 @@ statamic:
     email: "statamic@example.com"
     message: "Update from production [ci skip]"
     push: true
+    # Incremental fetches below this object count are unpacked into loose
+    # objects instead of a pack. index-pack reopens its temporary pack while
+    # holding it open for writing, which NFSv4 servers reject. Lower this only
+    # on storage where that is not a problem.
+    unpackLimit: 100000
     # Slim git+ssh image. alpine/git has no passwd row for uid 33, so the
     # jobs mount a generated one over /etc/passwd.
     image:

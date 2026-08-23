@@ -441,6 +441,7 @@
             "email": { "type": "string", "minLength": 3 },
             "message": { "type": "string", "minLength": 1 },
             "push": { "type": "boolean" },
+            "unpackLimit": { "type": "integer", "minimum": 1 },
             "image": { "$ref": "#/definitions/image" },
             "resources": { "type": "object" },
             "podSecurityContext": { "type": "object" },

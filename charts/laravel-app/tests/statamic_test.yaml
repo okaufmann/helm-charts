@@ -77,6 +77,22 @@ tests:
   - matchRegex:
       path: metadata.name
       pattern: "-git-clone-[0-9]+$"
+- it: keeps incremental fetches off the index-pack path
+  template: templates/statamic/git-scripts-configmap.yaml
+  set:
+    statamic.git.unpackLimit: 4242
+  asserts:
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "fetch.unpackLimit=4242"
+  - matchRegex:
+      path: data["commit.sh"]
+      pattern: "fetch.unpackLimit=4242"
+  # The initial clone must stay on the pack path so it does not explode into
+  # loose objects.
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "git clone \"\\$REPO_URL\" /data"
 - it: waits for the checkout instead of linking image content
   template: templates/init-script.yaml
   set:
