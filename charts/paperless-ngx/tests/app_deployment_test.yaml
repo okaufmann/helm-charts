@@ -125,7 +125,7 @@ tests:
       pattern: PAPERLESS_REDIS=
   - matchRegex:
       path: data["entrypoint.sh"]
-      pattern: PAPERLESS_SOCIALACCOUNT_PROVIDERS=
+      pattern: python3 <<'PY'
   - matchRegex:
       path: data["entrypoint.sh"]
-      pattern: idp.example.com
+      pattern: '"server_url": "https://idp.example.com/.well-known/openid-configuration"'

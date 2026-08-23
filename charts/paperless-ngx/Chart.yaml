@@ -11,11 +11,11 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: changed
-      description: Use generic OIDC defaults instead of a specific identity provider.
+    - kind: fixed
+      description: Build the OIDC provider JSON in a quoted heredoc so URLs stay valid Python.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.1"
+version: "1.0.2"
 appVersion: "3.0.5"
 dependencies:
 - name: valkey

@@ -16,25 +16,26 @@ data:
 
     {{- if .Values.oidc.enabled }}
     : "${ {{- .Values.oidc.existingSecretKey -}}:?{{ .Values.oidc.existingSecretKey }} is required}"
-    PAPERLESS_SOCIALACCOUNT_PROVIDERS="$(python3 -c "
+    PAPERLESS_SOCIALACCOUNT_PROVIDERS="$(python3 <<'PY'
     import json, os
     print(json.dumps({
-        'openid_connect': {
-            'OAUTH_PKCE_ENABLED': {{ ternary "True" "False" .Values.oidc.pkce }},
-            'APPS': [{
-                'provider_id': {{ .Values.oidc.providerId | quote }},
-                'name': {{ .Values.oidc.name | quote }},
-                'client_id': {{ .Values.oidc.clientId | quote }},
-                'secret': os.environ[{{ .Values.oidc.existingSecretKey | quote }}],
-                'settings': {
-                    'server_url': {{ .Values.oidc.serverUrl | quote }},
-                    'fetch_userinfo': True,
+        "openid_connect": {
+            "OAUTH_PKCE_ENABLED": {{ ternary "True" "False" .Values.oidc.pkce }},
+            "APPS": [{
+                "provider_id": {{ .Values.oidc.providerId | toJson }},
+                "name": {{ .Values.oidc.name | toJson }},
+                "client_id": {{ .Values.oidc.clientId | toJson }},
+                "secret": os.environ[{{ .Values.oidc.existingSecretKey | toJson }}],
+                "settings": {
+                    "server_url": {{ .Values.oidc.serverUrl | toJson }},
+                    "fetch_userinfo": True,
                 },
             }],
-            'SCOPE': {{ .Values.oidc.scopes | toJson }},
+            "SCOPE": {{ .Values.oidc.scopes | toJson }},
         }
     }))
-    ")"
+    PY
+    )"
     export PAPERLESS_SOCIALACCOUNT_PROVIDERS
     {{- end }}
 
