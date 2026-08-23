@@ -38,7 +38,9 @@ data:
     # "could not open '.git/objects/pack/tmp_pack_...' for reading: Permission
     # denied". Raising the unpack limit keeps incremental fetches on the
     # loose-object path, which writes, closes and only then reads. The initial
-    # clone deliberately keeps the default so it still lands as one pack.
+    # clone still uses index-pack so it lands as one pack, but it must run on
+    # local disk first. Copying the packed repo onto the PVC avoids the NFS
+    # reopen.
     git_safe() {
       git -C /data -c safe.directory=/data \
         -c fetch.unpackLimit={{ .Values.statamic.git.unpackLimit }} \
@@ -47,10 +49,12 @@ data:
 
     if [ ! -d /data/.git ]; then
       if [ -n "${REPO_BRANCH:-}" ]; then
-        git clone --branch "$REPO_BRANCH" --single-branch "$REPO_URL" /data
+        git clone --branch "$REPO_BRANCH" --single-branch "$REPO_URL" /scratch/repo
       else
-        git clone "$REPO_URL" /data
+        git clone "$REPO_URL" /scratch/repo
       fi
+      tar -C /scratch/repo -cf - . | tar -C /data -xf -
+      rm -rf /scratch/repo
       exit 0
     fi
 

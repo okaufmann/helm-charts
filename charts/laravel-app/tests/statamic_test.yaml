@@ -57,6 +57,11 @@ tests:
         name: scripts
         mountPath: /etc/passwd
         subPath: passwd
+  - contains:
+      path: spec.template.spec.containers[0].volumeMounts
+      content:
+        name: scratch
+        mountPath: /scratch
 - it: mounts a passwd row for the git uid so alpine/git can SSH
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:
@@ -88,11 +93,14 @@ tests:
   - matchRegex:
       path: data["commit.sh"]
       pattern: "fetch.unpackLimit=4242"
-  # The initial clone must stay on the pack path so it does not explode into
-  # loose objects.
+  # The initial clone stays on the pack path (local scratch, then copy) so it
+  # does not explode into loose objects on the PVC.
   - matchRegex:
       path: data["clone.sh"]
-      pattern: "git clone \"\\$REPO_URL\" /data"
+      pattern: "git clone \"\\$REPO_URL\" /scratch/repo"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "tar -C /scratch/repo -cf -"
 - it: waits for the checkout instead of linking image content
   template: templates/init-script.yaml
   set:

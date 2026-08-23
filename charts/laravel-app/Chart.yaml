@@ -13,7 +13,7 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: fixed
-      description: Keep incremental Statamic fetches off the index-pack path. It reopens its temporary pack while holding it open for writing, which NFSv4 rejects with a permission error.
+      description: Clone Statamic onto local scratch before copying to the PVC. index-pack on NFSv4 cannot reopen tmp_pack_* and fails the initial clone with a permission error.
   artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.10"
+version: "2.0.11"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
