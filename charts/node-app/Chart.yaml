@@ -1,0 +1,23 @@
+apiVersion: v2
+name: node-app
+description: A Helm chart for running Node.js HTTP apps (Nuxt, Nitro, and similar)
+home: https://github.com/okaufmann/helm-charts/tree/main/charts/node-app
+sources:
+- https://github.com/okaufmann/helm-charts
+maintainers:
+- name: okaufmann
+  url: https://github.com/okaufmann
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Node.js HTTP application chart with rolling updates, probes, and optional Valkey.
+  artifacthub.io/containsSecurityUpdates: "false"
+type: application
+version: "1.0.0"
+appVersion: "22.0.0"
+dependencies:
+- name: valkey
+  condition: valkey.enabled
+  version: "6.2.x"
+  repository: oci://registry-1.docker.io/bitnamicharts

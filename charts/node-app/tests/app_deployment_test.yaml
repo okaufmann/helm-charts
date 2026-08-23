@@ -1,0 +1,68 @@
+suite: app deployment
+templates:
+- templates/deployment.yaml
+- templates/configmap-envs.yaml
+tests:
+- it: renders restricted security defaults
+  template: templates/deployment.yaml
+  asserts:
+  - isKind:
+      of: Deployment
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+  - equal:
+      path: spec.template.spec.securityContext.runAsNonRoot
+      value: true
+  - equal:
+      path: spec.template.spec.securityContext.runAsUser
+      value: 1000
+  - equal:
+      path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+      value: false
+  - contains:
+      path: spec.template.spec.containers[0].securityContext.capabilities.drop
+      content: ALL
+- it: uses rolling update with zero unavailable
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.strategy.type
+      value: RollingUpdate
+  - equal:
+      path: spec.strategy.rollingUpdate.maxUnavailable
+      value: 0
+  - equal:
+      path: spec.strategy.rollingUpdate.maxSurge
+      value: 1
+- it: probes health for liveness and ready for startup
+  template: templates/deployment.yaml
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+      value: /health
+  - equal:
+      path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+      value: /ready
+  - equal:
+      path: spec.template.spec.containers[0].startupProbe.httpGet.path
+      value: /ready
+- it: omits replicas when autoscaling is enabled
+  template: templates/deployment.yaml
+  set:
+    app.autoscaling.enabled: true
+  asserts:
+  - notExists:
+      path: spec.replicas
+- it: injects env from config and existing secrets
+  template: templates/deployment.yaml
+  set:
+    existingEnvSecrets:
+    - app-secrets
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+      value: RELEASE-NAME-node-app-config
+  - equal:
+      path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+      value: app-secrets

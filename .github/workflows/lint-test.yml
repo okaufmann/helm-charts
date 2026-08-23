@@ -42,15 +42,17 @@ jobs:
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.8.0
 
-    - name: Lint chart
-      run: ct lint --charts charts/laravel-app
+    - name: Lint charts
+      run: ct lint --charts charts/laravel-app,charts/node-app
 
     - name: Install helm-unittest
       # Helm 4 does not support GPG verification for legacy plugin archives.
       run: helm plugin install https://github.com/helm-unittest/helm-unittest/releases/download/v1.1.2/unittest-1.1.2.tgz --verify=false
 
     - name: Run unit tests
-      run: helm unittest charts/laravel-app
+      run: |
+        helm unittest charts/laravel-app
+        helm unittest charts/node-app
 
     - name: Render smoke-test manifests
       run: |
@@ -61,6 +63,10 @@ jobs:
         helm template smoke charts/laravel-app \
           --set app.migrate.mode=hook \
           > rendered-migrate-hook.yaml
+        helm template smoke charts/node-app > rendered-node-default.yaml
+        helm template smoke charts/node-app \
+          --values charts/node-app/values.test.yaml \
+          > rendered-node-features.yaml
 
     - name: Validate Kubernetes manifests
       run: |
@@ -73,4 +79,6 @@ jobs:
           -kubernetes-version "${{ matrix.kubernetes-version }}" \
           /work/rendered-default.yaml \
           /work/rendered-features.yaml \
-          /work/rendered-migrate-hook.yaml
+          /work/rendered-migrate-hook.yaml \
+          /work/rendered-node-default.yaml \
+          /work/rendered-node-features.yaml

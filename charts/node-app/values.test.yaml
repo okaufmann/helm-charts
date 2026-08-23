@@ -1,0 +1,27 @@
+existingEnvSecrets:
+- node-test-secrets
+
+envs:
+  NODE_ENV: production
+  NITRO_HOST: 0.0.0.0
+
+app:
+  replicaCount: 2
+  autoscaling:
+    enabled: true
+  podDisruptionBudget:
+    enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+    - host: node.example.com
+      paths:
+      - /
+    tls:
+    - hosts:
+      - node.example.com
+      secretName: node-tls
+
+networkPolicy:
+  enabled: true

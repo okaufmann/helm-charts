@@ -1,0 +1,164 @@
+global: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Non-sensitive environment variables. Never put tokens or passwords here:
+# this renders into a ConfigMap. Use existingEnvSecrets for sensitive values.
+envs: {}
+
+# Existing Secrets whose keys are exposed as environment variables.
+existingEnvSecrets: []
+
+imagePullSecrets: []
+
+automountServiceAccountToken: false
+
+# Restricted Pod Security Standard-compatible defaults for the official
+# Node image (`USER node`, uid 1000).
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+networkPolicy:
+  enabled: false
+  ingress:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ingress-nginx
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+  egress:
+    additionalRules: []
+
+app:
+  enabled: true
+
+  image:
+    repository: node
+    pullPolicy: IfNotPresent
+    tag: "22-bookworm-slim"
+
+  replicaCount: 1
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+    behavior: {}
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: null
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+  podAnnotations: {}
+  podSecurityContext: {}
+  containerSecurityContext: {}
+  extraVolumeMounts: []
+  extraVolumes: []
+  extraEnv: []
+
+  terminationGracePeriodSeconds: 30
+  revisionHistoryLimit: 10
+  priorityClassName: ""
+  lifecycle: {}
+  command: []
+  args: []
+  resources: {}
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+    nodePort: null
+    annotations: {}
+    labels: {}
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+
+  # Liveness is the process. Startup and readiness wait for application
+  # warmup (for example a Nuxt sitemap crawl) before taking traffic.
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 0
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  startupProbe:
+    httpGet:
+      path: /ready
+      port: http
+    failureThreshold: 90
+    periodSeconds: 2
+    timeoutSeconds: 5
+
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    annotations: {}
+    hosts:
+    - host: chart-example.local
+      paths:
+      - /
+    tls: []
+
+valkey:
+  enabled: false
+  auth:
+    enabled: true
+    password: ""
+  architecture: standalone
+  primary:
+    disableCommands:
+    - FLUSHALL
+    persistence:
+      enabled: true
+      storageClass: ""
+      accessModes:
+      - ReadWriteOnce
+      size: 8Gi
