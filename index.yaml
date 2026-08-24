@@ -282,6 +282,35 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: statamic.git.sync is commit (Forge-style, default), reset (discard local PVC edits and match origin), or preserve (skip pull when dirty). The clone Job never pushes.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-08-24T20:30:19.730692342Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: e37b2847d700863a5319e2e2ed9cee1d99bc40b287e06c805be43bfb076bf300
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.14/laravel-app-2.0.14.tgz
+    version: 2.0.14
+  - annotations:
+      artifacthub.io/changes: |
         - kind: fixed
           description: Always pass args after the Statamic linker. Kubernetes drops the image CMD when command is set without args, so init.sh exited 0 after linking and the web container crash-looped.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2454,4 +2483,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-24T00:21:23.527687588Z"
+generated: "2026-08-24T20:30:19.730956095Z"
