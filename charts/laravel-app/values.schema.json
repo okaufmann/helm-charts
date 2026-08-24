@@ -456,6 +456,7 @@
         },
         "schedule": { "type": "string", "minLength": 1 },
         "contentWaitSeconds": { "type": "integer", "minimum": 0 },
+        "webCommand": { "type": "string", "minLength": 1 },
         "persistence": {
           "type": "object",
           "required": ["accessMode", "size", "storageClass"],

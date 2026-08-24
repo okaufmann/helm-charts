@@ -124,14 +124,26 @@ tests:
   - equal:
       path: spec.template.spec.containers[0].args
       value: ["/bin/sh", "-c", "php artisan horizon"]
-- it: uses the linker as entrypoint so the image CMD still gets content links
+- it: starts FrankenPHP through the linker when no app.command is set
   template: templates/app/deployment.yaml
   asserts:
   - equal:
       path: spec.template.spec.containers[0].command
       value: ["/app/init.sh"]
-  - isNull:
+  - equal:
       path: spec.template.spec.containers[0].args
+      value:
+        - /bin/sh
+        - -c
+        - exec frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
+- it: honors statamic.webCommand
+  template: templates/app/deployment.yaml
+  set:
+    statamic.webCommand: exec custom-web-server
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args[2]
+      value: exec custom-web-server
 - it: wraps Octane through the linker instead of STARTUP_SCRIPT_PATH
   template: templates/app/deployment.yaml
   set:

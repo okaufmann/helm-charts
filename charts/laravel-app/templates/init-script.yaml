@@ -49,8 +49,10 @@ data:
     link_path /data/git/resources/preferences.yaml "{{ .Values.webRoot }}/resources/preferences.yaml"
     link_path /data/git/storage/forms "{{ .Values.webRoot }}/storage/forms"
 
-    if [ "$#" -gt 0 ]; then
-      exec "$@"
+    if [ "$#" -eq 0 ]; then
+      echo "No command after Statamic link; the chart must set args." >&2
+      exit 1
     fi
+    exec "$@"
 
 {{- end }}
