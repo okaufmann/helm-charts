@@ -104,16 +104,17 @@ containers:
       {{- toYaml $containerSecurityContext | nindent 6 }}
     {{- if $statamic }}
     {{/*
-      Always start through the linker. Omitting args keeps the image CMD so
-      FrankenPHP classic (no Octane, no app.command) still gets content
-      symlinks. STARTUP_SCRIPT_PATH cannot do this: that image is PID 1
-      without s6.
+      Always start through the linker. Kubernetes drops the image CMD when
+      command is set without args, so a missing command here makes init.sh
+      exit 0 after linking and the web container crash-loops.
     */}}
     command: ["/app/init.sh"]
     {{- if $values.command }}
     args: ["/bin/sh", "-c", {{ $values.command | quote }}]
     {{- else if $octane }}
     args: ["/bin/sh", "-c", {{ $octaneCommand | quote }}]
+    {{- else if eq $component "app" }}
+    args: ["/bin/sh", "-c", {{ $root.Values.statamic.webCommand | quote }}]
     {{- end }}
     {{- else if $values.command }}
     command: ["/bin/sh", "-c"]

@@ -115,6 +115,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git clone on NFS | 2.0.11 | The initial clone runs `index-pack` on an `emptyDir`, then copies the packed repo onto the PVC. Cloning straight onto NFSv4 hits the same `tmp_pack_*` reopen denial as pulls. | |
 | Statamic content links | 2.0.9 | Workloads wait `statamic.contentWaitSeconds` for the checkout and fail instead of serving image content. Components setting `command` (queue, scheduler, Octane) now run the linker explicitly, because overriding the entrypoint skips the s6 service that honours `STARTUP_SCRIPT_PATH`. | |
 | Statamic content linker | 2.0.12 | The linker is the container entrypoint whenever Statamic is enabled. FrankenPHP classic has no s6, so `STARTUP_SCRIPT_PATH` never ran and `content` stayed as the image directory unless `command` or Octane was set. | |
+| Statamic web command | 2.0.13 | The linker always gets args (`statamic.webCommand` when `app.command` and Octane are unset). Kubernetes drops the image CMD if `command` is set without `args`, so 2.0.12 exited after linking and the web pod crash-looped. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values

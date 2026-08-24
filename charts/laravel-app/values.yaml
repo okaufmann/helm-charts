@@ -104,6 +104,11 @@ statamic:
   # giving up. Workloads fail rather than silently serve image content.
   contentWaitSeconds: 120
 
+  # Process started after the content linker when app.command is empty and
+  # Octane is off. Kubernetes ignores the image CMD if command is set
+  # without args, so this cannot be left blank for FrankenPHP classic.
+  webCommand: exec frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
+
   persistence:
     accessMode: "ReadWriteOnce"
     size: "10Gi"
