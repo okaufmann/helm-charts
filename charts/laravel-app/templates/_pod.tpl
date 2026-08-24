@@ -13,12 +13,12 @@ Expected arguments:
 {{- $podSecurityContext := mustMergeOverwrite (deepCopy ($root.Values.podSecurityContext | default dict)) ($values.podSecurityContext | default dict) -}}
 {{- $containerSecurityContext := mustMergeOverwrite (deepCopy ($root.Values.containerSecurityContext | default dict)) ($values.containerSecurityContext | default dict) -}}
 {{- $statamic := and $root.Values.statamic.enabled (ne $component "reverb") -}}
-{{/*
-Setting command replaces the image ENTRYPOINT, so the s6 service that honours
-STARTUP_SCRIPT_PATH never runs and the content symlinks are never created.
-Run the linker explicitly whenever we override the entrypoint.
-*/}}
-{{- $linker := ternary "/app/init.sh && " "" $statamic -}}
+{{- $octane := and (eq $component "app") $values.octane.enabled -}}
+{{- $octaneCommand := "" -}}
+{{- if $octane -}}
+{{- $octaneWorkers := ternary (printf " --workers=%v" $values.octane.workers) "" (not (empty $values.octane.workers)) -}}
+{{- $octaneCommand = printf "php artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v --log-level=%s%s" $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests (default "info" $values.octane.logLevel) $octaneWorkers -}}
+{{- end -}}
 automountServiceAccountToken: {{ $root.Values.automountServiceAccountToken }}
 {{- with $root.Values.imagePullSecrets }}
 imagePullSecrets:
@@ -102,16 +102,27 @@ containers:
     imagePullPolicy: {{ $values.image.pullPolicy }}
     securityContext:
       {{- toYaml $containerSecurityContext | nindent 6 }}
+    {{- if $statamic }}
+    {{/*
+      Always start through the linker. Omitting args keeps the image CMD so
+      FrankenPHP classic (no Octane, no app.command) still gets content
+      symlinks. STARTUP_SCRIPT_PATH cannot do this: that image is PID 1
+      without s6.
+    */}}
+    command: ["/app/init.sh"]
     {{- if $values.command }}
+    args: ["/bin/sh", "-c", {{ $values.command | quote }}]
+    {{- else if $octane }}
+    args: ["/bin/sh", "-c", {{ $octaneCommand | quote }}]
+    {{- end }}
+    {{- else if $values.command }}
     command: ["/bin/sh", "-c"]
     args:
-      - {{ printf "%s%s" $linker $values.command | quote }}
-    {{- else if and (eq $component "app") $values.octane.enabled }}
+      - {{ $values.command | quote }}
+    {{- else if $octane }}
     command: ["/bin/sh", "-c"]
     args:
-      {{- $workers := ternary (printf " --workers=%v" $values.octane.workers) "" (not (empty $values.octane.workers)) }}
-      {{- $logLevel := default "info" $values.octane.logLevel }}
-      - {{ printf "%sphp artisan octane:start --server=%s --host=%s --port=%v --max-requests=%v --log-level=%s%s" $linker $values.octane.server $values.octane.host $values.octane.port $values.octane.maxRequests $logLevel $workers | quote }}
+      - {{ $octaneCommand | quote }}
     {{- end }}
     volumeMounts:
       - name: runtime-cache
@@ -131,11 +142,6 @@ containers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
-    {{- if $statamic }}
-    env:
-      - name: STARTUP_SCRIPT_PATH
-        value: /app/init.sh
-    {{- end }}
     {{- if or (eq $component "app") (eq $component "reverb") }}
     ports:
       - name: http
