@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: fixed
+          description: Always pass args after the Statamic linker. Kubernetes drops the image CMD when command is set without args, so init.sh exited 0 after linking and the web container crash-looped.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-08-24T00:21:23.527410899Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: c803034b424e85c670284271191cd0e5bf03fd5a4c8b5a185c3562d980198d00
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.13/laravel-app-2.0.13.tgz
+    version: 2.0.13
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
           description: Always run the Statamic content linker as the container entrypoint. FrankenPHP classic has no s6, so STARTUP_SCRIPT_PATH never created the content/users symlinks unless command or Octane was set.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2425,4 +2454,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-24T00:14:23.190956156Z"
+generated: "2026-08-24T00:21:23.527687588Z"
