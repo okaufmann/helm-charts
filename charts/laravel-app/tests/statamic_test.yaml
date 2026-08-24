@@ -69,6 +69,9 @@ tests:
   - equal:
       path: spec.template.spec.containers[0].env[7].value
       value: /tmp
+  - equal:
+      path: spec.template.spec.containers[0].env[8].name
+      value: RELEASE_REVISION
   - contains:
       path: spec.template.spec.containers[0].volumeMounts
       content:
@@ -119,7 +122,7 @@ tests:
   - matchRegex:
       path: data["clone.sh"]
       pattern: "tar -C /scratch/repo -cf -"
-- it: waits for the checkout instead of linking image content
+- it: waits for this release's clone instead of linking image content
   template: templates/init-script.yaml
   set:
     statamic.contentWaitSeconds: 42
@@ -129,7 +132,13 @@ tests:
       pattern: "-lt 42"
   - matchRegex:
       path: data["init.sh"]
-      pattern: "refusing to start with image content"
+      pattern: "statamic-clone-revision"
+  - matchRegex:
+      path: data["init.sh"]
+      pattern: "refusing to start with a stale checkout"
+  - matchRegex:
+      path: data["init.sh"]
+      pattern: "statamic:stache:refresh"
 - it: runs the linker as the entrypoint when a command is set
   template: templates/queue/deployment.yaml
   set:
@@ -212,6 +221,12 @@ tests:
   - matchRegex:
       path: data["clone.sh"]
       pattern: "git_safe clean -fd"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "statamic-stache-invalidate"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "statamic-clone-revision"
 - it: passes reset sync to the clone job
   template: templates/statamic/git-pull-job.yaml
   set:

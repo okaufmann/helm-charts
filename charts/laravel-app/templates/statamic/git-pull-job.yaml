@@ -72,6 +72,8 @@ spec:
           value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
         - name: HOME
           value: /tmp
+        - name: RELEASE_REVISION
+          value: {{ .Release.Revision | quote }}
         volumeMounts:
         - name: data
           mountPath: /data

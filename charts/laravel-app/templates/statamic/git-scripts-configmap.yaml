@@ -47,6 +47,17 @@ data:
         -c transfer.unpackLimit={{ .Values.statamic.git.unpackLimit }} "$@"
     }
 
+    # Workloads mount this PVC at /data/git. Files under .git do not dirty
+    # the working tree. The revision stamp lets init.sh wait for THIS
+    # release's clone, not a leftover checkout. The invalidate marker
+    # tells PHP to rebuild the Redis Stache after reset/pull.
+    finish_sync() {
+      if [ -n "${RELEASE_REVISION:-}" ]; then
+        printf '%s\n' "$RELEASE_REVISION" > /data/.git/statamic-clone-revision
+      fi
+      date -u +%Y-%m-%dT%H:%M:%SZ > /data/.git/statamic-stache-invalidate
+    }
+
     if [ ! -d /data/.git ]; then
       if [ -n "${REPO_BRANCH:-}" ]; then
         git clone --branch "$REPO_BRANCH" --single-branch "$REPO_URL" /scratch/repo
@@ -55,6 +66,7 @@ data:
       fi
       tar -C /scratch/repo -cf - . | tar -C /data -xf -
       rm -rf /scratch/repo
+      finish_sync
       exit 0
     fi
 
@@ -91,6 +103,7 @@ data:
         git_safe reset --hard "@{upstream}"
       fi
       git_safe clean -fd
+      finish_sync
       exit 0
     fi
 
@@ -105,6 +118,7 @@ data:
         fi
       fi
       pull_origin
+      finish_sync
       exit 0
     fi
 
@@ -115,6 +129,7 @@ data:
           git_safe checkout -B "$REPO_BRANCH" "origin/$REPO_BRANCH"
         else
           echo "Working tree is dirty on ${current}; not switching to ${REPO_BRANCH}."
+          finish_sync
           exit 0
         fi
       fi
@@ -125,6 +140,7 @@ data:
     else
       echo "Working tree is dirty; skipping pull to preserve local Statamic changes."
     fi
+    finish_sync
   commit.sh: |-
     #!/bin/sh
     set -eu

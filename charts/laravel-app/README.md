@@ -117,6 +117,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic content linker | 2.0.12 | The linker is the container entrypoint whenever Statamic is enabled. FrankenPHP classic has no s6, so `STARTUP_SCRIPT_PATH` never ran and `content` stayed as the image directory unless `command` or Octane was set. | |
 | Statamic web command | 2.0.13 | The linker always gets args (`statamic.webCommand` when `app.command` and Octane are unset). Kubernetes drops the image CMD if `command` is set without `args`, so 2.0.12 exited after linking and the web pod crash-looped. | |
 | Statamic Git sync | 2.0.14 | `statamic.git.sync` is `commit` (Forge-style, default), `reset` (match origin, discard local PVC edits), or `preserve` (skip pull when dirty). The clone Job never pushes. | |
+| Statamic Stache after git sync | 2.0.15 | Workloads wait for this Helm revision's clone Job, then rebuild the Redis Stache. Git reset updates files on the PVC; without a refresh GraphQL and the Control Panel keep serving the previous index (watcher is off when `APP_ENV` is production). | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values

@@ -10,18 +10,21 @@ data:
     #!/bin/sh
     set -eu
 
-    # The clone Job runs alongside this pod rather than before it, so the
-    # checkout may not be on the PVC yet. Without this wait every link below
-    # would skip and the app would serve the content baked into the image,
-    # sending Control Panel edits to the container's ephemeral filesystem.
+    # The clone Job runs alongside this pod rather than before it. Wait for
+    # THIS release's clone to finish. A leftover .git from the previous
+    # revision is not enough: git reset can still be rewriting the tree,
+    # and Redis Stache will not notice the new files (watcher is off when
+    # APP_ENV is production).
+    expected_revision="{{ .Release.Revision }}"
+    revision_file=/data/git/.git/statamic-clone-revision
     waited=0
-    while [ ! -d /data/git/.git ] && [ "$waited" -lt {{ .Values.statamic.contentWaitSeconds }} ]; do
+    while [ "$(cat "$revision_file" 2>/dev/null || true)" != "$expected_revision" ] && [ "$waited" -lt {{ .Values.statamic.contentWaitSeconds }} ]; do
       sleep 2
       waited=$((waited + 2))
     done
 
-    if [ ! -d /data/git/.git ]; then
-      echo "No Statamic checkout at /data/git after ${waited}s; refusing to start with image content."
+    if [ "$(cat "$revision_file" 2>/dev/null || true)" != "$expected_revision" ]; then
+      echo "Clone Job has not finished revision ${expected_revision} after ${waited}s; refusing to start with a stale checkout."
       exit 1
     fi
 
@@ -48,6 +51,25 @@ data:
     link_path /data/git/resources/users "{{ .Values.webRoot }}/resources/users"
     link_path /data/git/resources/preferences.yaml "{{ .Values.webRoot }}/resources/preferences.yaml"
     link_path /data/git/storage/forms "{{ .Values.webRoot }}/storage/forms"
+
+    refresh_stache_if_needed() {
+      marker=/data/git/.git/statamic-stache-invalidate
+      [ -f "$marker" ] || return 0
+      echo "Git checkout changed; refreshing Statamic Stache so Redis matches the PVC."
+      (
+        if command -v flock >/dev/null 2>&1; then
+          flock 9
+        fi
+        [ -f "$marker" ] || exit 0
+        php artisan --no-ansi cache:clear
+        php artisan --no-ansi statamic:stache:refresh
+        rm -f "$marker"
+      ) 9>/data/git/.git/statamic-stache-invalidate.lock
+    }
+
+    if command -v php >/dev/null 2>&1 && [ -f "{{ .Values.webRoot }}/artisan" ]; then
+      refresh_stache_if_needed
+    fi
 
     if [ "$#" -eq 0 ]; then
       echo "No command after Statamic link; the chart must set args." >&2

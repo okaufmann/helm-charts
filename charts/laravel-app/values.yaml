@@ -65,9 +65,13 @@ statamic:
     user: "statamic"
     email: "statamic@example.com"
     message: "Update from production [ci skip]"
+    # Renders the alpine/git commit CronJob. Leave Statamic's own git
+    # automation off in the app (STATAMIC_GIT_ENABLED / STATAMIC_GIT_PUSH):
+    # PHP pods do not mount the deploy key, and OpenSSH as uid 33 needs the
+    # job's passwd mount plus a 0400 key in $HOME.
     push: true
     # commit: Forge-style (production). Commit dirty PVC content, then
-    # git pull --rebase. Push stays with the CronJob / Statamic.
+    # git pull --rebase. Push is this CronJob only, never Statamic PHP.
     # reset: discard local PVC edits and match origin (staging).
     # preserve: skip pull when dirty.
     sync: commit
