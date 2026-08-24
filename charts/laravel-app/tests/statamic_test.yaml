@@ -20,8 +20,14 @@ tests:
   - notMatchRegex:
       path: data["commit.sh"]
       pattern: "echo unsafe"
+  - notMatchRegex:
+      path: data["clone.sh"]
+      pattern: "echo unsafe"
   - matchRegex:
       path: data["commit.sh"]
+      pattern: "\\$GIT_MESSAGE"
+  - matchRegex:
+      path: data["clone.sh"]
       pattern: "\\$GIT_MESSAGE"
 - it: runs the clone job as the shared non-root user
   template: templates/statamic/git-pull-job.yaml
@@ -46,10 +52,22 @@ tests:
       path: spec.template.spec.containers[0].env[1].value
       value: develop
   - equal:
+      path: spec.template.spec.containers[0].env[2].name
+      value: GIT_SYNC
+  - equal:
+      path: spec.template.spec.containers[0].env[2].value
+      value: commit
+  - equal:
       path: spec.template.spec.containers[0].env[3].name
+      value: GIT_USER
+  - equal:
+      path: spec.template.spec.containers[0].env[5].name
+      value: GIT_MESSAGE
+  - equal:
+      path: spec.template.spec.containers[0].env[7].name
       value: HOME
   - equal:
-      path: spec.template.spec.containers[0].env[3].value
+      path: spec.template.spec.containers[0].env[7].value
       value: /tmp
   - contains:
       path: spec.template.spec.containers[0].volumeMounts
@@ -173,6 +191,49 @@ tests:
   - matchRegex:
       path: data["clone.sh"]
       pattern: "skipping pull to preserve local Statamic changes"
+- it: commits dirty content before pull --rebase
+  template: templates/statamic/git-scripts-configmap.yaml
+  asserts:
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "Committing local Statamic changes before pull"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "pull --rebase origin"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "\\$GIT_MESSAGE"
+- it: resets a dirty tree to origin when git sync is reset
+  template: templates/statamic/git-scripts-configmap.yaml
+  asserts:
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "checkout -f -B"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "git_safe clean -fd"
+- it: passes reset sync to the clone job
+  template: templates/statamic/git-pull-job.yaml
+  set:
+    statamic.git.sync: reset
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].env[2].name
+      value: GIT_SYNC
+  - equal:
+      path: spec.template.spec.containers[0].env[2].value
+      value: reset
+- it: passes preserve sync to the clone job
+  template: templates/statamic/git-pull-job.yaml
+  set:
+    statamic.git.sync: preserve
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].env[2].name
+      value: GIT_SYNC
+  - equal:
+      path: spec.template.spec.containers[0].env[2].value
+      value: preserve
 - it: passes the commit message as an environment value
   template: templates/statamic/git-commit-cronjob.yaml
   set:

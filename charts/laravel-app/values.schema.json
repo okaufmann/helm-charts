@@ -435,12 +435,13 @@
         },
         "git": {
           "type": "object",
-          "required": ["user", "email", "message", "push", "image"],
+          "required": ["user", "email", "message", "push", "sync", "image"],
           "properties": {
             "user": { "type": "string", "minLength": 1 },
             "email": { "type": "string", "minLength": 3 },
             "message": { "type": "string", "minLength": 1 },
             "push": { "type": "boolean" },
+            "sync": { "type": "string", "enum": ["commit", "reset", "preserve"] },
             "unpackLimit": { "type": "integer", "minimum": 1 },
             "image": { "$ref": "#/definitions/image" },
             "resources": { "type": "object" },

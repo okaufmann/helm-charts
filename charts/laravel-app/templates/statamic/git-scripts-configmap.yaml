@@ -60,6 +60,54 @@ data:
 
     git_safe fetch origin
 
+    commit_if_dirty() {
+      git_safe add .
+      if git_safe diff --quiet && git_safe diff --staged --quiet; then
+        return 0
+      fi
+      echo "Committing local Statamic changes before pull."
+      git_safe \
+        -c user.name="$GIT_USER" \
+        -c user.email="$GIT_EMAIL" \
+        commit -m "$GIT_MESSAGE"
+    }
+
+    pull_origin() {
+      if [ -n "${REPO_BRANCH:-}" ]; then
+        git_safe pull --rebase origin "$REPO_BRANCH"
+      else
+        git_safe pull --rebase
+      fi
+    }
+
+    if [ "${GIT_SYNC:-commit}" = "reset" ]; then
+      # Staging: origin is source of truth. Discard unpublished PVC edits so
+      # they cannot pin the volume behind origin.
+      if [ -n "${REPO_BRANCH:-}" ]; then
+        echo "Resetting working tree to origin/${REPO_BRANCH}."
+        git_safe checkout -f -B "$REPO_BRANCH" "origin/$REPO_BRANCH"
+      else
+        echo "Resetting working tree to @{upstream}."
+        git_safe reset --hard "@{upstream}"
+      fi
+      git_safe clean -fd
+      exit 0
+    fi
+
+    if [ "${GIT_SYNC:-commit}" = "commit" ]; then
+      # Production / Forge: commit dirty content first so git pull --rebase
+      # can run, then apply origin. Push stays with the CronJob / Statamic.
+      commit_if_dirty
+      if [ -n "${REPO_BRANCH:-}" ]; then
+        current="$(git_safe rev-parse --abbrev-ref HEAD)"
+        if [ "$current" != "$REPO_BRANCH" ]; then
+          git_safe checkout "$REPO_BRANCH"
+        fi
+      fi
+      pull_origin
+      exit 0
+    fi
+
     if [ -n "${REPO_BRANCH:-}" ]; then
       current="$(git_safe rev-parse --abbrev-ref HEAD)"
       if [ "$current" != "$REPO_BRANCH" ]; then
@@ -73,7 +121,7 @@ data:
     fi
 
     if [ -z "$(git_safe status --porcelain)" ]; then
-      git_safe pull --rebase
+      pull_origin
     else
       echo "Working tree is dirty; skipping pull to preserve local Statamic changes."
     fi
