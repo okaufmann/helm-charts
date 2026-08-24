@@ -60,6 +60,14 @@ spec:
           value: {{ .Values.statamic.repo.sshUrl | quote }}
         - name: REPO_BRANCH
           value: {{ .Values.statamic.repo.branch | default "" | quote }}
+        - name: GIT_SYNC
+          value: {{ .Values.statamic.git.sync | default "commit" | quote }}
+        - name: GIT_USER
+          value: {{ .Values.statamic.git.user | quote }}
+        - name: GIT_EMAIL
+          value: {{ .Values.statamic.git.email | quote }}
+        - name: GIT_MESSAGE
+          value: {{ .Values.statamic.git.message | quote }}
         - name: GIT_SSH_COMMAND
           value: ssh -i /git/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=/git/.ssh/known_hosts
         - name: HOME
