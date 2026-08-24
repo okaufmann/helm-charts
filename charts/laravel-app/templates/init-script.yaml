@@ -49,4 +49,8 @@ data:
     link_path /data/git/resources/preferences.yaml "{{ .Values.webRoot }}/resources/preferences.yaml"
     link_path /data/git/storage/forms "{{ .Values.webRoot }}/storage/forms"
 
+    if [ "$#" -gt 0 ]; then
+      exec "$@"
+    fi
+
 {{- end }}

@@ -112,25 +112,46 @@ tests:
   - matchRegex:
       path: data["init.sh"]
       pattern: "refusing to start with image content"
-- it: runs the linker on components that override the entrypoint
+- it: runs the linker as the entrypoint when a command is set
   template: templates/queue/deployment.yaml
   set:
     queue.enabled: true
     queue.command: php artisan horizon
   asserts:
   - equal:
-      path: spec.template.spec.containers[0].args[0]
-      value: "/app/init.sh && php artisan horizon"
-- it: leaves the entrypoint alone when no command is set
+      path: spec.template.spec.containers[0].command
+      value: ["/app/init.sh"]
+  - equal:
+      path: spec.template.spec.containers[0].args
+      value: ["/bin/sh", "-c", "php artisan horizon"]
+- it: uses the linker as entrypoint so the image CMD still gets content links
   template: templates/app/deployment.yaml
   asserts:
-  - isNull:
+  - equal:
       path: spec.template.spec.containers[0].command
-  - contains:
-      path: spec.template.spec.containers[0].env
-      content:
-        name: STARTUP_SCRIPT_PATH
-        value: /app/init.sh
+      value: ["/app/init.sh"]
+  - isNull:
+      path: spec.template.spec.containers[0].args
+- it: wraps Octane through the linker instead of STARTUP_SCRIPT_PATH
+  template: templates/app/deployment.yaml
+  set:
+    app.octane.enabled: true
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].command
+      value: ["/app/init.sh"]
+  - equal:
+      path: spec.template.spec.containers[0].args
+      value:
+        - /bin/sh
+        - -c
+        - php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080 --max-requests=500 --log-level=info
+- it: execs the real process after linking
+  template: templates/init-script.yaml
+  asserts:
+  - matchRegex:
+      path: data["init.sh"]
+      pattern: 'exec "\$@"'
 - it: clones a configured branch and skips pull on a dirty tree
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:
