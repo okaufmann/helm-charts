@@ -27,10 +27,11 @@ data:
     chmod 0444 "$HOME/.ssh/known_hosts"
     GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
     export GIT_SSH_COMMAND
-  clone.sh: |-
+  git-common.sh: |-
     #!/bin/sh
-    set -eu
-    . /scripts/ssh-env.sh
+    # Shared by clone.sh and commit.sh. Keep git talk single-writer: NFS plus
+    # overlapping clone retries and the commit CronJob otherwise leave
+    # rebase-merge / index.lock and every later pull --rebase dies immediately.
 
     # index-pack creates .git/objects/pack/tmp_pack_* with mode 0444 and then
     # reopens it for reading while still holding it open for writing. NFSv4
@@ -46,6 +47,62 @@ data:
         -c fetch.unpackLimit={{ .Values.statamic.git.unpackLimit }} \
         -c transfer.unpackLimit={{ .Values.statamic.git.unpackLimit }} "$@"
     }
+
+    with_git_lock() {
+      if [ ! -d /data/.git ]; then
+        return 0
+      fi
+      # Lock lives under .git so it cannot show up as an untracked content file.
+      exec 9>/data/.git/statamic-git.lock
+      echo "Waiting for Statamic git lock."
+      flock 9
+    }
+
+    recover_interrupted_git() {
+      if [ ! -d /data/.git ]; then
+        return 0
+      fi
+      rm -f /data/.git/index.lock
+      if [ -d /data/.git/rebase-merge ] || [ -d /data/.git/rebase-apply ]; then
+        echo "Aborting leftover rebase."
+        git_safe rebase --abort || rm -rf /data/.git/rebase-merge /data/.git/rebase-apply
+      fi
+      if [ -f /data/.git/MERGE_HEAD ]; then
+        echo "Aborting leftover merge."
+        git_safe merge --abort || rm -f /data/.git/MERGE_HEAD
+      fi
+    }
+
+    pull_origin() {
+      # Leftover interactive rebase state can block waiting for an editor.
+      GIT_EDITOR=true
+      export GIT_EDITOR
+      if [ -n "${REPO_BRANCH:-}" ]; then
+        git_safe pull --rebase origin "$REPO_BRANCH"
+      else
+        git_safe pull --rebase
+      fi
+    }
+
+    push_if_ahead() {
+      if [ "${GIT_PUSH:-}" != "true" ]; then
+        return 0
+      fi
+      if ! git_safe rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/dev/null 2>&1; then
+        echo "No upstream; skipping push."
+        return 0
+      fi
+      ahead="$(git_safe rev-list --count '@{upstream}..HEAD')"
+      if [ "$ahead" != "0" ]; then
+        echo "Pushing ${ahead} commit(s) not on origin."
+        git_safe push
+      fi
+    }
+  clone.sh: |-
+    #!/bin/sh
+    set -eu
+    . /scripts/ssh-env.sh
+    . /scripts/git-common.sh
 
     # Workloads mount this PVC at /data/git. Files under .git do not dirty
     # the working tree. The revision stamp lets init.sh wait for THIS
@@ -70,6 +127,8 @@ data:
       exit 0
     fi
 
+    with_git_lock
+    recover_interrupted_git
     git_safe fetch origin
 
     commit_if_dirty() {
@@ -82,14 +141,6 @@ data:
         -c user.name="$GIT_USER" \
         -c user.email="$GIT_EMAIL" \
         commit -m "$GIT_MESSAGE"
-    }
-
-    pull_origin() {
-      if [ -n "${REPO_BRANCH:-}" ]; then
-        git_safe pull --rebase origin "$REPO_BRANCH"
-      else
-        git_safe pull --rebase
-      fi
     }
 
     if [ "${GIT_SYNC:-commit}" = "reset" ]; then
@@ -108,8 +159,8 @@ data:
     fi
 
     if [ "${GIT_SYNC:-commit}" = "commit" ]; then
-      # Production / Forge: commit dirty content first so git pull --rebase
-      # can run, then apply origin. Push stays with the CronJob / Statamic.
+      # Production / Forge: commit dirty content, rebase onto origin, then
+      # push when GIT_PUSH=true so a deploy does not leave the volume ahead.
       commit_if_dirty
       if [ -n "${REPO_BRANCH:-}" ]; then
         current="$(git_safe rev-parse --abbrev-ref HEAD)"
@@ -118,6 +169,7 @@ data:
         fi
       fi
       pull_origin
+      push_if_ahead
       finish_sync
       exit 0
     fi
@@ -145,24 +197,29 @@ data:
     #!/bin/sh
     set -eu
     . /scripts/ssh-env.sh
+    . /scripts/git-common.sh
 
-    # See clone.sh for why the unpack limit is raised.
-    git_safe() {
-      git -C /data -c safe.directory=/data \
-        -c fetch.unpackLimit={{ .Values.statamic.git.unpackLimit }} \
-        -c transfer.unpackLimit={{ .Values.statamic.git.unpackLimit }} "$@"
-    }
-
-    if [ -z "$(git_safe status --porcelain)" ]; then
-      echo "No Statamic content changes to commit."
+    if [ ! -d /data/.git ]; then
+      echo "No Statamic git checkout yet."
       exit 0
     fi
 
-    git_safe add .
-    git_safe \
-      -c user.name="$GIT_USER" \
-      -c user.email="$GIT_EMAIL" \
-      commit -m "$GIT_MESSAGE"
-    git_safe pull --rebase
-    git_safe push
+    with_git_lock
+    recover_interrupted_git
+    GIT_PUSH=true
+    export GIT_PUSH
+
+    if [ -z "$(git_safe status --porcelain)" ]; then
+      echo "No Statamic content changes to commit."
+    else
+      git_safe add .
+      git_safe \
+        -c user.name="$GIT_USER" \
+        -c user.email="$GIT_EMAIL" \
+        commit -m "$GIT_MESSAGE"
+    fi
+
+    git_safe fetch origin
+    pull_origin
+    push_if_ahead
 {{- end }}
