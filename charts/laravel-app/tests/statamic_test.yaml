@@ -196,6 +196,9 @@ tests:
       pattern: "git clone --branch \"\\$REPO_BRANCH\" --single-branch"
   - matchRegex:
       path: data["clone.sh"]
+      pattern: "Cloned successfully"
+  - matchRegex:
+      path: data["clone.sh"]
       pattern: "skipping pull to preserve local Statamic changes"
 - it: commits dirty content before pull --rebase
   template: templates/statamic/git-scripts-configmap.yaml
@@ -206,6 +209,9 @@ tests:
   - matchRegex:
       path: data["git-common.sh"]
       pattern: "pull --rebase origin"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "Synced successfully"
   - matchRegex:
       path: data["clone.sh"]
       pattern: "\\$GIT_MESSAGE"
@@ -256,6 +262,9 @@ tests:
   - matchRegex:
       path: data["clone.sh"]
       pattern: "git_safe clean -fd"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "Reset complete"
   - matchRegex:
       path: data["clone.sh"]
       pattern: "statamic-stache-invalidate"

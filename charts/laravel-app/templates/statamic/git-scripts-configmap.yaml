@@ -123,6 +123,7 @@ data:
       fi
       tar -C /scratch/repo -cf - . | tar -C /data -xf -
       rm -rf /scratch/repo
+      echo "Cloned successfully."
       finish_sync
       exit 0
     fi
@@ -154,6 +155,7 @@ data:
         git_safe reset --hard "@{upstream}"
       fi
       git_safe clean -fd
+      echo "Reset complete."
       finish_sync
       exit 0
     fi
