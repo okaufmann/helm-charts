@@ -18,6 +18,12 @@ tests:
       - equal:
           path: data.STATIC_MONITORS_PATH
           value: /config/monitors.yaml
+      - equal:
+          path: data.DEFAULT_DELETE_POLICY
+          value: deferred
+      - equal:
+          path: data.DEFAULT_DELETE_GRACE
+          value: 24h
   - it: merges extraEnv into the config ConfigMap
     template: templates/configmap.yaml
     set:
