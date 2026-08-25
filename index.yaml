@@ -282,6 +282,35 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Statamic git Jobs flock the PVC, abort leftover rebase/merge state, and the clone Job pushes when git.push is true so a deploy cannot leave the volume ahead of origin.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-08-25T23:55:40.252772133Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 3c10756f31d02842c4612bb7057dc11ac8ffe1f51796d8eedd7d971a38a3e15d
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.16/laravel-app-2.0.16.tgz
+    version: 2.0.16
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: After a Statamic git clone/reset, workloads wait for this release's checkout and rebuild the Redis Stache so Control Panel and GraphQL match the files on the PVC.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2512,4 +2541,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-24T22:10:13.113318518Z"
+generated: "2026-08-25T23:55:40.253270428Z"
