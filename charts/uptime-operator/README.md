@@ -38,12 +38,12 @@ staticMonitors:
 | `uptime-kuma.io/monitor-interval` | Check interval in seconds (default `60`) |
 | `uptime-kuma.io/monitor-group` | Kuma group name |
 | `uptime-kuma.io/notification` | Extra Kuma notification channel name(s) |
-| `uptime-kuma.io/delete-policy` | `deferred` (default) or `immediate` |
+| `uptime-kuma.io/delete-policy` | `deferred` (default), `immediate`, or `retain` |
 | `uptime-kuma.io/delete-grace` | How long a deferred orphan stays (default `24h`) |
 
 Managed monitors are tagged `managed-by-uptime-operator`. Manual monitors are
 never touched. Deferred orphans keep probing so an accidental Helm uninstall
-still pages through Kuma.
+still pages through Kuma. `retain` never deletes the monitor.
 
 ## Values
 
@@ -53,7 +53,7 @@ still pages through Kuma.
 | `image.tag` | Chart `appVersion` | Image tag |
 | `config.resyncInterval` | `300` | Seconds between full syncs |
 | `config.logLevel` | `INFO` | `DEBUG` / `INFO` / `WARN` / `ERROR` |
-| `config.defaultDeletePolicy` | `deferred` | Cluster default when an Ingress has no override |
+| `config.defaultDeletePolicy` | `deferred` | `deferred`, `immediate`, or `retain` |
 | `config.defaultDeleteGrace` | `24h` | Deferred orphan lifetime |
 | `existingSecret` | `uptime-operator` | Secret with Kuma login |
 | `secret.create` | `false` | Create a Secret from `secret.url` / `username` / `password` |

@@ -22,8 +22,8 @@ config:
   resyncInterval: 300
   logLevel: INFO
   staticMonitorsPath: /config/monitors.yaml
-  # deferred keeps a monitor for defaultDeleteGrace after its Ingress is gone
-  # so an accidental Helm uninstall still pages. immediate deletes at once.
+  # deferred: keep for defaultDeleteGrace after the Ingress is gone.
+  # immediate: delete at once. retain: never delete.
   defaultDeletePolicy: deferred
   defaultDeleteGrace: 24h
 
