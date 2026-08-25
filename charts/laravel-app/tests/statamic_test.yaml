@@ -109,10 +109,7 @@ tests:
     statamic.git.unpackLimit: 4242
   asserts:
   - matchRegex:
-      path: data["clone.sh"]
-      pattern: "fetch.unpackLimit=4242"
-  - matchRegex:
-      path: data["commit.sh"]
+      path: data["git-common.sh"]
       pattern: "fetch.unpackLimit=4242"
   # The initial clone stays on the pack path (local scratch, then copy) so it
   # does not explode into loose objects on the PVC.
@@ -207,11 +204,49 @@ tests:
       path: data["clone.sh"]
       pattern: "Committing local Statamic changes before pull"
   - matchRegex:
-      path: data["clone.sh"]
+      path: data["git-common.sh"]
       pattern: "pull --rebase origin"
   - matchRegex:
       path: data["clone.sh"]
       pattern: "\\$GIT_MESSAGE"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "push_if_ahead"
+- it: serializes git Jobs and recovers leftover rebase state
+  template: templates/statamic/git-scripts-configmap.yaml
+  asserts:
+  - matchRegex:
+      path: data["git-common.sh"]
+      pattern: "flock 9"
+  - matchRegex:
+      path: data["git-common.sh"]
+      pattern: "Aborting leftover rebase"
+  - matchRegex:
+      path: data["clone.sh"]
+      pattern: "recover_interrupted_git"
+  - matchRegex:
+      path: data["commit.sh"]
+      pattern: "recover_interrupted_git"
+  - matchRegex:
+      path: data["commit.sh"]
+      pattern: "push_if_ahead"
+- it: defaults the clone Job backoffLimit to one retry
+  template: templates/statamic/git-pull-job.yaml
+  asserts:
+  - equal:
+      path: spec.backoffLimit
+      value: 1
+- it: passes GIT_PUSH from statamic.git.push
+  template: templates/statamic/git-pull-job.yaml
+  set:
+    statamic.git.push: false
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].env[9].name
+      value: GIT_PUSH
+  - equal:
+      path: spec.template.spec.containers[0].env[9].value
+      value: "false"
 - it: resets a dirty tree to origin when git sync is reset
   template: templates/statamic/git-scripts-configmap.yaml
   asserts:
@@ -255,7 +290,10 @@ tests:
     statamic.git.message: "content: \"quoted\"; echo safe"
   asserts:
   - equal:
-      path: spec.jobTemplate.spec.template.spec.containers[0].env[2].value
+      path: spec.jobTemplate.spec.template.spec.containers[0].env[0].name
+      value: REPO_BRANCH
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env[3].value
       value: "content: \"quoted\"; echo safe"
 - it: omits the commit CronJob when git push is disabled
   template: templates/statamic/git-commit-cronjob.yaml

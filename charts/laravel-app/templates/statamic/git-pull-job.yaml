@@ -74,6 +74,8 @@ spec:
           value: /tmp
         - name: RELEASE_REVISION
           value: {{ .Release.Revision | quote }}
+        - name: GIT_PUSH
+          value: {{ .Values.statamic.git.push | quote }}
         volumeMounts:
         - name: data
           mountPath: /data

@@ -55,6 +55,8 @@ spec:
               {{- toYaml .Values.statamic.git.containerSecurityContext | nindent 14 }}
             command: [/scripts/commit.sh]
             env:
+            - name: REPO_BRANCH
+              value: {{ .Values.statamic.repo.branch | default "" | quote }}
             - name: GIT_USER
               value: {{ .Values.statamic.git.user | quote }}
             - name: GIT_EMAIL
