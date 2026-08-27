@@ -119,6 +119,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git sync | 2.0.14 | `statamic.git.sync` is `commit` (Forge-style, default), `reset` (match origin, discard local PVC edits), or `preserve` (skip pull when dirty). Through 2.0.15 the clone Job never pushed. | |
 | Statamic Stache after git sync | 2.0.15 | Workloads wait for this Helm revision's clone Job, then rebuild the Redis Stache. Git reset updates files on the PVC; without a refresh GraphQL and the Control Panel keep serving the previous index (watcher is off when `APP_ENV` is production). | |
 | Statamic Git lock and push | 2.0.16 | Clone and commit Jobs `flock` the PVC, abort leftover rebase/merge state, and default `backoffLimit` is 1. When `statamic.git.push` is true the clone Job pushes after rebase so a deploy does not leave the volume ahead of origin. The CronJob still pushes Control Panel saves between deploys. | |
+| Statamic Git sync log | 2.0.17 | After `pull --rebase` the clone Job prints `Synced successfully.` so a quiet alpine/git Job does not look unfinished in `kubectl logs`. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values

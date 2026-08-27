@@ -172,6 +172,7 @@ data:
       fi
       pull_origin
       push_if_ahead
+      echo "Synced successfully."
       finish_sync
       exit 0
     fi
@@ -191,6 +192,7 @@ data:
 
     if [ -z "$(git_safe status --porcelain)" ]; then
       pull_origin
+      echo "Synced successfully."
     else
       echo "Working tree is dirty; skipping pull to preserve local Statamic changes."
     fi
