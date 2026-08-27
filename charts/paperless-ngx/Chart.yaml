@@ -16,6 +16,7 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
 version: "1.0.2"
+# renovate: datasource=github-releases depName=paperless-ngx/paperless-ngx extractVersion=^v(?<version>.*)$
 appVersion: "3.0.5"
 dependencies:
 - name: valkey

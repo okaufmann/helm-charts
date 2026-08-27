@@ -34,6 +34,13 @@
       "enabled": false
     },
     {
+      "description": "Only follow Paperless-ngx 3.x releases",
+      "matchPackageNames": [
+        "paperless-ngx/paperless-ngx"
+      ],
+      "allowedVersions": "<4.0.0"
+    },
+    {
       "description": "Bump the chart version when appVersion changes",
       "matchFileNames": [
         "charts/**"

@@ -14,4 +14,6 @@ The GitHub Action will automatically create a new release and push the Chart to 
 1. Bumps `appVersion`
 2. Bumps the chart `version` (patch for app patches, minor otherwise)
 
+Paperless-ngx is limited to 3.x so a 4.0 release will not be picked up automatically.
+
 Install the [Mend Renovate GitHub App](https://github.com/apps/renovate) on this repository if it is not already installed. Chart dependencies (Valkey, …) and GitHub Actions stay on Dependabot.
