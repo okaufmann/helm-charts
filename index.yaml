@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
+          description: Statamic clone Job logs "Synced successfully." after pull --rebase so kubectl logs is unambiguous when alpine/git stays quiet.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-08-27T12:47:53.913164771Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 7c57bd2e30e1b307ebd1924f80722f13054dcfe9b7f5d03da020d7d928552f72
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.17/laravel-app-2.0.17.tgz
+    version: 2.0.17
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
           description: Statamic git Jobs flock the PVC, abort leftover rebase/merge state, and the clone Job pushes when git.push is true so a deploy cannot leave the volume ahead of origin.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2569,4 +2598,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-27T12:42:22.666522202Z"
+generated: "2026-08-27T12:47:53.913533917Z"
