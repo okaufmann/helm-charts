@@ -21,6 +21,6 @@ annotations:
     - name: Uptime Kuma
       url: https://github.com/louislam/uptime-kuma
 type: application
-version: "1.0.0"
+version: "1.1.0"
 # renovate: datasource=github-releases depName=solid3dlab/uptime-operator extractVersion=^v(?<version>.*)$
-appVersion: "0.2.0"
+appVersion: "0.6.0"
