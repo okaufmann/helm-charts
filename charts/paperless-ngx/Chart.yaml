@@ -15,9 +15,9 @@ annotations:
       description: Update Paperless-ngx to 3.1.0.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.1.0"
+version: "1.1.1"
 # renovate: datasource=github-releases depName=paperless-ngx/paperless-ngx extractVersion=^v(?<version>.*)$
-appVersion: "3.1.0"
+appVersion: "3.1.3"
 dependencies:
 - name: valkey
   condition: valkey.enabled
