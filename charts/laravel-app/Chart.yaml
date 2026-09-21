@@ -36,5 +36,5 @@ appVersion: "13.0.0"
 dependencies:
 - name: valkey
   condition: valkey.enabled
-  version: "6.2.x"
+  version: 6.3.x
   repository: oci://registry-1.docker.io/bitnamicharts
