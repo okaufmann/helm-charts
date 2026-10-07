@@ -86,7 +86,7 @@ tests:
         tls:
           mode: Terminate
           certificateRefs:
-          - name: example-com-tls
+          - name: app-tls
   - documentSelector:
       path: kind
       value: HTTPRoute

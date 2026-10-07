@@ -31,7 +31,7 @@ filter on `httpRoute`. Mailpit only has optional HTTP basic auth.
 
 `httpRoute.listenerSet` adds a ListenerSet with one HTTPS listener per
 hostname on the given Gateway. Its `clusterIssuer` annotation makes
-cert-manager issue `<host-with-dashes>-tls` in the release namespace, and
+cert-manager issue `secretName` (default `<fullname>-tls`) in the release namespace, and
 the route attaches to the set unless `parentRefs` is given.
 
 ```yaml

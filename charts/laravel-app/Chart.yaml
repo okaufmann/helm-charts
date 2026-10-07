@@ -12,8 +12,8 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: added
-      description: Optional httpRoute.listenerSet: own HTTPS listeners per hostname with a cert-manager certificate; the route attaches to it unless parentRefs is set.
+    - kind: changed
+      description: httpRoute.listenerSet serves every hostname from one secret (default <fullname>-tls), so an existing Ingress certificate is reused.
   artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.1.0"
+version: "2.1.1"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

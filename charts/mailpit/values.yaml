@@ -212,8 +212,8 @@ httpRoute:
   parentRefs: []
   hostnames: []
   rules: []
-  # Own HTTPS listeners on the parent Gateway, one per hostname, with a
-  # cert-manager certificate each. The route attaches here unless parentRefs is set.
+  # Own HTTPS listeners on the parent Gateway, one per hostname, served by one
+  # cert-manager certificate. The route attaches here unless parentRefs is set.
   listenerSet:
     enabled: false
     name: ""
@@ -222,6 +222,8 @@ httpRoute:
       namespace: ""
     port: 443
     clusterIssuer: ""
+    # Shared by every listener. Defaults to <fullname>-tls.
+    secretName: ""
     annotations: {}
   # Ingress of class uptime-only for an operator image that cannot list HTTPRoutes.
   uptimeBridge:

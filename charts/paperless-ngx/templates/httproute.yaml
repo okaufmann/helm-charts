@@ -10,12 +10,14 @@
 {{- fail "httpRoute.rules is required when httpRoute.enabled is true" }}
 {{- end }}
 {{- $lsName := default (include "paperless-ngx.fullname" .) $ls.name }}
+{{- $lsSecret := default (printf "%s-tls" (include "paperless-ngx.fullname" .)) $ls.secretName }}
 {{- if $ls.enabled }}
 {{- if or (not $ls.gateway.name) (not $ls.gateway.namespace) }}
 {{- fail "httpRoute.listenerSet.gateway.name and .namespace are required" }}
 {{- end }}
 # One HTTPS listener per hostname. Cilium does not set an SNI match per
 # certificate, so a listener must not carry more than one certificateRef.
+# cert-manager issues one certificate per secret name for all listeners.
 apiVersion: gateway.networking.k8s.io/v1
 kind: ListenerSet
 metadata:
@@ -46,7 +48,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: {{ printf "%s-tls" (. | replace "." "-") | quote }}
+          - name: {{ $lsSecret }}
     {{- end }}
 ---
 {{- end }}

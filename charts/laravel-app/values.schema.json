@@ -108,7 +108,7 @@
         },
         "listenerSet": {
           "type": "object",
-          "required": ["enabled", "name", "gateway", "port", "clusterIssuer", "annotations"],
+          "required": ["enabled", "name", "gateway", "port", "clusterIssuer", "secretName", "annotations"],
           "additionalProperties": false,
           "properties": {
             "enabled": { "type": "boolean" },
@@ -124,6 +124,7 @@
             },
             "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
             "clusterIssuer": { "type": "string" },
+            "secretName": { "type": "string" },
             "annotations": { "type": "object" }
           }
         },
