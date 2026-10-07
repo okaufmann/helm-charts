@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
+          description: replicaCount accepts 0 so app, queue and reverb can be scaled down without disabling them.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-10-07T08:41:13.03424674Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.3.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 4394e56cd114c1cb9e23298b48240bff7d87331e5410a7eabc12f186edc8699f
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.18/laravel-app-2.0.18.tgz
+    version: 2.0.18
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
           description: Statamic clone Job logs "Synced successfully." after pull --rebase so kubectl logs is unambiguous when alpine/git stays quiet.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2655,4 +2684,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-09-04T21:12:52.892493502Z"
+generated: "2026-10-07T08:41:13.034485017Z"
