@@ -282,6 +282,35 @@ entries:
   laravel-app:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-10-07T10:10:49.980126228Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.3.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: e5af31bca8cf9bde5a4306797ac4e16e4eb48570ca164c1039b97678959e5dd0
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.0.19/laravel-app-2.0.19.tgz
+    version: 2.0.19
+  - annotations:
+      artifacthub.io/changes: |
         - kind: changed
           description: replicaCount accepts 0 so app, queue and reverb can be scaled down without disabling them.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2410,6 +2439,30 @@ entries:
   mailpit:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: v1.31.0
+    created: "2026-10-07T10:10:50.126784256Z"
+    description: A Helm chart for Mailpit, an email testing tool with SMTP, web UI,
+      and API
+    digest: 4c6366e1345f5be9c4917968033c263ea0e709d382f5ff212404d8eabd2e3804
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/mailpit
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: mailpit
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/axllent/mailpit
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/mailpit-1.0.2/mailpit-1.0.2.tgz
+    version: 1.0.2
+  - annotations:
+      artifacthub.io/changes: |
         - kind: fixed
           description: Allow SpamAssassin to setuid to nobody after dropping other capabilities.
       artifacthub.io/containsSecurityUpdates: "false"
@@ -2460,6 +2513,33 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
+          description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 22.0.0
+    created: "2026-10-07T10:10:50.244914007Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for running Node.js HTTP apps (Nuxt, Nitro, and similar)
+    digest: f9c315d1a380f22e448a2d2b44a471706f1ed78d019f56cdb77e75a1ef3b9a7a
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/node-app
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: node-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/node-app-1.0.1/node-app-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
           description: Initial Node.js HTTP application chart with rolling updates, probes, and optional Valkey.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -2485,6 +2565,34 @@ entries:
     - https://github.com/okaufmann/helm-charts/releases/download/node-app-1.0.0/node-app-1.0.0.tgz
     version: 1.0.0
   paperless-ngx:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 3.3.0
+    created: "2026-10-07T10:10:50.395689548Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for Paperless-ngx
+    digest: eacc3a0585cd485b2fd0d30637bf21e913ecee4fa3c781dd7da66821a11f9984
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/paperless-ngx
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: paperless-ngx
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/paperless-ngx-1.2.1/paperless-ngx-1.2.1.tgz
+    version: 1.2.1
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -2657,6 +2765,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
+          description: ClusterRole can list HTTPRoutes as well as Ingresses.
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: MIT
+      artifacthub.io/links: |
+        - name: Operator source
+          url: https://github.com/solid3dlab/uptime-operator
+        - name: Uptime Kuma
+          url: https://github.com/louislam/uptime-kuma
+    apiVersion: v2
+    appVersion: 0.6.0
+    created: "2026-10-07T10:10:50.513368115Z"
+    description: Sync annotated HTTPRoutes and Ingresses into Uptime Kuma HTTP monitors
+    digest: 6cbc87c658d047c4c003f9b7da1bbce9b833c6c6b2985d3eae17635f70e1884d
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/uptime-operator
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: uptime-operator
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/solid3dlab/uptime-operator
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.1.1/uptime-operator-1.1.1.tgz
+    version: 1.1.1
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
           description: Initial chart for the uptime-operator Deployment, RBAC, config, and optional static monitors.
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: MIT
@@ -2712,4 +2849,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-07T08:41:33.433523414Z"
+generated: "2026-10-07T10:10:50.513740848Z"
