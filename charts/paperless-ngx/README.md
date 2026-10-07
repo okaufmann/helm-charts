@@ -9,6 +9,10 @@ helm repo add olidev https://helm-charts.oli-the.dev
 helm install paperless olidev/paperless-ngx
 ```
 
+`httpRoute` attaches the release to a Gateway. `app.ingress` remains the
+Ingress API. A longer path (for example a sidecar) belongs in
+`httpRoute.rules` before `/`.
+
 ## Values
 
 Put non-secret configuration in `envs`. Inject secrets with

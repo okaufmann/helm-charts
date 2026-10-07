@@ -1,0 +1,94 @@
+{{- if .Values.httpRoute.enabled }}
+{{- if not .Values.httpRoute.parentRefs }}
+{{- fail "httpRoute.parentRefs is required when httpRoute.enabled is true" }}
+{{- end }}
+{{- if not .Values.httpRoute.hostnames }}
+{{- fail "httpRoute.hostnames is required when httpRoute.enabled is true" }}
+{{- end }}
+{{- if not .Values.httpRoute.rules }}
+{{- fail "httpRoute.rules is required when httpRoute.enabled is true" }}
+{{- end }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ default (include "mailpit.fullname" .) .Values.httpRoute.name }}
+  labels:
+    {{- include "mailpit.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- toYaml .Values.httpRoute.parentRefs | nindent 4 }}
+  hostnames:
+    {{- toYaml .Values.httpRoute.hostnames | nindent 4 }}
+  rules:
+    {{- range .Values.httpRoute.rules }}
+    {{- if or (not .backend) (not .backend.name) (not .backend.port) }}
+    {{- fail "each httpRoute rule needs backend.name and backend.port" }}
+    {{- end }}
+    - {{- if .path }}
+      matches:
+        - path:
+            type: PathPrefix
+            value: {{ .path | quote }}
+      {{- end }}
+      {{- with .filters }}
+      filters:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .timeouts }}
+      timeouts:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      backendRefs:
+        - name: {{ .backend.name }}
+          {{- with .backend.namespace }}
+          namespace: {{ . }}
+          {{- end }}
+          port: {{ .backend.port }}
+    {{- end }}
+{{- if .Values.httpRoute.uptimeBridge.enabled }}
+{{- if not .Values.httpRoute.uptimeBridge.service.name }}
+{{- fail "httpRoute.uptimeBridge.service.name is required when the bridge is enabled" }}
+{{- end }}
+---
+# tls.hosts keeps an Ingress-only Uptime operator on https. No secretName,
+# so cert-manager does not issue a certificate for this object.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ default (printf "%s-uptime" (include "mailpit.fullname" .)) .Values.httpRoute.uptimeBridge.name }}
+  labels:
+    {{- include "mailpit.labels" . | nindent 4 }}
+  {{- $bridgeAnns := .Values.httpRoute.annotations }}
+  {{- if .Values.httpRoute.uptimeBridge.annotations }}
+  {{- $bridgeAnns = .Values.httpRoute.uptimeBridge.annotations }}
+  {{- end }}
+  {{- with $bridgeAnns }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: uptime-only
+  tls:
+    - hosts:
+        {{- range .Values.httpRoute.hostnames }}
+        - {{ . | quote }}
+        {{- end }}
+  rules:
+    {{- range .Values.httpRoute.hostnames }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.httpRoute.uptimeBridge.service.name }}
+                port:
+                  number: {{ $.Values.httpRoute.uptimeBridge.service.port }}
+    {{- end }}
+{{- end }}
+{{- end }}

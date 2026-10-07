@@ -1,0 +1,47 @@
+suite: httproute
+templates:
+- templates/httproute.yaml
+tests:
+- it: renders nothing unless enabled
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders an HTTPRoute and an uptime bridge
+  set:
+    fullnameOverride: solid3d-web
+    httpRoute.enabled: true
+    httpRoute.parentRefs:
+    - name: public
+      namespace: kube-system
+      sectionName: https
+    httpRoute.hostnames:
+    - preview.solid3d.ch
+    httpRoute.rules:
+    - path: /
+      backend:
+        name: solid3d-web
+        port: 80
+        namespace: authentik
+    httpRoute.uptimeBridge.enabled: true
+    httpRoute.uptimeBridge.service.name: solid3d-web
+    httpRoute.uptimeBridge.service.port: 80
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.rules[0].backendRefs[0].namespace
+      value: authentik
+  - documentSelector:
+      path: kind
+      value: Ingress
+    equal:
+      path: spec.ingressClassName
+      value: uptime-only
+  - documentSelector:
+      path: kind
+      value: Ingress
+    notExists:
+      path: spec.tls[0].secretName

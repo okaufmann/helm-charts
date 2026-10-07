@@ -11,10 +11,10 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: added
-      description: Initial Node.js HTTP application chart with rolling updates, probes, and optional Valkey.
+      description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.0"
+version: "1.0.1"
 appVersion: "22.0.0"
 dependencies:
 - name: valkey

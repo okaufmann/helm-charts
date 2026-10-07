@@ -1,0 +1,50 @@
+suite: httproute
+templates:
+- templates/httproute.yaml
+tests:
+- it: renders nothing unless enabled
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders an HTTPRoute and an uptime bridge
+  set:
+    fullnameOverride: paperless
+    httpRoute.enabled: true
+    httpRoute.parentRefs:
+    - name: public
+      namespace: kube-system
+      sectionName: https
+    httpRoute.hostnames:
+    - dms.example.com
+    httpRoute.rules:
+    - path: /mailgun
+      backend:
+        name: paperless-mail-ingest
+        port: 80
+    - path: /
+      backend:
+        name: paperless
+        port: 8000
+    httpRoute.uptimeBridge.enabled: true
+    httpRoute.uptimeBridge.service.name: paperless
+    httpRoute.uptimeBridge.service.port: 8000
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.rules[0].backendRefs[0].name
+      value: paperless-mail-ingest
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.rules[1].backendRefs[0].port
+      value: 8000
+  - documentSelector:
+      path: kind
+      value: Ingress
+    notExists:
+      path: spec.tls[0].secretName

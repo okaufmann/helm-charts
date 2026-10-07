@@ -188,3 +188,21 @@ valkey:
       accessModes:
       - ReadWriteOnce
       size: 8Gi
+
+# Attaches this release to a Gateway. The Gateway itself is not created here.
+# Put a longer path before `/`. backend.name is the Service to call.
+httpRoute:
+  enabled: false
+  name: ""
+  annotations: {}
+  parentRefs: []
+  hostnames: []
+  rules: []
+  # Ingress of class uptime-only for an operator image that cannot list HTTPRoutes.
+  uptimeBridge:
+    enabled: false
+    name: ""
+    annotations: {}
+    service:
+      name: ""
+      port: 80

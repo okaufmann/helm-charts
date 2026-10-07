@@ -1,0 +1,78 @@
+suite: httproute
+templates:
+- templates/httproute.yaml
+tests:
+- it: renders nothing unless enabled
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders an HTTPRoute and an uptime bridge
+  set:
+    fullnameOverride: solid3d-relay
+    httpRoute.enabled: true
+    httpRoute.annotations:
+      uptime-kuma.io/monitor: "true"
+    httpRoute.parentRefs:
+    - name: public
+      namespace: kube-system
+      sectionName: https
+    httpRoute.hostnames:
+    - relay.solid3d.ch
+    httpRoute.rules:
+    - path: /ws
+      timeouts:
+        request: 3600s
+        backendRequest: 3600s
+      backend:
+        name: solid3d-relay-reverb
+        port: 8081
+    - path: /
+      backend:
+        name: solid3d-relay-app-service
+        port: 80
+    httpRoute.uptimeBridge.enabled: true
+    httpRoute.uptimeBridge.service.name: solid3d-relay-app-service
+    httpRoute.uptimeBridge.service.port: 80
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    isKind:
+      of: HTTPRoute
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.hostnames[0]
+      value: relay.solid3d.ch
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.rules[0].backendRefs[0].name
+      value: solid3d-relay-reverb
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.rules[1].backendRefs[0].port
+      value: 80
+  - documentSelector:
+      path: kind
+      value: Ingress
+    equal:
+      path: spec.ingressClassName
+      value: uptime-only
+  - documentSelector:
+      path: kind
+      value: Ingress
+    equal:
+      path: spec.tls[0].hosts[0]
+      value: relay.solid3d.ch
+  - documentSelector:
+      path: kind
+      value: Ingress
+    notExists:
+      path: spec.tls[0].secretName

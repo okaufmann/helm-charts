@@ -11,9 +11,9 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: fixed
-      description: Allow SpamAssassin to setuid to nobody after dropping other capabilities.
+    - kind: added
+      description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.1"
+version: "1.0.2"
 appVersion: "v1.31.0"

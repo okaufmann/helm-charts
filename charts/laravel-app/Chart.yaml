@@ -12,8 +12,8 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: changed
-      description: replicaCount accepts 0 so app, queue and reverb can be scaled down without disabling them.
+    - kind: added
+      description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
   artifacthub.io/containsSecurityUpdates: "false"
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,7 +27,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "2.0.18"
+version: "2.0.19"
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.

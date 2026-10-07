@@ -1,0 +1,36 @@
+suite: httproute
+templates:
+- templates/httproute.yaml
+tests:
+- it: renders nothing unless enabled
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: renders an HTTPRoute without the uptime bridge
+  set:
+    fullnameOverride: mailpit
+    httpRoute.enabled: true
+    httpRoute.parentRefs:
+    - name: public
+      namespace: kube-system
+      sectionName: https
+    httpRoute.hostnames:
+    - mailpit.example.com
+    httpRoute.rules:
+    - path: /
+      timeouts:
+        request: 3600s
+      backend:
+        name: mailpit
+        port: 8025
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: HTTPRoute
+  - equal:
+      path: spec.rules[0].backendRefs[0].port
+      value: 8025
+  - equal:
+      path: spec.rules[0].timeouts.request
+      value: 3600s

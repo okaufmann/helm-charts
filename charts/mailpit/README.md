@@ -25,8 +25,9 @@ Optional SpamAssassin is gated by `spamassassin.enabled`. When it is on, the
 chart sets `MP_ENABLE_SPAMASSASSIN` to the in-chart Service unless you already
 set that key in `envs`.
 
-Protect the UI with your ingress controller (forward-auth, oauth2-proxy, and
-similar). Mailpit only has optional HTTP basic auth.
+Protect the UI with your ingress controller or a Gateway `ExternalAuth`
+filter on `httpRoute`. Mailpit only has optional HTTP basic auth.
+`app.ingress` remains the Ingress API.
 
 ```yaml
 envs:

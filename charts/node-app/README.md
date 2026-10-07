@@ -18,3 +18,7 @@ Put non-secret configuration in `envs`. Inject secrets with
 `/ready` so a warmup can finish before the pod takes traffic.
 
 Optional Valkey is the Bitnami subchart, gated by `valkey.enabled`.
+
+`httpRoute` attaches the release to a Gateway. `app.ingress` remains the
+Ingress API. `httpRoute.uptimeBridge` adds an Ingress of class `uptime-only`
+with `tls.hosts` and no secret.

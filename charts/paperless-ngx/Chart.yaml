@@ -11,11 +11,11 @@ maintainers:
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
-    - kind: changed
-      description: Update Paperless-ngx to 3.1.0.
+    - kind: added
+      description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.2.0"
+version: "1.2.1"
 # renovate: datasource=github-releases depName=paperless-ngx/paperless-ngx extractVersion=^v(?<version>.*)$
 appVersion: "3.3.0"
 dependencies:

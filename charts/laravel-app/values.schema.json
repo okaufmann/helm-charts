@@ -72,7 +72,61 @@
     "queue": { "$ref": "#/definitions/scalableWorker" },
     "reverb": { "$ref": "#/definitions/reverb" },
     "scheduler": { "$ref": "#/definitions/scheduler" },
-    "valkey": { "type": "object" }
+    "valkey": { "type": "object" },
+    "httpRoute": {
+      "type": "object",
+      "required": ["enabled", "name", "annotations", "parentRefs", "hostnames", "rules", "uptimeBridge"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "type": "object" },
+        "parentRefs": { "type": "array", "items": { "type": "object" } },
+        "hostnames": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["backend"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "filters": { "type": "array", "items": { "type": "object" } },
+              "timeouts": { "type": "object" },
+              "backend": {
+                "type": "object",
+                "required": ["name", "port"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "namespace": { "type": "string", "minLength": 1 },
+                  "port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+                }
+              }
+            }
+          }
+        },
+        "uptimeBridge": {
+          "type": "object",
+          "required": ["enabled", "name", "annotations", "service"],
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "name": { "type": "string" },
+            "annotations": { "type": "object" },
+            "service": {
+              "type": "object",
+              "required": ["name", "port"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "required": [
     "envs",
@@ -87,7 +141,8 @@
     "queue",
     "reverb",
     "scheduler",
-    "networkPolicy"
+    "networkPolicy",
+    "httpRoute"
   ],
   "allOf": [
     {
