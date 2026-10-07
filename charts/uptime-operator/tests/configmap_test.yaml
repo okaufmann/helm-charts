@@ -76,3 +76,16 @@ tests:
       - equal:
           path: stringData.password
           value: s3cret
+  - it: sets MANAGED_TAG only when configured
+    template: templates/configmap.yaml
+    set:
+      config.managedTag: managed-by-uptime-operator:solid3d
+    asserts:
+      - equal:
+          path: data.MANAGED_TAG
+          value: managed-by-uptime-operator:solid3d
+  - it: leaves MANAGED_TAG to the operator default
+    template: templates/configmap.yaml
+    asserts:
+      - notExists:
+          path: data.MANAGED_TAG

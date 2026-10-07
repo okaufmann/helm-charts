@@ -22,6 +22,10 @@ config:
   resyncInterval: 300
   logLevel: INFO
   staticMonitorsPath: /config/monitors.yaml
+  # Ownership tag. Give every cluster on a shared Kuma its own value, or the
+  # operators treat each other's monitors as orphans. Empty keeps the
+  # operator default (managed-by-uptime-operator).
+  managedTag: ""
 
 # Extra non-secret key/value pairs merged into the operator ConfigMap.
 extraEnv: {}

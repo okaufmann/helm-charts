@@ -41,8 +41,11 @@ host is listed under `spec.tls`.
 | `uptime-kuma.io/monitor-group` | Kuma group name |
 | `uptime-kuma.io/notification` | Extra Kuma notification channel name(s) |
 
-Managed monitors are tagged `managed-by-uptime-operator`. Manual monitors are
-never touched.
+Managed monitors carry `config.managedTag` (operator default
+`managed-by-uptime-operator`). Monitors with another tag are never touched.
+Clusters that share one Kuma need distinct values. From operator 0.7.0, a
+changed tag claims monitors still carrying the default tag only when name
+and URL match an object in this cluster, and never deletes them.
 
 ## Values
 
@@ -52,6 +55,7 @@ never touched.
 | `image.tag` | Chart `appVersion` | Image tag |
 | `config.resyncInterval` | `300` | Seconds between full syncs |
 | `config.logLevel` | `INFO` | `DEBUG` / `INFO` / `WARN` / `ERROR` |
+| `config.managedTag` | `""` | `MANAGED_TAG`; unique per cluster when several share one Kuma |
 | `existingSecret` | `uptime-operator` | Secret with Kuma login |
 | `secret.create` | `false` | Create a Secret from `secret.url` / `username` / `password` |
 | `staticMonitors` | `[]` | Extra monitors mounted at `/config/monitors.yaml` |

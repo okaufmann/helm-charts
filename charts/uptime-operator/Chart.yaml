@@ -12,7 +12,9 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: added
-      description: ClusterRole can list HTTPRoutes as well as Ingresses.
+      description: config.managedTag sets MANAGED_TAG so clusters on a shared Kuma keep separate monitors.
+    - kind: changed
+      description: Operator 0.7.0 reads HTTPRoutes and only adopts monitors that carry no tag.
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/license: MIT
   artifacthub.io/links: |
@@ -21,6 +23,6 @@ annotations:
     - name: Uptime Kuma
       url: https://github.com/louislam/uptime-kuma
 type: application
-version: "1.1.1"
+version: "1.2.0"
 # renovate: datasource=github-releases depName=solid3dlab/uptime-operator extractVersion=^v(?<version>.*)$
-appVersion: "0.6.0"
+appVersion: "0.7.0"
