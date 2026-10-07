@@ -2491,6 +2491,34 @@ entries:
           description: Update Paperless-ngx to 3.1.0.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
+    appVersion: 3.3.0
+    created: "2026-10-07T08:41:33.433193923Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for Paperless-ngx
+    digest: ab3e8d382f2940420994822482d657092a5dc6247bd52aabe532b0471f0aa376
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/paperless-ngx
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: paperless-ngx
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/paperless-ngx-1.2.0/paperless-ngx-1.2.0.tgz
+    version: 1.2.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Update Paperless-ngx to 3.1.0.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
     appVersion: 3.1.3
     created: "2026-09-04T21:12:52.892271895Z"
     dependencies:
@@ -2684,4 +2712,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-07T08:41:13.034485017Z"
+generated: "2026-10-07T08:41:33.433523414Z"
