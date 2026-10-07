@@ -2,7 +2,7 @@
 
 A Helm chart for [uptime-operator](https://github.com/solid3dlab/uptime-operator):
 a tiny Go controller that keeps [Uptime Kuma](https://github.com/louislam/uptime-kuma)
-HTTP monitors in sync with annotated Ingresses.
+HTTP monitors in sync with annotated HTTPRoutes and Ingresses.
 
 ## Install
 
@@ -28,11 +28,15 @@ staticMonitors:
     notification: Slack
 ```
 
-## Ingress annotations
+## Annotations
+
+The same annotations work on an HTTPRoute or an Ingress. An HTTPRoute on an
+`https` listener is probed with `https`. An Ingress is `https` only when the
+host is listed under `spec.tls`.
 
 | Annotation | Meaning |
 |---|---|
-| `uptime-kuma.io/monitor: "true"` | Manage this Ingress |
+| `uptime-kuma.io/monitor: "true"` | Manage this route |
 | `uptime-kuma.io/monitor-interval` | Check interval in seconds (default `60`) |
 | `uptime-kuma.io/monitor-group` | Kuma group name |
 | `uptime-kuma.io/notification` | Extra Kuma notification channel name(s) |
@@ -51,4 +55,4 @@ never touched.
 | `existingSecret` | `uptime-operator` | Secret with Kuma login |
 | `secret.create` | `false` | Create a Secret from `secret.url` / `username` / `password` |
 | `staticMonitors` | `[]` | Extra monitors mounted at `/config/monitors.yaml` |
-| `rbac.create` | `true` | ClusterRole that can list Ingresses |
+| `rbac.create` | `true` | ClusterRole that can list Ingresses and HTTPRoutes |

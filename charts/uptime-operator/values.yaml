@@ -68,7 +68,7 @@ serviceAccount:
   annotations: {}
   automountServiceAccountToken: true
 
-# The operator lists Ingresses via the API, so the token must be mounted.
+# The operator lists Ingresses and HTTPRoutes via the API, so the token must be mounted.
 automountServiceAccountToken: true
 
 podSecurityContext:

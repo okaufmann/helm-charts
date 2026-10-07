@@ -3,7 +3,7 @@ templates:
   - templates/rbac.yaml
   - templates/serviceaccount.yaml
 tests:
-  - it: grants Ingress read access only
+  - it: grants Ingress and HTTPRoute read access
     template: templates/rbac.yaml
     documentIndex: 0
     asserts:
@@ -21,9 +21,21 @@ tests:
             - get
             - list
             - watch
+      - equal:
+          path: rules[1].apiGroups[0]
+          value: gateway.networking.k8s.io
+      - equal:
+          path: rules[1].resources[0]
+          value: httproutes
+      - equal:
+          path: rules[1].verbs
+          value:
+            - get
+            - list
+            - watch
       - lengthEqual:
           path: rules
-          count: 1
+          count: 2
   - it: binds the ServiceAccount in the release namespace
     template: templates/rbac.yaml
     documentIndex: 1
