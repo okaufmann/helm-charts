@@ -2981,6 +2981,37 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
+          description: config.managedTag sets MANAGED_TAG so clusters on a shared Kuma keep separate monitors.
+        - kind: changed
+          description: Operator 0.7.0 reads HTTPRoutes and only adopts monitors that carry no tag.
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: MIT
+      artifacthub.io/links: |
+        - name: Operator source
+          url: https://github.com/solid3dlab/uptime-operator
+        - name: Uptime Kuma
+          url: https://github.com/louislam/uptime-kuma
+    apiVersion: v2
+    appVersion: 0.7.0
+    created: "2026-10-07T15:25:57.455619129Z"
+    description: Sync annotated HTTPRoutes and Ingresses into Uptime Kuma HTTP monitors
+    digest: bf5b1271178b84e091d9dbcf2a114918a4499b3f2604aab7249a0c9d801005ce
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/uptime-operator
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: uptime-operator
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/solid3dlab/uptime-operator
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.2.0/uptime-operator-1.2.0.tgz
+    version: 1.2.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
           description: ClusterRole can list HTTPRoutes as well as Ingresses.
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: MIT
@@ -3065,4 +3096,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-07T11:21:15.070721398Z"
+generated: "2026-10-07T15:25:57.455863846Z"
