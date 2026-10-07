@@ -196,7 +196,7 @@
     "commonWorkloadProperties": {
       "enabled": { "type": "boolean" },
       "image": { "$ref": "#/definitions/image" },
-      "replicaCount": { "type": "integer", "minimum": 1 },
+      "replicaCount": { "type": "integer", "minimum": 0 },
       "resources": { "type": "object" },
       "nodeSelector": { "type": "object" },
       "tolerations": { "type": "array", "items": { "type": "object" } },
@@ -241,7 +241,7 @@
       "properties": {
         "enabled": { "type": "boolean" },
         "image": { "$ref": "#/definitions/image" },
-        "replicaCount": { "type": "integer", "minimum": 1 },
+        "replicaCount": { "type": "integer", "minimum": 0 },
         "autoscaling": { "$ref": "#/definitions/autoscaling" },
         "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
         "strategy": { "type": "object" },
@@ -318,7 +318,7 @@
       "properties": {
         "enabled": { "type": "boolean" },
         "image": { "$ref": "#/definitions/image" },
-        "replicaCount": { "type": "integer", "minimum": 1 },
+        "replicaCount": { "type": "integer", "minimum": 0 },
         "autoscaling": { "$ref": "#/definitions/autoscaling" },
         "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
         "strategy": { "type": "object" },
@@ -359,7 +359,7 @@
       "properties": {
         "enabled": { "type": "boolean" },
         "image": { "$ref": "#/definitions/image" },
-        "replicaCount": { "type": "integer", "minimum": 1 },
+        "replicaCount": { "type": "integer", "minimum": 0 },
         "autoscaling": { "$ref": "#/definitions/autoscaling" },
         "podDisruptionBudget": { "$ref": "#/definitions/pdb" },
         "strategy": { "type": "object" },
