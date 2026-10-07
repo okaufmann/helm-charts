@@ -12,8 +12,8 @@ kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/changes: |
     - kind: added
-      description: Optional HTTPRoute (and an Uptime Ingress bridge) so the chart attaches itself to a Gateway the same way it used to create an Ingress.
+      description: Optional httpRoute.listenerSet: own HTTPS listeners per hostname with a cert-manager certificate; the route attaches to it unless parentRefs is set.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.0.2"
+version: "1.1.0"
 appVersion: "v1.31.0"

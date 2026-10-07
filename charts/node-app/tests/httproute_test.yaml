@@ -45,3 +45,62 @@ tests:
       value: Ingress
     notExists:
       path: spec.tls[0].secretName
+- it: renders a ListenerSet and attaches the route to it
+  set:
+    fullnameOverride: app
+    httpRoute.enabled: true
+    httpRoute.hostnames:
+    - www.example.com
+    - example.com
+    httpRoute.rules:
+    - backend:
+        name: app
+        port: 80
+    httpRoute.listenerSet.enabled: true
+    httpRoute.listenerSet.gateway.name: public
+    httpRoute.listenerSet.gateway.namespace: kube-system
+    httpRoute.listenerSet.port: 30443
+    httpRoute.listenerSet.clusterIssuer: letsencrypt
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentSelector:
+      path: kind
+      value: ListenerSet
+    equal:
+      path: metadata.annotations["cert-manager.io/cluster-issuer"]
+      value: letsencrypt
+  - documentSelector:
+      path: kind
+      value: ListenerSet
+    equal:
+      path: spec.listeners[1]
+      value:
+        name: example-com
+        hostname: example.com
+        protocol: HTTPS
+        port: 30443
+        tls:
+          mode: Terminate
+          certificateRefs:
+          - name: example-com-tls
+  - documentSelector:
+      path: kind
+      value: HTTPRoute
+    equal:
+      path: spec.parentRefs
+      value:
+      - group: gateway.networking.k8s.io
+        kind: ListenerSet
+        name: app
+- it: fails without parentRefs or a ListenerSet
+  set:
+    httpRoute.enabled: true
+    httpRoute.hostnames: [app.example.com]
+    httpRoute.rules:
+    - backend:
+        name: app
+        port: 80
+  asserts:
+  - failedTemplate:
+      errorMessage: httpRoute needs parentRefs or listenerSet.enabled

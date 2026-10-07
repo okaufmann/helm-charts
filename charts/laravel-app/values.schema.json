@@ -75,7 +75,7 @@
     "valkey": { "type": "object" },
     "httpRoute": {
       "type": "object",
-      "required": ["enabled", "name", "annotations", "parentRefs", "hostnames", "rules", "uptimeBridge"],
+      "required": ["enabled", "name", "annotations", "parentRefs", "hostnames", "rules", "listenerSet", "uptimeBridge"],
       "additionalProperties": false,
       "properties": {
         "enabled": { "type": "boolean" },
@@ -104,6 +104,27 @@
                 }
               }
             }
+          }
+        },
+        "listenerSet": {
+          "type": "object",
+          "required": ["enabled", "name", "gateway", "port", "clusterIssuer", "annotations"],
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "name": { "type": "string" },
+            "gateway": {
+              "type": "object",
+              "required": ["name", "namespace"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "namespace": { "type": "string" }
+              }
+            },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "clusterIssuer": { "type": "string" },
+            "annotations": { "type": "object" }
           }
         },
         "uptimeBridge": {

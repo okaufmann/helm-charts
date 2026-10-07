@@ -121,6 +121,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | Statamic Git lock and push | 2.0.16 | Clone and commit Jobs `flock` the PVC, abort leftover rebase/merge state, and default `backoffLimit` is 1. When `statamic.git.push` is true the clone Job pushes after rebase so a deploy does not leave the volume ahead of origin. The CronJob still pushes Control Panel saves between deploys. | |
 | Statamic Git sync log | 2.0.17 | After `pull --rebase` the clone Job prints `Synced successfully.` so a quiet alpine/git Job does not look unfinished in `kubectl logs`. | |
 | Gateway API | 2.0.19 | `httpRoute` renders one HTTPRoute for the release. `httpRoute.uptimeBridge` adds an Ingress of class `uptime-only` with `tls.hosts` and no secret. `app.ingress` and `reverb.ingress` stay the Ingress API. | |
+| Gateway ListenerSet | 2.1.0 | `httpRoute.listenerSet` renders a ListenerSet with one HTTPS listener per hostname on the given Gateway. `clusterIssuer` makes cert-manager issue `<host-with-dashes>-tls` in the release namespace. The route attaches to the set unless `parentRefs` is given. | |
 | Valkey authentication | 2.0.0 | Authentication now defaults on and the insecure `yourpassword` placeholder was removed. | |
 
 ## Values

@@ -1,12 +1,54 @@
 {{- if .Values.httpRoute.enabled }}
-{{- if not .Values.httpRoute.parentRefs }}
-{{- fail "httpRoute.parentRefs is required when httpRoute.enabled is true" }}
+{{- $ls := .Values.httpRoute.listenerSet }}
+{{- if and (not .Values.httpRoute.parentRefs) (not $ls.enabled) }}
+{{- fail "httpRoute needs parentRefs or listenerSet.enabled" }}
 {{- end }}
 {{- if not .Values.httpRoute.hostnames }}
 {{- fail "httpRoute.hostnames is required when httpRoute.enabled is true" }}
 {{- end }}
 {{- if not .Values.httpRoute.rules }}
 {{- fail "httpRoute.rules is required when httpRoute.enabled is true" }}
+{{- end }}
+{{- $lsName := default (include "laravel-app.fullname" .) $ls.name }}
+{{- if $ls.enabled }}
+{{- if or (not $ls.gateway.name) (not $ls.gateway.namespace) }}
+{{- fail "httpRoute.listenerSet.gateway.name and .namespace are required" }}
+{{- end }}
+# One HTTPS listener per hostname. Cilium does not set an SNI match per
+# certificate, so a listener must not carry more than one certificateRef.
+apiVersion: gateway.networking.k8s.io/v1
+kind: ListenerSet
+metadata:
+  name: {{ $lsName }}
+  labels:
+    {{- include "laravel-app.labels" . | nindent 4 }}
+  annotations:
+    {{- with $ls.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ . | quote }}
+    {{- end }}
+    # HTTP-01 is served on the parent Gateway's HTTP listener; this set is HTTPS only.
+    acme.cert-manager.io/http01-parentreffallback: "true"
+    {{- with $ls.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  parentRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ $ls.gateway.name }}
+    namespace: {{ $ls.gateway.namespace }}
+  listeners:
+    {{- range .Values.httpRoute.hostnames }}
+    - name: {{ . | replace "." "-" | quote }}
+      hostname: {{ . | quote }}
+      protocol: HTTPS
+      port: {{ $ls.port }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: {{ printf "%s-tls" (. | replace "." "-") | quote }}
+    {{- end }}
+---
 {{- end }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -20,7 +62,13 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.httpRoute.parentRefs }}
     {{- toYaml .Values.httpRoute.parentRefs | nindent 4 }}
+    {{- else }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ $lsName }}
+    {{- end }}
   hostnames:
     {{- toYaml .Values.httpRoute.hostnames | nindent 4 }}
   rules:
