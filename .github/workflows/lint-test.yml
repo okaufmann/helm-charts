@@ -40,7 +40,7 @@ jobs:
         python-version: "3.13"
 
     - name: Set up chart-testing
-      uses: helm/chart-testing-action@v2.8.0
+      uses: helm/chart-testing-action@v2.9.0
 
     - name: Lint charts
       run: ct lint --charts charts/laravel-app,charts/node-app,charts/uptime-operator,charts/paperless-ngx,charts/mailpit
