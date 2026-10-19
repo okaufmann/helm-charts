@@ -370,7 +370,10 @@ queue:
   podSecurityContext: {}
   containerSecurityContext: {}
 
-  terminationGracePeriodSeconds: 300
+  # A fresh Horizon install times a job out after 60s and retries it after 90s.
+  # This lets the current job finish once Kubernetes sends SIGTERM. Raise it
+  # above the longest timeout in config/horizon.php.
+  terminationGracePeriodSeconds: 90
   revisionHistoryLimit: 10
   priorityClassName: ""
   topologySpreadConstraints: []
