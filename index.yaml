@@ -283,6 +283,35 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
+          description: The queue command is exec'd so Horizon receives SIGTERM, and its grace period defaults to 90s, covering a fresh Horizon install.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 13.0.0
+    created: "2026-10-19T20:52:39.881379027Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.3.x
+    description: A Helm chart for running Laravel or Statamic Apps
+    digest: 8e4dc8ae99c2ceda8c09584beb1c89d8b6ea2b700284ea016a306f4d76ab3f22
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/laravel-app
+    icon: https://raw.githubusercontent.com/laravel/art/master/laravel-logo.svg
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: laravel-app
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/serversideup/docker-php
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/laravel-app-2.1.2/laravel-app-2.1.2.tgz
+    version: 2.1.2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
           description: httpRoute.listenerSet serves every hostname from one secret (default <fullname>-tls), so an existing Ingress certificate is reused.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
@@ -3124,4 +3153,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-18T09:47:30.682210726Z"
+generated: "2026-10-19T20:52:39.881853697Z"
