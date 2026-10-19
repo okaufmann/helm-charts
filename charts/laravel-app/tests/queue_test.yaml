@@ -1,0 +1,28 @@
+suite: queue deployment
+templates:
+- templates/queue/deployment.yaml
+- templates/configmap-envs.yaml
+tests:
+- it: execs horizon and waits out the default job timeout
+  template: templates/queue/deployment.yaml
+  set:
+    queue.enabled: true
+  asserts:
+  - equal:
+      path: spec.template.spec.terminationGracePeriodSeconds
+      value: 90
+  - equal:
+      path: spec.template.spec.containers[0].command
+      value: ["/bin/sh", "-c"]
+  - equal:
+      path: spec.template.spec.containers[0].args
+      value: ["exec php artisan horizon"]
+- it: does not exec a command twice
+  template: templates/queue/deployment.yaml
+  set:
+    queue.enabled: true
+    queue.command: exec php artisan horizon
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].args
+      value: ["exec php artisan horizon"]

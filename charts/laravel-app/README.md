@@ -270,7 +270,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | queue.strategy.rollingUpdate.maxSurge | int | `1` |  |
 | queue.strategy.rollingUpdate.maxUnavailable | string | `"50%"` |  |
 | queue.strategy.type | string | `"RollingUpdate"` |  |
-| queue.terminationGracePeriodSeconds | int | `300` |  |
+| queue.terminationGracePeriodSeconds | int | `90` |  |
 | queue.tolerations | list | `[]` |  |
 | queue.topologySpreadConstraints | list | `[]` |  |
 | reverb.affinity | object | `{}` |  |

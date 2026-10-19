@@ -102,6 +102,10 @@ containers:
     imagePullPolicy: {{ $values.image.pullPolicy }}
     securityContext:
       {{- toYaml $containerSecurityContext | nindent 6 }}
+    {{- $run := $values.command }}
+    {{- if and (eq $component "queue") $run (not (hasPrefix "exec " $run)) }}
+    {{- $run = printf "exec %s" $run }}
+    {{- end }}
     {{- if $statamic }}
     {{/*
       Always start through the linker. Kubernetes drops the image CMD when
@@ -109,17 +113,17 @@ containers:
       exit 0 after linking and the web container crash-loops.
     */}}
     command: ["/app/init.sh"]
-    {{- if $values.command }}
-    args: ["/bin/sh", "-c", {{ $values.command | quote }}]
+    {{- if $run }}
+    args: ["/bin/sh", "-c", {{ $run | quote }}]
     {{- else if $octane }}
     args: ["/bin/sh", "-c", {{ $octaneCommand | quote }}]
     {{- else if eq $component "app" }}
     args: ["/bin/sh", "-c", {{ $root.Values.statamic.webCommand | quote }}]
     {{- end }}
-    {{- else if $values.command }}
+    {{- else if $run }}
     command: ["/bin/sh", "-c"]
     args:
-      - {{ $values.command | quote }}
+      - {{ $run | quote }}
     {{- else if $octane }}
     command: ["/bin/sh", "-c"]
     args:

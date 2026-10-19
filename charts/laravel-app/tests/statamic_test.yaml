@@ -147,7 +147,7 @@ tests:
       value: ["/app/init.sh"]
   - equal:
       path: spec.template.spec.containers[0].args
-      value: ["/bin/sh", "-c", "php artisan horizon"]
+      value: ["/bin/sh", "-c", "exec php artisan horizon"]
 - it: starts FrankenPHP through the linker when no app.command is set
   template: templates/app/deployment.yaml
   asserts:
