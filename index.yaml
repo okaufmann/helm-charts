@@ -2760,6 +2760,34 @@ entries:
           description: httpRoute.listenerSet serves every hostname from one secret (default <fullname>-tls), so an existing Ingress certificate is reused.
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
+    appVersion: 3.4.2
+    created: "2026-11-04T08:29:38.435738133Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 6.2.x
+    description: A Helm chart for Paperless-ngx
+    digest: e0df37bdaa4f01ee4ac6ec04dc433cfd3711b7314c513a5294e27e70418fa37e
+    home: https://github.com/okaufmann/helm-charts/tree/main/charts/paperless-ngx
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: okaufmann
+      url: https://github.com/okaufmann
+    name: paperless-ngx
+    sources:
+    - https://github.com/okaufmann/helm-charts
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/okaufmann/helm-charts/releases/download/paperless-ngx-1.4.0/paperless-ngx-1.4.0.tgz
+    version: 1.4.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: httpRoute.listenerSet serves every hostname from one secret (default <fullname>-tls), so an existing Ingress certificate is reused.
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
     appVersion: 3.3.2
     created: "2026-10-18T09:47:30.681942524Z"
     dependencies:
@@ -3153,4 +3181,4 @@ entries:
     urls:
     - https://github.com/okaufmann/helm-charts/releases/download/uptime-operator-1.0.0/uptime-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-19T20:52:39.881853697Z"
+generated: "2026-11-04T08:29:38.435960139Z"
