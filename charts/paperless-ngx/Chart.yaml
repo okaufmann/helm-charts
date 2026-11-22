@@ -15,9 +15,9 @@ annotations:
       description: httpRoute.listenerSet serves every hostname from one secret (default <fullname>-tls), so an existing Ingress certificate is reused.
   artifacthub.io/containsSecurityUpdates: "false"
 type: application
-version: "1.4.0"
+version: "1.5.0"
 # renovate: datasource=github-releases depName=paperless-ngx/paperless-ngx extractVersion=^v(?<version>.*)$
-appVersion: "3.4.2"
+appVersion: "3.5.1"
 dependencies:
 - name: valkey
   condition: valkey.enabled
