@@ -266,6 +266,8 @@ app:
     command: "php artisan migrate --isolated --force"
     ttlSecondsAfterFinished: 300
     backoffLimit: 3
+    # Empty falls back to app.resources. Init containers (init, migrate) always
+    # get their component's resources so the pod cgroup has a memory limit.
     resources: {}
 
   service:

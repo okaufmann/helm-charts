@@ -26,3 +26,13 @@ tests:
   - equal:
       path: spec.template.spec.containers[0].args
       value: ["exec php artisan horizon"]
+- it: gives the init container the queue's resources
+  template: templates/queue/deployment.yaml
+  set:
+    queue.enabled: true
+    queue.resources:
+      limits: {memory: 2Gi}
+  asserts:
+  - equal:
+      path: spec.template.spec.initContainers[0].resources.limits.memory
+      value: 2Gi

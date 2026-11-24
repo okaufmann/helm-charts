@@ -73,6 +73,11 @@ initContainers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
+    {{- /* Without a memory limit on every init container the pod cgroup gets no memory.max. */}}
+    {{- with $values.resources }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   {{- end }}
   {{- if and (eq $component "app") $values.migrate.enabled (eq $values.migrate.mode "initContainer") }}
   - name: migrate
@@ -94,6 +99,10 @@ initContainers:
       {{- end }}
     envFrom:
       {{- include "laravel-app.envFrom" $root | nindent 6 }}
+    {{- with (default $values.resources $values.migrate.resources) }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   {{- end }}
 {{- end }}
 containers:

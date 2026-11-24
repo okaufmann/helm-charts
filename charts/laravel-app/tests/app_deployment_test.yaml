@@ -66,3 +66,41 @@ tests:
   asserts:
   - notExists:
       path: spec.replicas
+- it: gives the init containers the app's resources
+  template: templates/app/deployment.yaml
+  set:
+    app.resources:
+      requests: {cpu: 100m, memory: 256Mi}
+      limits: {memory: 1Gi}
+  asserts:
+  - equal:
+      path: spec.template.spec.initContainers[0].name
+      value: init
+  - equal:
+      path: spec.template.spec.initContainers[0].resources.limits.memory
+      value: 1Gi
+  - equal:
+      path: spec.template.spec.initContainers[1].name
+      value: migrate
+  - equal:
+      path: spec.template.spec.initContainers[1].resources.limits.memory
+      value: 1Gi
+- it: lets migrate.resources override the migrate init container
+  template: templates/app/deployment.yaml
+  set:
+    app.resources:
+      limits: {memory: 1Gi}
+    app.migrate.resources:
+      limits: {memory: 512Mi}
+  asserts:
+  - equal:
+      path: spec.template.spec.initContainers[1].resources.limits.memory
+      value: 512Mi
+  - equal:
+      path: spec.template.spec.initContainers[0].resources.limits.memory
+      value: 1Gi
+- it: leaves init containers without resources when the app has none
+  template: templates/app/deployment.yaml
+  asserts:
+  - notExists:
+      path: spec.template.spec.initContainers[0].resources
